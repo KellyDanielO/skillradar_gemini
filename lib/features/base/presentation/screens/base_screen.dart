@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skillradar/core/constants/colors.dart';
+
+import '../../../../core/constants/assets.dart';
 
 class BaseScreen extends ConsumerStatefulWidget {
   const BaseScreen({super.key});
@@ -20,8 +23,8 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
     double width = ScreenUtil().screenWidth;
     List<BottomTabs> bottomTabs = [
       BottomTabs(
-        activeIcon: CupertinoIcons.house_fill,
-        defaultIcon: CupertinoIcons.home,
+        activeIcon: AppAssets.homeBoldIcon,
+        defaultIcon: AppAssets.homeOutlinedIcon,
         action: () {
           setState(() {
             _selectedIndex = 0;
@@ -29,8 +32,8 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
         },
       ),
       BottomTabs(
-        activeIcon: CupertinoIcons.compass_fill,
-        defaultIcon: CupertinoIcons.compass,
+        activeIcon: AppAssets.compassBoldIcon,
+        defaultIcon: AppAssets.compassOutlinedIcon,
         action: () {
           setState(() {
             _selectedIndex = 1;
@@ -38,8 +41,8 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
         },
       ),
       BottomTabs(
-        activeIcon: CupertinoIcons.bookmark_fill,
-        defaultIcon: CupertinoIcons.bookmark,
+        activeIcon: AppAssets.bookmarkBoldIcon,
+        defaultIcon: AppAssets.bookmarkOutlinedIcon,
         action: () {
           setState(() {
             _selectedIndex = 2;
@@ -47,8 +50,8 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
         },
       ),
       BottomTabs(
-        activeIcon: CupertinoIcons.person_fill,
-        defaultIcon: CupertinoIcons.person,
+        activeIcon: AppAssets.userBoldIcon,
+        defaultIcon: AppAssets.userOutlinedIcon,
         action: () {
           setState(() {
             _selectedIndex = 3;
@@ -102,10 +105,12 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
                             ),
                             child: IconButton(
                               onPressed: () {},
-                              icon: Icon(
-                                CupertinoIcons.bell,
-                                color: AppColors.whiteColor.withOpacity(.7),
-                                size: 20.sp,
+                              icon: SvgPicture.asset(
+                                AppAssets.bellOutlinedIcon,
+                                colorFilter: const ColorFilter.mode(
+                                    AppColors.whiteColor, BlendMode.srcIn),
+                                width: 18.w,
+                                height: 18.h,
                               ),
                             ),
                           )
@@ -186,14 +191,18 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
               child: IconButton(
                 key: ValueKey<int>(_selectedIndex),
                 onPressed: bottomTabs[index].action,
-                icon: Icon(
+                icon: SvgPicture.asset(
                   _selectedIndex == index
                       ? bottomTabs[index].activeIcon
                       : bottomTabs[index].defaultIcon,
-                  color: _selectedIndex == index
-                      ? AppColors.blackColor
-                      : AppColors.blackColor.withOpacity(.6),
-                  size: 24.sp,
+                  colorFilter: ColorFilter.mode(
+                    _selectedIndex == index
+                        ? AppColors.blackColor
+                        : AppColors.blackColor.withOpacity(.6),
+                    BlendMode.srcIn,
+                  ),
+                  width: 25.w,
+                  height: 25.h,
                 ),
               ),
             ),
@@ -205,8 +214,8 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
 }
 
 class BottomTabs {
-  final IconData activeIcon;
-  final IconData defaultIcon;
+  final String activeIcon;
+  final String defaultIcon;
   final void Function() action;
 
   BottomTabs(

@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/sizes.dart';
@@ -45,6 +45,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget build(BuildContext context) {
     double height = ScreenUtil().screenHeight;
     double width = ScreenUtil().screenWidth;
+    final transH = AppLocalizations.of(context)!;
     return Scaffold(
       body: AnimatedSwitcher(
         duration: const Duration(seconds: 1),
@@ -92,7 +93,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     ),
                   ),
                   Text(
-                    'Welcome to Skill Radar',
+                    transH.welcomeMsgTitle,
                     style: TextStyle(
                       color: AppColors.whiteColor,
                       fontSize: AppSizes.bigSize,
@@ -101,7 +102,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   ),
                   SizedBox(height: 5.h),
                   Text(
-                    'You\'re one step away from connecting with that skill closest to you.',
+                    transH.welcomeMsgBody,
                     style: TextStyle(
                       color: AppColors.whiteColor,
                       fontSize: AppSizes.mediumSize,
@@ -126,14 +127,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          const Expanded(
+                          Expanded(
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(
-                                'Continue with Google',
-                                style: TextStyle(
-                                    color: AppColors.blackColor,
-                                    fontWeight: FontWeight.bold),
+                                transH.getStarted,
+                                style: const TextStyle(
+                                  color: AppColors.blackColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),

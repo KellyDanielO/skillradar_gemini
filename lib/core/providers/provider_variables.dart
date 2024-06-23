@@ -1,7 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'provider_classes.dart';
 
 final buttonLoadingNotifierProvider = StateNotifierProvider<BoolNotifier, bool>((ref) {
   return BoolNotifier();
+});
+
+final languageNotifierProvider =
+    StateNotifierProvider<LocaleNotifier, Locale>((ref) {
+  return LocaleNotifier();
 });

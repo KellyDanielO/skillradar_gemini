@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'core/constants/colors.dart';
 
 import 'core/constants/sizes.dart';
+import 'core/providers/provider_variables.dart';
 import 'features/utils/presentation/screens/splash_screen.dart';
+import 'l10n/l10n.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +23,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final languageProvider = ref.watch(languageNotifierProvider);
     return ScreenUtilInit(
       builder: (context, child) => MaterialApp(
         title: 'Skill Radar',
@@ -36,7 +41,15 @@ class MyApp extends ConsumerWidget {
             elevation: 0,
           ),
         ),
+        supportedLocales: L10n.all,
+        locale: languageProvider,
         home: const SplashScreen(),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate
+          ],
       ),
     );
   }
