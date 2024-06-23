@@ -3,5 +3,6 @@
   "appName": "skillradar",
   "welcomeMsgTitle": "Welcome to Skill Radar",
   "welcomeMsgBody": "You're one step away from connecting with that skill closest to you.",
-  "getStarted": "Get Started"
+  "getStarted": "Get Started",
+  "viewProfile": "View Profile"
 }
