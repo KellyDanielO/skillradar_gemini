@@ -1,6 +1,6 @@
 {
-    "name": "fundz_app",
-    "short_name": "fundz_app",
+    "name": "skillradar",
+    "short_name": "skillradar",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
