@@ -109,10 +109,9 @@ class HomeTab extends ConsumerWidget {
           child: Text(
             'Let\'s find that skill, closest to you!',
             style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                  color: AppColors.whiteColor,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: AppFonts.sansFont
-                ),
+                color: AppColors.whiteColor,
+                fontWeight: FontWeight.bold,
+                fontFamily: AppFonts.sansFont),
           ),
         ),
         SizedBox(height: 15.h),

@@ -1,4 +1,5 @@
 List<String> skillList = [
+  'Flutter developer',
   'Forex Trader',
   'Web3 Developer',
   'Anime Otaku',
