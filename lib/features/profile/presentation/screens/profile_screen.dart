@@ -18,6 +18,16 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  List<String> userSkills = ['Anime', 'Web developer', 'App Developer'];
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return const BottomSheetContent();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;
@@ -163,6 +173,49 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
+                        transH.skills.capitalizeFirst.toString(),
+                        style:
+                            Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: AppFonts.sansFont,
+                                  color: AppColors.whiteColor,
+                                ),
+                      ),
+                      SizedBox(height: 10.h),
+                      Wrap(
+                        spacing: 8.0, // Gap between adjacent items
+                        runSpacing: 4.0, // Gap between lines
+                        children: List.generate(
+                          userSkills.length,
+                          (index) {
+                            return Chip(
+                              backgroundColor: index == 0
+                                  ? AppColors.whiteColor
+                                  : AppColors.blackColor,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30)),
+                              label: Text(
+                                userSkills[index],
+                                style: TextStyle(
+                                  color: index == 0
+                                      ? AppColors.blackColor
+                                      : AppColors.whiteColor,
+                                  fontFamily: AppFonts.sansFont,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10.h),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
                         transH.about.capitalizeFirst.toString(),
                         style:
                             Theme.of(context).textTheme.headlineSmall!.copyWith(
@@ -171,12 +224,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   color: AppColors.whiteColor,
                                 ),
                       ),
+                      SizedBox(height: 10.h),
                       const Text(
                         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                         style: TextStyle(
                           color: AppColors.greyColor,
                         ),
-                      )
+                      ),
+                      SizedBox(height: 100.h),
                     ],
                   ),
                 ],
@@ -185,7 +240,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             Positioned(
               bottom: 10,
               child: InkWell(
-                onTap: () {},
+                onTap: () => _showBottomSheet(context),
                 child: Container(
                   width: width - 40.w,
                   decoration: BoxDecoration(
@@ -202,7 +257,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
-                            transH.getStarted,
+                            transH.connect.capitalizeFirst.toString(),
                             style: const TextStyle(
                               color: AppColors.blackColor,
                               fontWeight: FontWeight.bold,
@@ -226,6 +281,36 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BottomSheetContent extends StatelessWidget {
+  const BottomSheetContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Text(
+              'Bottom Sheet Content',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+                'This is an example of a bottom sheet with content that determines its size.'),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
             ),
           ],
         ),
