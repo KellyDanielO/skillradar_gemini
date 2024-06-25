@@ -19,14 +19,22 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   List<String> userSkills = ['Anime', 'Web developer', 'App Developer'];
-  void _showBottomSheet(BuildContext context) {
+  void _showBottomSheet(BuildContext context, double width) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return const BottomSheetContent();
+        return BottomSheetContent(
+          width: width,
+        );
       },
     );
   }
+
+  List<String> backgroundAvatar = [
+    AppAssets.background3,
+    AppAssets.background1,
+    AppAssets.background2,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +94,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             Positioned.fill(
               child: ListView(
                 children: <Widget>[
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 5.h),
                   SizedBox(
                     width: width,
                     height: height * .31,
@@ -216,6 +224,44 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
+                        'Featured Images',
+                        style:
+                            Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: AppFonts.sansFont,
+                                  color: AppColors.whiteColor,
+                                ),
+                      ),
+                      SizedBox(height: 10.h),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children:
+                              List.generate(backgroundAvatar.length, (index) {
+                            return Container(
+                              margin: EdgeInsets.only(right: 10.w),
+                              child: Container(
+                                width: width * .75,
+                                height: height * .15,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10)),
+                                clipBehavior: Clip.antiAlias,
+                                child: Image.asset(
+                                  backgroundAvatar[index],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10.h),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
                         transH.about.capitalizeFirst.toString(),
                         style:
                             Theme.of(context).textTheme.headlineSmall!.copyWith(
@@ -240,7 +286,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             Positioned(
               bottom: 10,
               child: InkWell(
-                onTap: () => _showBottomSheet(context),
+                onTap: () => _showBottomSheet(context, width),
                 child: Container(
                   width: width - 40.w,
                   decoration: BoxDecoration(
@@ -269,8 +315,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         width: 40.w,
                         height: 40.w,
                         decoration: BoxDecoration(
-                            color: AppColors.blackColor,
-                            borderRadius: BorderRadius.circular(50)),
+                          color: AppColors.blackColor,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
                         child: Icon(
                           CupertinoIcons.arrow_right,
                           color: AppColors.whiteColor,
@@ -290,30 +337,51 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 }
 
 class BottomSheetContent extends StatelessWidget {
-  const BottomSheetContent({super.key});
+  final double width;
+  const BottomSheetContent({super.key, required this.width});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const Text(
-              'Bottom Sheet Content',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-                'This is an example of a bottom sheet with content that determines its size.'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
-            ),
-          ],
+    return Container(
+      width: width,
+      decoration: const BoxDecoration(
+        color: AppColors.blackShadeColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
         ),
+      ),
+      child: Column(
+        children: [
+          SizedBox(height: 10.h),
+          Text(
+            'Connect Via',
+            style: TextStyle(
+                fontSize: 24.sp,
+                fontWeight: FontWeight.bold,
+                fontFamily: AppFonts.sansFont),
+          ),
+          SizedBox(height: 10.h),
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Wrap(
+                spacing: 16.0, // Gap between adjacent items
+                runSpacing: 16.0, // Gap between lines
+                children: List.generate(
+                  SocialIcons.all.length,
+                  (index) {
+                    return SizedBox(
+                      width: 50.w,
+                      height: 50.h,
+                      child: Image.asset(SocialIcons.all[index]),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
