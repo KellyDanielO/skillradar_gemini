@@ -10,6 +10,11 @@ class AppAssets{
   static const String avatar2 = 'assets/images/avatar-2.jpeg';
   static const String avatar3 = 'assets/images/avatar-3.jpeg';
   static const String avatar4 = 'assets/images/avatar-4.jpeg';
+  // Avatars
+  // ====================
+  static const String background1 = 'assets/images/background-1.jfif';
+  static const String background2 = 'assets/images/background-2.jfif';
+  static const String background3 = 'assets/images/background-3.jfif';
 
   // Icons
   // ==================================================
@@ -19,6 +24,8 @@ class AppAssets{
   static const String compassBoldIcon = 'assets/svgs/compass-bold.svg';
   static const String bookmarkBoldIcon = 'assets/svgs/bookmark-bold.svg';
   static const String userBoldIcon = 'assets/svgs/user-bold.svg';
+  static const String arrowLeftBoldIcon = 'assets/svgs/arrow-left-bold.svg';
+  static const String arrowIOSBoldIcon = 'assets/svgs/angle-left-ios.svg';
   // outlined
   // ===========
   static const String homeOutlinedIcon = 'assets/svgs/home-outlined.svg';

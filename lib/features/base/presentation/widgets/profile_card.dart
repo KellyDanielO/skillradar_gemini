@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -104,7 +103,7 @@ class ProfileCard extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Icon(
-                    CupertinoIcons.map_pin_ellipse,
+                      Icons.location_on_outlined,
                     color: AppColors.blackColor.withOpacity(.7),
                     size: 20.sp,
                   ),
