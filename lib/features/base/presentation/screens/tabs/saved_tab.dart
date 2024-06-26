@@ -23,7 +23,7 @@ class SavedTab extends ConsumerWidget {
         name: 'Ace',
         image: AppAssets.avatar1,
         location: 'Nigeria, Port Harcourt',
-        skill: 'Flutter Developer',
+        skill: 'Photographer',
         bio: 'I\'m a cool guy',
         joined: '10 mons ago',
         action: () {},

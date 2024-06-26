@@ -12,9 +12,9 @@ class AppAssets{
   static const String avatar4 = 'assets/images/avatar-4.jpeg';
   // Avatars
   // ====================
-  static const String background1 = 'assets/images/background-1.jfif';
-  static const String background2 = 'assets/images/background-2.jfif';
-  static const String background3 = 'assets/images/background-3.jfif';
+  static const String background1 = 'assets/images/background-1.jpeg';
+  static const String background2 = 'assets/images/background-2.jpeg';
+  static const String background3 = 'assets/images/background-3.jpeg';
 
   // Icons
   // ==================================================

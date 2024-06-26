@@ -20,7 +20,7 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  List<String> userSkills = ['Anime', 'Web developer', 'App Developer'];
+  List<String> userSkills = ['Photograher', 'Fashionista'];
   void _showBottomSheet(BuildContext context, double width, double height) {
     showModalBottomSheet(
       context: context,
