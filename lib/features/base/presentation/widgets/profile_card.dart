@@ -9,6 +9,7 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/widgets/custom_btns.dart';
+import '../../../profile/presentation/screens/profile_screen.dart';
 import '../../../utils/presentation/screens/image_viewer.dart';
 
 class ProfileCard extends ConsumerWidget {
@@ -182,7 +183,9 @@ class ProfileCard extends ConsumerWidget {
             textColor: AppColors.whiteColor,
             btnColor: AppColors.blackColor,
             fontSize: 14.sp,
-            onPressed: () {},
+            onPressed: () {
+              AppHelpers.moveTo(const ProfileScreen(), context);
+            },
             padding: EdgeInsets.symmetric(vertical: 18.h),
           )
         ],

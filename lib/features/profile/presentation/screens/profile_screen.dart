@@ -69,21 +69,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ),
         centerTitle: true,
         actions: [
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.greyColor.withOpacity(.3),
-              borderRadius: BorderRadius.circular(30),
-            ),
+          Container(            
             margin: EdgeInsets.only(right: 10.w),
             child: IconButton(
               onPressed: () {},
-              icon: SvgPicture.asset(
-                AppAssets.bookmarkOutlinedIcon,
-                colorFilter: const ColorFilter.mode(
-                    AppColors.whiteColor, BlendMode.srcIn),
-                width: 15.w,
-                height: 15.h,
-              ),
+              icon: Icon(CupertinoIcons.bars, color: AppColors.whiteColor,)
             ),
           ),
         ],
@@ -128,6 +118,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.greyColor.withOpacity(.3),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            margin: EdgeInsets.only(right: 10.w),
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: SvgPicture.asset(
+                                AppAssets.bookmarkOutlinedIcon,
+                                colorFilter: const ColorFilter.mode(
+                                    AppColors.whiteColor, BlendMode.srcIn),
+                                width: 15.w,
+                                height: 15.h,
                               ),
                             ),
                           ),
