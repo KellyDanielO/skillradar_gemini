@@ -9,6 +9,8 @@ import 'package:skillradar/core/helpers/app_extensions.dart';
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
+import '../../../../core/helpers/functions.dart';
+import '../../../utils/presentation/screens/image_viewer.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -19,12 +21,13 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   List<String> userSkills = ['Anime', 'Web developer', 'App Developer'];
-  void _showBottomSheet(BuildContext context, double width) {
+  void _showBottomSheet(BuildContext context, double width, double height) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return BottomSheetContent(
           width: width,
+          height: height,
         );
       },
     );
@@ -103,14 +106,28 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         Positioned(
                           top: 0,
                           left: 0,
-                          child: SizedBox(
-                            width: width * .88,
-                            height: height * .25,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: Image.asset(
-                                AppAssets.background2,
-                                fit: BoxFit.cover,
+                          child: GestureDetector(
+                            onTap: () {
+                              AppHelpers.moveTo(
+                                  const ImageViewer(
+                                    image: AppAssets.background2,
+                                    heroTag: 'ace_background',
+                                  ),
+                                  context);
+                            },
+                            child: SizedBox(
+                              width: width * .88,
+                              height: height * .25,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Hero(
+                                  tag: 'ace_background',
+                                  transitionOnUserGestures: true,
+                                  child: Image.asset(
+                                    AppAssets.background2,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -118,17 +135,32 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         Positioned(
                           bottom: -10,
                           left: (width - 100.w) / 2 - 20.w,
-                          child: Container(
-                            width: 100.w,
-                            height: 100.w,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border.all(
-                                  color: AppColors.blackColor, width: 8),
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: const CircleAvatar(
-                              backgroundImage: AssetImage(AppAssets.avatar1),
+                          child: GestureDetector(
+                            onTap: () {
+                              AppHelpers.moveTo(
+                                  const ImageViewer(
+                                    image: AppAssets.avatar1,
+                                    heroTag: 'ace_profile',
+                                  ),
+                                  context);
+                            },
+                            child: Container(
+                              width: 100.w,
+                              height: 100.w,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                    color: AppColors.blackColor, width: 8),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: const Hero(
+                                tag: 'ace_profile',
+                                transitionOnUserGestures: true,
+                                child: CircleAvatar(
+                                  backgroundImage:
+                                      AssetImage(AppAssets.avatar1),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -240,15 +272,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               List.generate(backgroundAvatar.length, (index) {
                             return Container(
                               margin: EdgeInsets.only(right: 10.w),
-                              child: Container(
-                                width: width * .75,
-                                height: height * .15,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10)),
-                                clipBehavior: Clip.antiAlias,
-                                child: Image.asset(
-                                  backgroundAvatar[index],
-                                  fit: BoxFit.cover,
+                              child: InkWell(
+                                onTap: () {
+                                  AppHelpers.moveTo(
+                                      ImageViewer(
+                                        image: backgroundAvatar[index],
+                                        heroTag: backgroundAvatar[index],
+                                      ),
+                                      context);
+                                },
+                                child: Container(
+                                  width: width * .75,
+                                  height: height * .15,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: Hero(
+                                    tag: backgroundAvatar[index],
+                                    transitionOnUserGestures: true,
+                                    child: Image.asset(
+                                      backgroundAvatar[index],
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                                 ),
                               ),
                             );
@@ -286,7 +332,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             Positioned(
               bottom: 10,
               child: InkWell(
-                onTap: () => _showBottomSheet(context, width),
+                onTap: () => _showBottomSheet(context, width, height),
                 child: Container(
                   width: width - 40.w,
                   decoration: BoxDecoration(
@@ -338,7 +384,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
 class BottomSheetContent extends StatelessWidget {
   final double width;
-  const BottomSheetContent({super.key, required this.width});
+  final double height;
+  const BottomSheetContent(
+      {super.key, required this.width, required this.height});
 
   @override
   Widget build(BuildContext context) {
@@ -363,7 +411,8 @@ class BottomSheetContent extends StatelessWidget {
           ),
           SizedBox(height: 10.h),
           SingleChildScrollView(
-            child: Padding(
+            child: Container(
+              constraints: BoxConstraints(maxHeight: height * .4),
               padding: const EdgeInsets.all(16.0),
               child: Wrap(
                 spacing: 16.0, // Gap between adjacent items

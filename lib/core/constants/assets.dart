@@ -26,6 +26,8 @@ class AppAssets{
   static const String userBoldIcon = 'assets/svgs/user-bold.svg';
   static const String arrowLeftBoldIcon = 'assets/svgs/arrow-left-bold.svg';
   static const String arrowIOSBoldIcon = 'assets/svgs/angle-left-ios.svg';
+  static const String googleBoldIcon = 'assets/svgs/google.svg';
+  static const String facebookBoldIcon = 'assets/svgs/facebook.svg';
   // outlined
   // ===========
   static const String homeOutlinedIcon = 'assets/svgs/home-outlined.svg';

@@ -7,7 +7,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
+import '../../../../core/helpers/functions.dart';
 import '../../../../core/widgets/custom_btns.dart';
+import '../../../utils/presentation/screens/image_viewer.dart';
 
 class ProfileCard extends ConsumerWidget {
   final String name;
@@ -33,6 +35,7 @@ class ProfileCard extends ConsumerWidget {
     double width = ScreenUtil().screenWidth;
     double height = ScreenUtil().screenHeight;
     final transH = AppLocalizations.of(context)!;
+    String heroId = AppHelpers.generateRandomId();
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -78,14 +81,28 @@ class ProfileCard extends ConsumerWidget {
               ),
             ],
           ),
-          SizedBox(
-            width: 70.w,
-            height: 70.h,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.asset(
-                image,
-                fit: BoxFit.cover,
+          InkWell(
+            onTap: () {
+              AppHelpers.moveTo(
+                  ImageViewer(
+                    image: image,
+                    heroTag: heroId,
+                  ),
+                  context);
+            },
+            child: SizedBox(
+              width: 70.w,
+              height: 70.h,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Hero(
+                  tag: heroId,
+                  transitionOnUserGestures: true,
+                  child: Image.asset(
+                    image,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
           ),
@@ -103,7 +120,7 @@ class ProfileCard extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Icon(
-                      Icons.location_on_outlined,
+                    Icons.location_on_outlined,
                     color: AppColors.blackColor.withOpacity(.7),
                     size: 20.sp,
                   ),

@@ -9,7 +9,7 @@ import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/sizes.dart';
 import '../../../../core/helpers/functions.dart';
-import '../../../base/presentation/screens/base_screen.dart';
+import '../../../auth/presentation/screens/login_screen.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -113,7 +113,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   SizedBox(height: 10.h),
                   InkWell(
                     onTap: () {
-                      AppHelpers.moveTo(const BaseScreen(), context);
+                      AppHelpers.moveTo(const LoginScreen(), context);
                     },
                     child: Container(
                       width: width,
