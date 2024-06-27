@@ -3,9 +3,13 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../features/utils/presentation/screens/image_picker/media_picker.dart';
 import '../constants/colors.dart';
 
 class AppHelpers {
@@ -56,5 +60,26 @@ class AppHelpers {
 
   static bool isTablet() {
     return false;
+  }
+
+  Future pickAssets({
+    required int maxCount,
+    required RequestType requestType,
+    required BuildContext context
+  }) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return MediaPicker(maxCount, requestType);
+        },
+      ),
+    );
+    if (result != null) {
+      // setState(() {
+      //   haveSelected = true;
+      //   selectedAssetList = result;
+      // });
+    }
   }
 }
