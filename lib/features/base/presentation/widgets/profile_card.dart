@@ -184,7 +184,7 @@ class ProfileCard extends ConsumerWidget {
             btnColor: AppColors.blackColor,
             fontSize: 14.sp,
             onPressed: () {
-              AppHelpers.moveTo(const ProfileScreen(), context);
+              AppHelpers.moveTo(const ProfileScreen(me: false,), context);
             },
             padding: EdgeInsets.symmetric(vertical: 18.h),
           )

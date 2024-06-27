@@ -11,9 +11,12 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../utils/presentation/screens/image_viewer.dart';
+import '../../../utils/presentation/screens/settings/edit_profile_screen.dart';
+import '../../../utils/presentation/screens/settings/menu.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key});
+  final bool me;
+  const ProfileScreen({super.key, required this.me});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ProfileScreenState();
@@ -38,6 +41,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     AppAssets.background1,
     AppAssets.background2,
   ];
+  @override
+  void initState() {
+    AppHelpers.changeBottomBarColor();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,11 +77,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ),
         centerTitle: true,
         actions: [
-          Container(            
+          Container(
             margin: EdgeInsets.only(right: 10.w),
             child: IconButton(
-              onPressed: () {},
-              icon: Icon(CupertinoIcons.bars, color: AppColors.whiteColor,)
+              onPressed: () {
+                AppHelpers.moveTo(const MenuScreen(), context);
+              },
+              icon: SvgPicture.asset(
+                AppAssets.menuOutlinedIcon,
+                colorFilter: const ColorFilter.mode(
+                    AppColors.whiteColor, BlendMode.srcIn),
+                width: 15.w,
+                height: 15.h,
+              ),
             ),
           ),
         ],
@@ -133,13 +149,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             margin: EdgeInsets.only(right: 10.w),
                             child: IconButton(
                               onPressed: () {},
-                              icon: SvgPicture.asset(
-                                AppAssets.bookmarkOutlinedIcon,
-                                colorFilter: const ColorFilter.mode(
-                                    AppColors.whiteColor, BlendMode.srcIn),
-                                width: 15.w,
-                                height: 15.h,
-                              ),
+                              icon: widget.me
+                                  ? Icon(
+                                      Icons.change_circle_outlined,
+                                      color: AppColors.whiteColor,
+                                      size: 20.sp,
+                                    )
+                                  : SvgPicture.asset(
+                                      AppAssets.bookmarkOutlinedIcon,
+                                      colorFilter: const ColorFilter.mode(
+                                          AppColors.whiteColor,
+                                          BlendMode.srcIn),
+                                      width: 15.w,
+                                      height: 15.h,
+                                    ),
                             ),
                           ),
                         ),
@@ -343,7 +366,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             Positioned(
               bottom: 10,
               child: InkWell(
-                onTap: () => _showBottomSheet(context, width, height),
+                onTap: () => widget.me ? AppHelpers.moveTo(const EditProfileScreen(), context) : _showBottomSheet(context, width, height),
                 child: Container(
                   width: width - 40.w,
                   decoration: BoxDecoration(
@@ -360,7 +383,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
-                            transH.connect.capitalizeFirst.toString(),
+                            widget.me
+                                ? 'Edit'
+                                : transH.connect.capitalizeFirst.toString(),
                             style: const TextStyle(
                               color: AppColors.blackColor,
                               fontWeight: FontWeight.bold,
@@ -375,7 +400,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           color: AppColors.blackColor,
                           borderRadius: BorderRadius.circular(50),
                         ),
-                        child: Icon(
+                        child:  Icon(
                           CupertinoIcons.arrow_right,
                           color: AppColors.whiteColor,
                           size: 18.sp,

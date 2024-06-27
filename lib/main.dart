@@ -29,7 +29,7 @@ class MyApp extends ConsumerWidget {
         title: 'Skill Radar',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryColor),
           useMaterial3: true,
           scaffoldBackgroundColor: AppColors.blackColor,
           textTheme: TextTheme(

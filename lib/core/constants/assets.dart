@@ -35,6 +35,10 @@ class AppAssets{
   static const String bookmarkOutlinedIcon = 'assets/svgs/bookmark-outlined.svg';
   static const String userOutlinedIcon = 'assets/svgs/user-outlined.svg';
   static const String bellOutlinedIcon = 'assets/svgs/bell-outlined.svg';
+  static const String menuOutlinedIcon = 'assets/svgs/menu.svg';
+  static const String editOutlinedIcon = 'assets/svgs/edit.svg';
+  static const String lockOutlinedIcon = 'assets/svgs/lock.svg';
+  static const String languageOutlinedIcon = 'assets/svgs/language.svg';
   // +++++++++++
   static const String skillIcon = 'assets/svgs/skill-alt.svg';
 

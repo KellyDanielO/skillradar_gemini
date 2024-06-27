@@ -116,38 +116,42 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         fontFamily: AppFonts.sansFont),
                   ),
                   SizedBox(height: 5.h),
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 0.h),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.whiteColor.withOpacity(.4),
-                      ),
-                      color: AppColors.blackShadeColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                          child: TextField(
-                            // controller: _searchController,
-                            style: TextStyle(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          // controller: _searchController,
+                          style: TextStyle(
+                            color: AppColors.whiteColor.withOpacity(.7),
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Enter email address',
+                            hintStyle: TextStyle(
                               color: AppColors.whiteColor.withOpacity(.7),
                             ),
-                            decoration: InputDecoration(
-                              hintText: 'Enter email address',
-                              hintStyle: TextStyle(
-                                color: AppColors.whiteColor.withOpacity(.7),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor.withOpacity(.2),
+                                width: 2,
                               ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.all(0),
                             ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: AppColors.primaryColor,
+                                width: 2,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: AppColors.blackShadeColor,
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 15),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -163,42 +167,49 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         fontFamily: AppFonts.sansFont),
                   ),
                   SizedBox(height: 5.h),
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 0.h),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.whiteColor.withOpacity(.4),
-                      ),
-                      color: AppColors.blackShadeColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                          child: TextField(
-                            // controller: _searchController,
-                            style: TextStyle(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          // controller: _searchController,
+                          style: TextStyle(
+                            color: AppColors.whiteColor.withOpacity(.7),
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Enter password',
+                            hintStyle: TextStyle(
                               color: AppColors.whiteColor.withOpacity(.7),
                             ),
-                            decoration: InputDecoration(
-                              hintText: 'Enter password',
-                              hintStyle: TextStyle(
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor.withOpacity(.2),
+                                width: 2,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: AppColors.primaryColor,
+                                width: 2,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: AppColors.blackShadeColor,
+                            suffixIcon: IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                CupertinoIcons.eye_slash,
                                 color: AppColors.whiteColor.withOpacity(.7),
                               ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.all(0),
                             ),
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 15),
                           ),
                         ),
-                        Icon(
-                          CupertinoIcons.eye_slash,
-                          color: AppColors.whiteColor.withOpacity(.7),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),

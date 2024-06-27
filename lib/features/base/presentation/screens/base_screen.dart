@@ -20,7 +20,11 @@ class BaseScreen extends ConsumerStatefulWidget {
 }
 
 class _BaseScreenState extends ConsumerState<BaseScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 0;@override
+  void initState() {
+    AppHelpers.changeBottomBarColor();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     double height = ScreenUtil().screenHeight;
@@ -57,7 +61,7 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
         activeIcon: AppAssets.userBoldIcon,
         defaultIcon: AppAssets.userOutlinedIcon,
         action: () {
-          AppHelpers.moveTo(const ProfileScreen(), context);
+          AppHelpers.moveTo(const ProfileScreen(me: true,), context);
         },
       ),
     ];
