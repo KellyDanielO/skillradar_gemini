@@ -30,6 +30,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
+    AppHelpers.changeBottomBarColor();
     _startImageTimer();
   }
 

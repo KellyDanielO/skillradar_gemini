@@ -19,6 +19,11 @@ class SetupAccountSuccessScreen extends ConsumerStatefulWidget {
 
 class _SetupAccountSuccessScreenState
     extends ConsumerState<SetupAccountSuccessScreen> {
+      @override
+  void initState() {
+    AppHelpers.changeBottomBarColor();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;

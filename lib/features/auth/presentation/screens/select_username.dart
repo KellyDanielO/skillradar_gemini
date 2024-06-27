@@ -19,6 +19,11 @@ class SelectUsernameAndLocation extends ConsumerStatefulWidget {
 
 class _SelectUsernameAndLocationState
     extends ConsumerState<SelectUsernameAndLocation> {
+      @override
+  void initState() {
+    AppHelpers.changeBottomBarColor();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;

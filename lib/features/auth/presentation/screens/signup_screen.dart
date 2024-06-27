@@ -21,6 +21,11 @@ class SignupScreen extends ConsumerStatefulWidget {
 
 class _SignupScreenState extends ConsumerState<SignupScreen> {
   @override
+  void initState() {
+    AppHelpers.changeBottomBarColor();
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;
     double height = ScreenUtil().screenHeight;

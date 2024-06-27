@@ -21,6 +21,11 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
+  void initState() {
+    AppHelpers.changeBottomBarColor();
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;
     double height = ScreenUtil().screenHeight;
