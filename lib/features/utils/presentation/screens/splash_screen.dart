@@ -19,13 +19,17 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
-
     AppHelpers.changeBottomBarColor();
+    request();
     Future.delayed(
       const Duration(seconds: 5),
       () => AppHelpers.moveTo(const OnboardingScreen(), context),
     );
     super.initState();
+  }
+
+  void request() async {
+    await AppHelpers.requestStoragePermission();
   }
 
   @override

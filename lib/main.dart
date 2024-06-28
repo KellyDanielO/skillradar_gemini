@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/services.dart';
+
 
 import 'core/constants/colors.dart';
 
@@ -13,7 +15,9 @@ import 'features/utils/presentation/screens/splash_screen.dart';
 import 'l10n/l10n.dart';
 
 void main() async {
+  
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
     const ProviderScope(child: MyApp()),
   );

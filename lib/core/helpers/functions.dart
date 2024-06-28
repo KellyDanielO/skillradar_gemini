@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -84,4 +85,23 @@ class AppHelpers {
     }
     return null;
   }
+    static Future<void> requestStoragePermission() async {
+    // Check the status of the permission
+    var status = await Permission.storage.status;
+
+    if (!status.isGranted) {
+      // Request the permission
+      if (await Permission.storage.request().isGranted) {
+        // The permission was granted
+        print("Storage permission granted");
+      } else {
+        // The permission was denied
+        print("Storage permission denied");
+      }
+    } else {
+      // The permission is already granted
+      print("Storage permission already granted");
+    }
+  }
+
 }

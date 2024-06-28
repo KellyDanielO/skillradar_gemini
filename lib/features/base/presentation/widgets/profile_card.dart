@@ -114,6 +114,7 @@ class ProfileCard extends ConsumerWidget {
                 style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                       fontWeight: FontWeight.w600,
                       fontFamily: AppFonts.sansFont,
+                      color: AppColors.blackColor,
                     ),
               ),
               SizedBox(height: 5.h),
