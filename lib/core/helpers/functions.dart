@@ -62,12 +62,12 @@ class AppHelpers {
     return false;
   }
 
-  Future pickAssets({
+  Future<List<AssetEntity>?> pickAssets({
     required int maxCount,
     required RequestType requestType,
     required BuildContext context
   }) async {
-    final result = await Navigator.push(
+    List<AssetEntity>? result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) {
@@ -80,6 +80,8 @@ class AppHelpers {
       //   haveSelected = true;
       //   selectedAssetList = result;
       // });
+      return result;
     }
+    return null;
   }
 }

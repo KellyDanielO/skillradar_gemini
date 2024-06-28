@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'core/constants/colors.dart';
 
@@ -27,6 +28,7 @@ class MyApp extends ConsumerWidget {
     return ScreenUtilInit(
       builder: (context, child) => MaterialApp(
         title: 'Skill Radar',
+        builder: FToastBuilder(),
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryColor),
@@ -44,12 +46,12 @@ class MyApp extends ConsumerWidget {
         supportedLocales: L10n.all,
         locale: languageProvider,
         home: const SplashScreen(),
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate
-          ],
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate
+        ],
       ),
     );
   }

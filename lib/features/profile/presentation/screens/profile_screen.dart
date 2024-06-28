@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:skillradar/core/helpers/app_extensions.dart';
 
 import '../../../../core/constants/assets.dart';
@@ -148,7 +149,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                             margin: EdgeInsets.only(right: 10.w),
                             child: IconButton(
-                              onPressed: () {},
+                              onPressed: () async{
+                                if(widget.me){
+                                 final data = await AppHelpers().pickAssets(maxCount: 5, requestType: RequestType.image, context: context);
+                                 print(data);
+                                }
+                              },
                               icon: widget.me
                                   ? Icon(
                                       Icons.change_circle_outlined,

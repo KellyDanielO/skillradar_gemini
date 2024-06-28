@@ -37,9 +37,14 @@ class ImageViewer extends StatelessWidget {
         child: Hero(
           tag: heroTag,
           transitionOnUserGestures: true,
-          child: Image.asset(
-            image,
-            fit: BoxFit.contain,
+          child: InteractiveViewer(
+            panEnabled: true, // Enable panning
+            minScale: 0.5, // Minimum zoom scale
+            maxScale: 4.0,
+            child: Image.asset(
+              image,
+              fit: BoxFit.contain,
+            ),
           ),
         ),
       ),

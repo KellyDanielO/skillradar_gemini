@@ -1,7 +1,12 @@
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 
+import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
 import 'media_services.dart';
@@ -32,6 +37,15 @@ class _MediaPickerState extends State<MediaPicker> {
         //   backgroundColor: Colors.redAccent,
         //   colorText: Colors.white,
         // );
+        Fluttertoast.showToast(
+          msg: "No album found",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
         Navigator.pop(context);
       } else {
         setState(() {
@@ -58,11 +72,17 @@ class _MediaPickerState extends State<MediaPicker> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          leading: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(
-              Icons.close,
-              color:AppColors.whiteColor,
+          leadingWidth: 50.w,
+          leading: FittedBox(
+            child: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: SvgPicture.asset(
+                AppAssets.arrowIOSBoldIcon,
+                colorFilter: const ColorFilter.mode(
+                    AppColors.whiteColor, BlendMode.srcIn),
+                width: 15.w,
+                height: 15.h,
+              ),
             ),
           ),
           title: ConstrainedBox(
@@ -89,8 +109,10 @@ class _MediaPickerState extends State<MediaPicker> {
                     value: album,
                     child: Text(
                       album.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.whiteColor,
+                        fontFamily: AppFonts.sansFont,
+                        fontSize: 18.sp,
                       ),
                     ));
               }).toList(),
@@ -128,21 +150,24 @@ class _MediaPickerState extends State<MediaPicker> {
         ),
         body: assetList.isEmpty
             ? const Center(
-                child: CircularProgressIndicator(),
+                child: CupertinoActivityIndicator(),
               )
-            : GridView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: assetList.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3),
-                itemBuilder: (context, index) {
-                  AssetEntity assetEntity = assetList[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(2),
-                    child: assetWidget(assetEntity),
-                  );
-                },
-              ),
+            : Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 5.w),
+              child: GridView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: assetList.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3),
+                  itemBuilder: (context, index) {
+                    AssetEntity assetEntity = assetList[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: assetWidget(assetEntity),
+                    );
+                  },
+                ),
+            ),
       ),
     );
   }
