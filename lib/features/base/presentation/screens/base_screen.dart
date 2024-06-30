@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -84,7 +85,7 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
                   child: IndexedStack(
                     index: _selectedIndex,
                     children: tabWidgets,
-                  ),
+                  ).animate().fadeIn(delay: 500.ms),
                 ),
               ),
               bottomNavigationArea(width, bottomTabs),

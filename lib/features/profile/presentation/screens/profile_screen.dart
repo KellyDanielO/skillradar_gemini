@@ -152,7 +152,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               onPressed: () async{
                                 if(widget.me){
                                  final data = await AppHelpers().pickAssets(maxCount: 5, requestType: RequestType.image, context: context);
-                                 print(data);
+                                 
                                 }
                               },
                               icon: widget.me

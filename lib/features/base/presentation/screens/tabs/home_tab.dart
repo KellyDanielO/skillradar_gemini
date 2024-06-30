@@ -8,6 +8,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../../core/helpers/functions.dart';
+import '../../../../notification/presnetation/screens/notification_screen.dart';
 import '../../widgets/profile_card.dart';
 
 class HomeTab extends ConsumerWidget {
@@ -90,7 +92,9 @@ class HomeTab extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                     AppHelpers.moveTo(const NotificationScreen(), context);
+                  },
                   icon: SvgPicture.asset(
                     AppAssets.bellOutlinedIcon,
                     colorFilter: const ColorFilter.mode(
@@ -114,35 +118,7 @@ class HomeTab extends ConsumerWidget {
                 fontFamily: AppFonts.sansFont),
           ),
         ),
-        SizedBox(height: 15.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.whiteColor.withOpacity(.7),
-              ),
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  'Type that desired skill....',
-                  style: TextStyle(
-                    color: AppColors.whiteColor.withOpacity(.7),
-                  ),
-                ),
-                Icon(
-                  CupertinoIcons.search,
-                  color: AppColors.whiteColor.withOpacity(.7),
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: height * .03),
+        SizedBox(height: 30.h),
         Flexible(
           child: Swiper(
             itemBuilder: (BuildContext context, int index) {
@@ -163,6 +139,7 @@ class HomeTab extends ConsumerWidget {
             loop: false,
           ),
         ),
+        SizedBox(height: 30.h),
         SizedBox(height: height * .12),
       ],
     );

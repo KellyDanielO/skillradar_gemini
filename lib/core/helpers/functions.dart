@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -63,11 +64,10 @@ class AppHelpers {
     return false;
   }
 
-  Future<List<AssetEntity>?> pickAssets({
-    required int maxCount,
-    required RequestType requestType,
-    required BuildContext context
-  }) async {
+  Future<List<AssetEntity>?> pickAssets(
+      {required int maxCount,
+      required RequestType requestType,
+      required BuildContext context}) async {
     List<AssetEntity>? result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -85,23 +85,25 @@ class AppHelpers {
     }
     return null;
   }
-    static Future<void> requestStoragePermission() async {
-    // Check the status of the permission
-    var status = await Permission.storage.status;
 
-    if (!status.isGranted) {
-      // Request the permission
-      if (await Permission.storage.request().isGranted) {
-        // The permission was granted
-        print("Storage permission granted");
+  static Future<void> requestStoragePermission() async {
+    // Check the status of the permission
+    if (Platform.isAndroid || Platform.isIOS) {
+      var status = await Permission.storage.status;
+
+      if (!status.isGranted) {
+        // Request the permission
+        if (await Permission.storage.request().isGranted) {
+          // The permission was granted
+          print("Storage permission granted");
+        } else {
+          // The permission was denied
+          print("Storage permission denied");
+        }
       } else {
-        // The permission was denied
-        print("Storage permission denied");
+        // The permission is already granted
+        print("Storage permission already granted");
       }
-    } else {
-      // The permission is already granted
-      print("Storage permission already granted");
     }
   }
-
 }
