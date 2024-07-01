@@ -21,11 +21,14 @@ class BaseScreen extends ConsumerStatefulWidget {
 }
 
 class _BaseScreenState extends ConsumerState<BaseScreen> {
-  int _selectedIndex = 0;@override
+  int _selectedIndex = 0;
+  final PageController _pageController = PageController();
+  @override
   void initState() {
     AppHelpers.changeBottomBarColor();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     double height = ScreenUtil().screenHeight;
@@ -35,34 +38,32 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
         activeIcon: AppAssets.homeBoldIcon,
         defaultIcon: AppAssets.homeOutlinedIcon,
         action: () {
-          setState(() {
-            _selectedIndex = 0;
-          });
+          _pageController.jumpToPage(0);
         },
       ),
       BottomTabs(
         activeIcon: AppAssets.compassBoldIcon,
         defaultIcon: AppAssets.compassOutlinedIcon,
         action: () {
-          setState(() {
-            _selectedIndex = 1;
-          });
+          _pageController.jumpToPage(1);
         },
       ),
       BottomTabs(
         activeIcon: AppAssets.bookmarkBoldIcon,
         defaultIcon: AppAssets.bookmarkOutlinedIcon,
         action: () {
-          setState(() {
-            _selectedIndex = 2;
-          });
+          _pageController.jumpToPage(2);
         },
       ),
       BottomTabs(
         activeIcon: AppAssets.userBoldIcon,
         defaultIcon: AppAssets.userOutlinedIcon,
         action: () {
-          AppHelpers.moveTo(const ProfileScreen(me: true,), context);
+          AppHelpers.moveTo(
+              const ProfileScreen(
+                me: true,
+              ),
+              context);
         },
       ),
     ];
@@ -82,10 +83,16 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
                 child: SizedBox(
                   width: width,
                   height: height,
-                  child: IndexedStack(
-                    index: _selectedIndex,
-                    children: tabWidgets,
-                  ).animate().fadeIn(delay: 500.ms),
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: tabWidgets.length,
+                    onPageChanged: (value) {
+                      setState(() {
+                        _selectedIndex = value;
+                      });
+                    },
+                    itemBuilder: (context, index) => tabWidgets[index],
+                  ),
                 ),
               ),
               bottomNavigationArea(width, bottomTabs),
