@@ -38,21 +38,21 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
         activeIcon: AppAssets.homeBoldIcon,
         defaultIcon: AppAssets.homeOutlinedIcon,
         action: () {
-          _pageController.jumpToPage(0);
+          _pageController.animateToPage(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
         },
       ),
       BottomTabs(
         activeIcon: AppAssets.compassBoldIcon,
         defaultIcon: AppAssets.compassOutlinedIcon,
         action: () {
-          _pageController.jumpToPage(1);
+          _pageController.animateToPage(1, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
         },
       ),
       BottomTabs(
         activeIcon: AppAssets.bookmarkBoldIcon,
         defaultIcon: AppAssets.bookmarkOutlinedIcon,
         action: () {
-          _pageController.jumpToPage(2);
+          _pageController.animateToPage(2, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
         },
       ),
       BottomTabs(

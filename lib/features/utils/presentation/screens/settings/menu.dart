@@ -8,6 +8,7 @@ import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
 import '../../../../../core/helpers/functions.dart';
+import 'select_skills.dart';
 
 class MenuScreen extends ConsumerStatefulWidget {
   const MenuScreen({super.key});
@@ -112,7 +113,9 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                   Icons.arrow_forward_ios,
                   color: AppColors.whiteColor,
                 ),
-                onTap: () {},
+                onTap: () {
+                  AppHelpers.moveTo(const SelectSkillsScreen(), context);
+                },
               ),
               ListTile(
                 leading: Container(
