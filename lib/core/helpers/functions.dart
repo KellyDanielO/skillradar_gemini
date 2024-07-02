@@ -66,21 +66,17 @@ class AppHelpers {
 
   Future<List<AssetEntity>?> pickAssets(
       {required int maxCount,
-      required RequestType requestType,
+      RequestType? requestType,
       required BuildContext context}) async {
     List<AssetEntity>? result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) {
-          return MediaPicker(maxCount, requestType);
+          return MediaPicker(maxCount, requestType ?? RequestType.image);
         },
       ),
     );
     if (result != null) {
-      // setState(() {
-      //   haveSelected = true;
-      //   selectedAssetList = result;
-      // });
       return result;
     }
     return null;

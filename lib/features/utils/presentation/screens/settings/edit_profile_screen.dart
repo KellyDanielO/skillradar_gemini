@@ -1,12 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../../core/helpers/functions.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -17,16 +21,20 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
-   final TextEditingController _nameController = TextEditingController();
-   final TextEditingController _aboutController = TextEditingController();
-   final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _aboutController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  bool fileSelected = false;
+  File? selectedFile;
   @override
   void initState() {
     _nameController.text = 'Ace';
     _locationController.text = 'Port Harcourt, Nigeria';
-    _aboutController.text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+    _aboutController.text =
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
     super.initState();
   }
+
   @override
   void dispose() {
     _aboutController.dispose();
@@ -34,6 +42,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _nameController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;
@@ -71,23 +80,61 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           children: <Widget>[
             Align(
               alignment: Alignment.center,
-              child: GestureDetector(
-                onTap: () {},
-                child: Container(
-                  width: 100.w,
-                  height: 100.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    image: const DecorationImage(
-                        image: AssetImage(AppAssets.avatar1),
-                        fit: BoxFit.cover),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  alignment: Alignment.center,
-                  child: const Icon(
-                    CupertinoIcons.camera_fill,
-                    color: AppColors.greyColor,
-                  ),
+              child: SizedBox(
+                width: 90.w,
+                height: 100.w,
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 86.w,
+                      height: 86.w,
+                      decoration: BoxDecoration(
+                        color: AppColors.greyColor.withOpacity(.5),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      alignment: fileSelected ? null : Alignment.center,
+                      clipBehavior: Clip.antiAlias,
+                      child: fileSelected
+                          ? Image.file(
+                              selectedFile!,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              AppAssets.avatar1,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                    Positioned(
+                      bottom: 3,
+                      right: 0,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: IconButton.filled(
+                          style: const ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(AppColors.primaryColor),
+                          ),
+                          onPressed: () async {
+                            List<AssetEntity>? data = await AppHelpers()
+                                .pickAssets(maxCount: 1, context: context);
+                            if (data != null) {
+                              final file = await data.first.file;
+                              setState(() {
+                                fileSelected = true;
+                                selectedFile = file;
+                              });
+                            }
+                          },
+                          padding: EdgeInsets.all(5.w),
+                          icon: Icon(
+                            Icons.add,
+                            color: AppColors.whiteColor,
+                            size: 24.sp,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -244,49 +291,48 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               ],
             ),
             SizedBox(height: 20.h),
-             InkWell(
-               onTap: () => Navigator.pop(context),
-               child: Container(
-                  width: width - 40.w,
-                  decoration: BoxDecoration(
-                    color: AppColors.whiteColor,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding:
-                      EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      const Expanded(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Save',
-                            style: TextStyle(
-                              color: AppColors.blackColor,
-                              fontWeight: FontWeight.bold,
-                            ),
+            InkWell(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                width: width - 40.w,
+                decoration: BoxDecoration(
+                  color: AppColors.whiteColor,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    const Expanded(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Save',
+                          style: TextStyle(
+                            color: AppColors.blackColor,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      Container(
-                        width: 40.w,
-                        height: 40.w,
-                        decoration: BoxDecoration(
-                          color: AppColors.blackColor,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Icon(
-                          CupertinoIcons.check_mark_circled,
-                          color: AppColors.whiteColor,
-                          size: 18.sp,
-                        ),
+                    ),
+                    Container(
+                      width: 40.w,
+                      height: 40.w,
+                      decoration: BoxDecoration(
+                        color: AppColors.blackColor,
+                        borderRadius: BorderRadius.circular(50),
                       ),
-                    ],
-                  ),
+                      child: Icon(
+                        CupertinoIcons.check_mark_circled,
+                        color: AppColors.whiteColor,
+                        size: 18.sp,
+                      ),
+                    ),
+                  ],
                 ),
-             )
+              ),
+            )
           ],
         ),
       ),
