@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:developer';
 
 import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
@@ -25,6 +25,7 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<String> _filteredItems = [];
   List<String> selectedSkills = [];
+  List<String> fetchedSkills = [];
 
   @override
   void initState() {
@@ -37,6 +38,7 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
   void _fetchItems() async {
     List<String> items = await compute(fetchItemsInIsolate, null);
     setState(() {
+      fetchedSkills = items;
       _filteredItems = items;
     });
   }
@@ -46,9 +48,10 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
   }
 
   void _filterItems() {
+    log('message');
     String query = _searchController.text.toLowerCase();
     setState(() {
-      _filteredItems = skillList.where((item) {
+      _filteredItems = fetchedSkills.where((item) {
         return item.toLowerCase().contains(query);
       }).toList();
     });
@@ -87,13 +90,18 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
         ),
         centerTitle: true,
       ),
-      floatingActionButton: selectedSkills.isEmpty ? null : FloatingActionButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        backgroundColor: AppColors.primaryColor,
-        child: const Icon(CupertinoIcons.check_mark,),
-      ),
+      floatingActionButton: selectedSkills.isEmpty
+          ? null
+          : FloatingActionButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              backgroundColor: AppColors.primaryColor,
+              shape: const CircleBorder(),
+              child: const Icon(
+                Icons.check,
+              ),
+            ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: ListView(
@@ -129,6 +137,7 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
                           child: InkWell(
                             onTap: () {
                               setState(() {
+                                fetchedSkills.add(selectedSkills[index]);
                                 _filteredItems.add(selectedSkills[index]);
                                 selectedSkills.removeAt(index);
                               });
@@ -200,6 +209,9 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
                     } else {
                       setState(() {
                         selectedSkills.add(_filteredItems[index]);
+                        fetchedSkills.removeWhere(
+                            (skill) => skill == _filteredItems[index]);
+
                         _filteredItems.removeAt(index);
                       });
                     }

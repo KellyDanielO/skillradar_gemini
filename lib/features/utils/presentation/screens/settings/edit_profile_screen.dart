@@ -92,7 +92,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         color: AppColors.greyColor.withOpacity(.5),
                         borderRadius: BorderRadius.circular(100),
                       ),
-                      alignment: fileSelected ? null : Alignment.center,
                       clipBehavior: Clip.antiAlias,
                       child: fileSelected
                           ? Image.file(
