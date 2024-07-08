@@ -49,7 +49,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final transH = AppLocalizations.of(context)!;
     return Scaffold(
       body: AnimatedSwitcher(
-        duration: const Duration(seconds: 1),
+        duration: const Duration(milliseconds: 0),
         transitionBuilder: (Widget child, Animation<double> animation) {
           return FadeTransition(
             opacity: animation,
