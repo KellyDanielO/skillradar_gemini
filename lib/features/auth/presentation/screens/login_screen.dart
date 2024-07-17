@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:rive/rive.dart';
 
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
@@ -24,77 +23,10 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  var riveUrl = 'assets/rive/login_bear.riv';
-  SMITrigger? failTrigger, successTrigar;
-  SMIBool? isHandsUp, isChecking;
-  SMINumber? lookNum;
-  StateMachineController? stateMachineController;
-  Artboard? artboard;
-
   @override
   void initState() {
     AppHelpers.changeBottomBarColor();
-    initAnimation();
     super.initState();
-  }
-
-  void initAnimation() async {
-    await RiveFile.initialize();
-    rootBundle.load(riveUrl).then((value) {
-      RiveFile file = RiveFile.import(value);
-      Artboard art = file.mainArtboard;
-      stateMachineController =
-          StateMachineController.fromArtboard(art, 'Login Machine');
-      if (stateMachineController != null) {
-        art.addController(stateMachineController!);
-        for (var element in stateMachineController!.inputs) {
-          if (element.name == 'isChecking') {
-            isChecking = element as SMIBool;
-          } else if (element.name == 'isHandsUp') {
-            isHandsUp = element as SMIBool;
-          } else if (element.name == 'trigSuccess') {
-            successTrigar = element as SMITrigger;
-          } else if (element.name == 'trigFail') {
-            failTrigger = element as SMITrigger;
-          } else if (element.name == 'numLook') {
-            lookNum = element as SMINumber;
-          }
-        }
-      }
-      setState(() => artboard = art);
-    });
-  }
-
-  void lookAround() {
-    isChecking?.change(true);
-    isHandsUp?.change(false);
-    lookNum?.change(0);
-    setState(() {
-      
-    });
-  }
-
-  void moveEyes(value) {
-    lookNum?.change(value.length.toDouble);
-  }
-
-  void handsUpOnEyes() {
-    isHandsUp?.change(true);
-    isChecking?.change(false);
-  }
-
-  void loginClick() {
-    isHandsUp?.change(false);
-    isChecking?.change(false);
-    if (emailController.text == 'email' &&
-        passwordController.text == 'password') {
-      successTrigar?.fire();
-
-      AppHelpers.moveTo(const BaseScreen(), context);
-    } else {
-      failTrigger?.fire();
-    }
-    setState(() {});
   }
 
   @override
@@ -140,17 +72,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 SizedBox(height: 25.h),
-                if (artboard != null)
-                  Center(
-                    child: Container(
-                      height: 200.h,
-                      width: 200.h,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: const BoxDecoration(shape: BoxShape.circle),
-                      child: Rive(artboard: artboard!),
-                    ),
-                  ),
-                SizedBox(height: 10.h),
                 Text(
                   'Log in with one of the following options',
                   style: TextStyle(
@@ -218,8 +139,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             style: TextStyle(
                               color: AppColors.whiteColor.withOpacity(.7),
                             ),
-                            onChanged: ((value) => moveEyes(value)),
-                            onTap: lookAround,
                             decoration: InputDecoration(
                               hintText: 'Enter email address',
                               hintStyle: TextStyle(
@@ -271,7 +190,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             style: TextStyle(
                               color: AppColors.whiteColor.withOpacity(.7),
                             ),
-                            onTap: handsUpOnEyes,
                             decoration: InputDecoration(
                               hintText: 'Enter password',
                               hintStyle: TextStyle(
@@ -332,7 +250,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     borderRadius: BorderRadius.circular(10),
                     fontSize: 14.sp,
                     onPressed: () {
-                      loginClick();
+                      AppHelpers.moveTo(const BaseScreen(), context);
                     },
                   ),
                 ),

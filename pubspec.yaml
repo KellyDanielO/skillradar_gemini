@@ -60,7 +60,7 @@ dependencies:
   uuid: ^4.2.1
   webview_flutter: ^4.4.3
   workmanager: ^0.5.2
-  rive: ^0.13.8
+  # rive: ^0.13.8
   feedback: ^3.1.0
   path_provider: ^2.0.15
   photo_manager_image_provider: ^2.1.1
@@ -68,7 +68,7 @@ dependencies:
   permission_handler: ^11.3.1
   google_gemini: ^0.1.2
   file_picker: ^8.0.6
-  pdf_text: ^0.5.0
+  # pdf_text: ^0.5.0
 
 
 dependency_overrides:
