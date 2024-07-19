@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "835946728382",
+    "project_id": "skillradar-b854d",
+    "storage_bucket": "skillradar-b854d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:835946728382:android:d91a166b6ff0980d23c7ef",
+        "android_client_info": {
+          "package_name": "com.skillradar.skillradar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "835946728382-0s2t437gtkrchmsg3vs2ue43fn857mue.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6SMLQ7pa0AYXIwJnfVgtZ3mSvJeFNh2U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "835946728382-0s2t437gtkrchmsg3vs2ue43fn857mue.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "835946728382-fqtljkjp8g4tipfosb6mvns4oau7jp86.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.skillradar.skillradar"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
