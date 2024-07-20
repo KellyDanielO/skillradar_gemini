@@ -37,7 +37,7 @@ class _SelectUsernameAndLocationState
         locationController.value.text.isNotEmpty && isUsername) {
       ref.read(accountSetUpLoadingNotifierProvider.notifier).change(true);
       final data = await ref
-          .read(setUpAccountListenerProvider.notifier)
+          .read(authListenerProvider.notifier)
           .setUpAccount(
               location: locationController.value.text,
               username: usernameController.value.text);

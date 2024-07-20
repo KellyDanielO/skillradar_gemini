@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:skillradar/core/helpers/app_extensions.dart';
 
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
@@ -11,9 +12,11 @@ import '../../../../core/constants/fonts.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/providers/provider_variables.dart';
 import '../../../../core/widgets/custom_btns.dart';
+import '../../../../core/widgets/error_widgets.dart';
 import '../../../base/presentation/screens/base_screen.dart';
 import '../controllers/auth_controller.dart';
 import '../providers/auth_provider.dart';
+import 'select_username.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -27,6 +30,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final AuthController _authController = AuthController();
+  bool obSecure = false;
   @override
   void initState() {
     AppHelpers.changeBottomBarColor();
@@ -38,6 +42,77 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  void googleAuth() async {
+    UserCredential? credentials = await _authController.signInWithGoogle();
+
+    if (credentials != null && credentials.user!.email != null) {
+      ref.read(accountCreatingLoadingNotifierProvider.notifier).change(true);
+      final data = await ref.read(authListenerProvider.notifier).loginAccount(
+          userId: credentials.user!.uid, email: credentials.user!.email!);
+      if (data == 'set-up') {
+        ref.read(accountCreatingLoadingNotifierProvider.notifier).change(false);
+        if (mounted) {
+          AppHelpers.moveTo(const SelectUsernameAndLocation(), context);
+        }
+      } else if (data == 'done') {
+        ref.read(accountCreatingLoadingNotifierProvider.notifier).change(false);
+        if (mounted) {
+          AppHelpers.moveTo(const BaseScreen(), context);
+        }
+      } else {
+        _authController.signOutFromGoogle();
+        ref.read(accountCreatingLoadingNotifierProvider.notifier).change(false);
+      }
+    }
+  }
+
+  void emailSignIn() async {
+    if (!emailController.value.text.isEmail) {
+      errorWidget(message: 'invalid email');
+    } else {
+      if (emailController.value.text.isNotEmpty &&
+          passwordController.value.text.isNotEmpty) {
+        ref.read(accountCreatingLoadingNotifierProvider.notifier).change(true);
+        UserCredential? credentials = await _authController.signInEmailPassword(
+            email: emailController.value.text,
+            password: passwordController.value.text);
+        if (credentials != null && credentials.user!.email != null) {
+          final data = await ref
+              .read(authListenerProvider.notifier)
+              .loginAccount(
+                  userId: credentials.user!.uid,
+                  email: credentials.user!.email!);
+          if (data == 'set-up') {
+            ref
+                .read(accountCreatingLoadingNotifierProvider.notifier)
+                .change(false);
+            if (mounted) {
+              AppHelpers.moveTo(const SelectUsernameAndLocation(), context);
+            }
+          } else if (data == 'done') {
+            ref
+                .read(accountCreatingLoadingNotifierProvider.notifier)
+                .change(false);
+            if (mounted) {
+              AppHelpers.moveTo(const BaseScreen(), context);
+            }
+          } else {
+            _authController.signOutFromGoogle();
+            ref
+                .read(accountCreatingLoadingNotifierProvider.notifier)
+                .change(false);
+          }
+        } else {
+          ref
+              .read(accountCreatingLoadingNotifierProvider.notifier)
+              .change(false);
+        }
+      } else {
+        errorWidget(message: 'all fields are required');
+      }
+    }
   }
 
   @override
@@ -89,38 +164,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
-                      onTap: () async {
-                        UserCredential? credentials =
-                            await _authController.signInWithGoogle();
-                        if (credentials != null &&
-                            credentials.user!.email != null) {
-                          ref
-                              .read(accountCreatingLoadingNotifierProvider
-                                  .notifier)
-                              .change(true);
-                          final data = await ref
-                              .read(createAccountListenerProvider.notifier)
-                              .createAccount(
-                                  userId: credentials.user!.uid,
-                                  accountTye: 'google',
-                                  email: credentials.user!.email!,
-                                  name: credentials.user!.displayName!);
-                          if (data) {
-                            ref
-                                .read(accountCreatingLoadingNotifierProvider
-                                    .notifier)
-                                .change(false);
-                            // ignore: use_build_context_synchronously
-                            AppHelpers.moveTo(const BaseScreen(), context);
-                          } else {
-                            _authController.signOutFromGoogle();
-                            ref
-                                .read(accountCreatingLoadingNotifierProvider
-                                    .notifier)
-                                .change(false);
-                          }
-                        }
-                      },
+                      onTap: googleAuth,
                       child: Container(
                         width: width * .43,
                         padding: EdgeInsets.symmetric(vertical: 15.h),
@@ -230,6 +274,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             style: TextStyle(
                               color: AppColors.whiteColor.withOpacity(.7),
                             ),
+                            obscureText: obSecure,
                             decoration: InputDecoration(
                               hintText: 'Enter password',
                               hintStyle: TextStyle(
@@ -252,9 +297,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               filled: true,
                               fillColor: AppColors.blackShadeColor,
                               suffixIcon: IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  setState(() {
+                                    obSecure = !obSecure;
+                                  });
+                                },
                                 icon: Icon(
-                                  CupertinoIcons.eye_slash,
+                                  obSecure
+                                      ? CupertinoIcons.eye_slash
+                                      : CupertinoIcons.eye,
                                   color: AppColors.whiteColor.withOpacity(.7),
                                 ),
                               ),
@@ -296,9 +347,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       textColor: AppColors.blackColor,
                       borderRadius: BorderRadius.circular(10),
                       fontSize: 14.sp,
-                      onPressed: () {
-                        AppHelpers.moveTo(const BaseScreen(), context);
-                      },
+                      onPressed: emailSignIn,
                     ),
                   ),
                 SizedBox(height: 10.h),

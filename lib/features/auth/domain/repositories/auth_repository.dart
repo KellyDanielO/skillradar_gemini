@@ -16,4 +16,8 @@ abstract class AuthRepository {
     required String username,
     required String location,
   });
+    Future<Either<DataState, UserEntity>> loginAccount({
+    required String userId,
+    required String email,
+  });
 }

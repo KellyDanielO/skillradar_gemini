@@ -51,6 +51,10 @@ class AuthController {
         errorWidget(message: 'The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
         errorWidget(message: 'The account already exists for that email.');
+      } else {
+        errorWidget(
+            message:
+                'The supplied auth credential is incorrect, malformed or has expired.');
       }
     } catch (e) {
       log(e.toString());
@@ -70,10 +74,11 @@ class AuthController {
         errorWidget(message: 'No user found for that email.');
       } else if (e.code == 'wrong-password') {
         errorWidget(message: 'Wrong password provided for that user.');
+      }else if(e.code == 'invalid-credential'){
+        errorWidget(message: 'invalid credentials');
       }
     } catch (e) {
       log(e.toString());
-      errorWidget(message: 'Error!');
     }
     return null;
   }

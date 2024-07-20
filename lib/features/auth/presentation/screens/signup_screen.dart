@@ -52,7 +52,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               .read(accountCreatingLoadingNotifierProvider.notifier)
               .change(true);
           final data = await ref
-              .read(createAccountListenerProvider.notifier)
+              .read(authListenerProvider.notifier)
               .createAccount(
                 userId: credentials.user!.uid,
                 accountTye: 'email',
@@ -85,7 +85,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     if (credentials != null && credentials.user!.email != null) {
       ref.read(accountCreatingLoadingNotifierProvider.notifier).change(true);
       final data = await ref
-          .read(createAccountListenerProvider.notifier)
+          .read(authListenerProvider.notifier)
           .createAccount(
               userId: credentials.user!.uid,
               accountTye: 'google',
