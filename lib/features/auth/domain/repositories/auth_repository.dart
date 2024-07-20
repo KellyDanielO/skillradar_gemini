@@ -10,4 +10,10 @@ abstract class AuthRepository {
     required String email,
     required String name,
   });
+  Future<Either<DataState, UserEntity>> setUpAccount({
+    required String accessToken,
+    required String refreshToken,
+    required String username,
+    required String location,
+  });
 }

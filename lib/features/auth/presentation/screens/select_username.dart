@@ -6,7 +6,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
 import '../../../../core/helpers/functions.dart';
+import '../../../../core/providers/provider_variables.dart';
 import '../../../../core/widgets/custom_btns.dart';
+import '../../../../core/widgets/error_widgets.dart';
+import '../providers/auth_provider.dart';
 import 'setup_account_screen.dart';
 
 class SelectUsernameAndLocation extends ConsumerStatefulWidget {
@@ -19,15 +22,43 @@ class SelectUsernameAndLocation extends ConsumerStatefulWidget {
 
 class _SelectUsernameAndLocationState
     extends ConsumerState<SelectUsernameAndLocation> {
-      @override
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  bool locating = false;
+  bool isUsername = false;
+  @override
   void initState() {
     AppHelpers.changeBottomBarColor();
     super.initState();
   }
+
+  void setUpAccount() async {
+    if (usernameController.value.text.isNotEmpty &&
+        locationController.value.text.isNotEmpty && isUsername) {
+      ref.read(accountSetUpLoadingNotifierProvider.notifier).change(true);
+      final data = await ref
+          .read(setUpAccountListenerProvider.notifier)
+          .setUpAccount(
+              location: locationController.value.text,
+              username: usernameController.value.text);
+      if (data) {
+        ref.read(accountSetUpLoadingNotifierProvider.notifier).change(false);
+        if (mounted) {
+          AppHelpers.moveTo(const SetupAccountSuccessScreen(), context);
+        }
+      } else {
+        ref.read(accountSetUpLoadingNotifierProvider.notifier).change(false);
+      }
+    } else {
+      errorWidget(message: 'all fields are required or invalid username');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;
     double height = ScreenUtil().screenHeight;
+    final accountSetupLoading = ref.watch(accountSetUpLoadingNotifierProvider);
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -66,10 +97,15 @@ class _SelectUsernameAndLocationState
                   ),
                   SizedBox(height: 5.h),
                   TextField(
-                    // controller: _searchController,
+                    controller: usernameController,
                     style: TextStyle(
                       color: AppColors.whiteColor.withOpacity(.7),
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        isUsername = AppHelpers.isValidUsername(value);
+                      });
+                    },
                     decoration: InputDecoration(
                       hintText: 'Enter email address',
                       hintStyle: TextStyle(
@@ -93,7 +129,7 @@ class _SelectUsernameAndLocationState
                       fillColor: AppColors.blackShadeColor,
                       suffixIcon: Icon(
                         CupertinoIcons.check_mark_circled_solid,
-                        color: AppColors.whiteColor.withOpacity(.7),
+                        color: isUsername ? AppColors.primaryColor : AppColors.whiteColor.withOpacity(.7),
                       ),
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 15),
@@ -114,7 +150,7 @@ class _SelectUsernameAndLocationState
                   ),
                   SizedBox(height: 5.h),
                   TextField(
-                    // controller: _searchController,
+                    controller: locationController,
                     readOnly: true,
                     style: TextStyle(
                       color: AppColors.whiteColor.withOpacity(.7),
@@ -140,13 +176,27 @@ class _SelectUsernameAndLocationState
                       ),
                       filled: true,
                       fillColor: AppColors.blackShadeColor,
-                      suffixIcon: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.location_on_outlined,
-                          color: AppColors.whiteColor.withOpacity(.7),
-                        ),
-                      ),
+                      suffixIcon: locating
+                          ? const CupertinoActivityIndicator(
+                              color: AppColors.primaryColor,
+                            )
+                          : IconButton(
+                              onPressed: () async {
+                                setState(() {
+                                  locating = true;
+                                });
+                                final location =
+                                    await AppHelpers.getCompleteAddress();
+                                setState(() {
+                                  locationController.text = location;
+                                  locating = false;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.location_on_outlined,
+                                color: AppColors.whiteColor.withOpacity(.7),
+                              ),
+                            ),
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 15),
                     ),
@@ -154,21 +204,24 @@ class _SelectUsernameAndLocationState
                 ],
               ),
               SizedBox(height: 15.h),
-              Hero(
-                tag: 'submit_button',
-                transitionOnUserGestures: true,
-                child: CustomBtn(
-                  text: 'Set up',
-                  btnColor: AppColors.primaryColor,
-                  textColor: AppColors.blackColor,
-                  borderRadius: BorderRadius.circular(10),
-                  fontSize: 14.sp,
-                  onPressed: () {
-                    AppHelpers.moveTo(
-                        const SetupAccountSuccessScreen(), context);
-                  },
+              if (accountSetupLoading)
+                const Align(
+                    alignment: Alignment.center,
+                    child: CupertinoActivityIndicator(
+                      color: AppColors.primaryColor,
+                    ))
+              else
+                Hero(
+                  tag: 'submit_button',
+                  transitionOnUserGestures: true,
+                  child: CustomBtn(
+                      text: 'Set up',
+                      btnColor: AppColors.primaryColor,
+                      textColor: AppColors.blackColor,
+                      borderRadius: BorderRadius.circular(10),
+                      fontSize: 14.sp,
+                      onPressed: setUpAccount),
                 ),
-              ),
             ],
           ),
         ),

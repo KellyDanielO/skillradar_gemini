@@ -86,6 +86,6 @@ class UserModel extends Equatable {
         accountType: accountType,
         isActive: isActive,
         dateJoined: dateJoined,
-        tokens: tokens!.toEntity(),
+        tokens: tokens?.toEntity(),
       );
 }

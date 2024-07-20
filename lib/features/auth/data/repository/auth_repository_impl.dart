@@ -27,4 +27,23 @@ class AuthRepositoryImpl implements AuthRepository {
       (UserModel userModel) => Right(userModel.toEntity()),
     );
   }
+
+  @override
+  Future<Either<DataState, UserEntity>> setUpAccount({
+    required String accessToken,
+    required String refreshToken,
+    required String username,
+    required String location,
+  }) async {
+    Either<DataState, UserModel> response = await remoteDataSource.setUpAccount(
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      username: username,
+      location: location,
+    );
+    return response.fold(
+      (DataState responseDataState) => Left(responseDataState),
+      (UserModel userModel) => Right(userModel.toEntity()),
+    );
+  }
 }

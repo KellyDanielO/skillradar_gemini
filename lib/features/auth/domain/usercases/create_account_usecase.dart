@@ -14,7 +14,6 @@ class CreateAccount {
     required String email,
     required String name,
   }) {
-    print('use case');
     return repository.createAccount(
         userId: userId, accountTye: accountTye, email: email, name: name);
   }
