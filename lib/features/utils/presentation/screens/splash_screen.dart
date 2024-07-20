@@ -7,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/helpers/functions.dart';
+import '../../../auth/presentation/screens/select_username.dart';
+import '../../../base/presentation/screens/base_screen.dart';
 import 'onboarding_screens.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -23,7 +25,22 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     request();
     Future.delayed(
       const Duration(seconds: 5),
-      () => AppHelpers.moveTo(const OnboardingScreen(), context),
+      () async {
+        String? accountStage = await AppHelpers().getData('account_stage');
+        if (mounted) {
+          if (accountStage == null) {
+            AppHelpers.moveTo(const OnboardingScreen(), context);
+          } else {
+            if (accountStage == 'set-up') {
+              AppHelpers.moveTo(const SelectUsernameAndLocation(), context);
+            } else if (accountStage == 'done') {
+              AppHelpers.moveTo(const BaseScreen(), context);
+            } else {
+              AppHelpers.moveTo(const OnboardingScreen(), context);
+            }
+          }
+        }
+      },
     );
     super.initState();
   }

@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,8 +9,11 @@ import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
 import '../../../../core/helpers/functions.dart';
+import '../../../../core/providers/provider_variables.dart';
 import '../../../../core/widgets/custom_btns.dart';
 import '../../../base/presentation/screens/base_screen.dart';
+import '../controllers/auth_controller.dart';
+import '../providers/auth_provider.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -23,6 +26,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  final AuthController _authController = AuthController();
   @override
   void initState() {
     AppHelpers.changeBottomBarColor();
@@ -40,6 +44,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;
     double height = ScreenUtil().screenHeight;
+    final accountCreatingLoading =
+        ref.watch(accountCreatingLoadingNotifierProvider);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -82,21 +88,55 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      width: width * .43,
-                      padding: EdgeInsets.symmetric(vertical: 15.h),
-                      decoration: BoxDecoration(
-                        color: AppColors.blackShadeColor,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: AppColors.whiteColor.withOpacity(.4)),
-                      ),
-                      child: SvgPicture.asset(
-                        AppAssets.googleBoldIcon,
-                        colorFilter: const ColorFilter.mode(
-                            AppColors.whiteColor, BlendMode.srcIn),
-                        width: 15.w,
-                        height: 15.h,
+                    GestureDetector(
+                      onTap: () async {
+                        UserCredential? credentials =
+                            await _authController.signInWithGoogle();
+                        if (credentials != null &&
+                            credentials.user!.email != null) {
+                          ref
+                              .read(accountCreatingLoadingNotifierProvider
+                                  .notifier)
+                              .change(true);
+                          final data = await ref
+                              .read(createAccountListenerProvider.notifier)
+                              .createAccount(
+                                  userId: credentials.user!.uid,
+                                  accountTye: 'google',
+                                  email: credentials.user!.email!,
+                                  name: credentials.user!.displayName!);
+                          if (data) {
+                            ref
+                                .read(accountCreatingLoadingNotifierProvider
+                                    .notifier)
+                                .change(false);
+                            // ignore: use_build_context_synchronously
+                            AppHelpers.moveTo(const BaseScreen(), context);
+                          } else {
+                            _authController.signOutFromGoogle();
+                            ref
+                                .read(accountCreatingLoadingNotifierProvider
+                                    .notifier)
+                                .change(false);
+                          }
+                        }
+                      },
+                      child: Container(
+                        width: width * .43,
+                        padding: EdgeInsets.symmetric(vertical: 15.h),
+                        decoration: BoxDecoration(
+                          color: AppColors.blackShadeColor,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: AppColors.whiteColor.withOpacity(.4)),
+                        ),
+                        child: SvgPicture.asset(
+                          AppAssets.googleBoldIcon,
+                          colorFilter: const ColorFilter.mode(
+                              AppColors.whiteColor, BlendMode.srcIn),
+                          width: 15.w,
+                          height: 15.h,
+                        ),
                       ),
                     ),
                     Container(
@@ -240,20 +280,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
                 SizedBox(height: 15.h),
-                Hero(
-                  tag: 'submit_button',
-                  transitionOnUserGestures: true,
-                  child: CustomBtn(
-                    text: 'Log in',
-                    btnColor: AppColors.primaryColor,
-                    textColor: AppColors.blackColor,
-                    borderRadius: BorderRadius.circular(10),
-                    fontSize: 14.sp,
-                    onPressed: () {
-                      AppHelpers.moveTo(const BaseScreen(), context);
-                    },
+                if (accountCreatingLoading)
+                  const Align(
+                      alignment: Alignment.center,
+                      child: CupertinoActivityIndicator(
+                        color: AppColors.primaryColor,
+                      ))
+                else
+                  Hero(
+                    tag: 'submit_button',
+                    transitionOnUserGestures: true,
+                    child: CustomBtn(
+                      text: 'Log in',
+                      btnColor: AppColors.primaryColor,
+                      textColor: AppColors.blackColor,
+                      borderRadius: BorderRadius.circular(10),
+                      fontSize: 14.sp,
+                      onPressed: () {
+                        AppHelpers.moveTo(const BaseScreen(), context);
+                      },
+                    ),
                   ),
-                ),
                 SizedBox(height: 10.h),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
