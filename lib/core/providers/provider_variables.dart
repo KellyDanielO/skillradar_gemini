@@ -6,6 +6,9 @@ import 'provider_classes.dart';
 final buttonLoadingNotifierProvider = StateNotifierProvider<BoolNotifier, bool>((ref) {
   return BoolNotifier();
 });
+final accountCreatingLoadingNotifierProvider = StateNotifierProvider<BoolNotifier, bool>((ref) {
+  return BoolNotifier();
+});
 
 final languageNotifierProvider =
     StateNotifierProvider<LocaleNotifier, Locale>((ref) {
