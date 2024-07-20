@@ -48,6 +48,41 @@ class RemoteDataSource {
       return Left(DataFailure(500, e.toString()));
     }
   }
+  Future<Either<DataState, UserModel>> loginAccount({
+    required String userId,
+    required String email,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConstants.baseUrl}/auth/login/'),
+        body: {
+          "user_id": userId,
+          "email": email,
+        },
+      );
+      final statusCode = response.statusCode;
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        UserModel user = UserModel.fromJson(jsonResponse['user']);
+        final tokens = TokenModel.fromJson(jsonResponse);
+        user.tokens = tokens;
+        return Right(user);
+      } else if (statusCode == 400) {
+        return Left(DataFailure(response.statusCode, 'missing data'));
+      } else if (statusCode == 406 || statusCode == 404) {
+        return Left(DataFailure(response.statusCode, 'account not found'));
+      } else if (statusCode == 401) {
+        return Left(DataFailure(response.statusCode, 'email exist'));
+      } else {
+        return Left(DataFailure(response.statusCode, response.body));
+      }
+    } catch (e) {
+      if (e.toString().contains('SocketException')) {
+        return Left(DataFailureOffline(700, 'network error'));
+      }
+      return Left(DataFailure(500, e.toString()));
+    }
+  }
 
   Future<Either<DataState, UserModel>> setUpAccount({
     required String accessToken,

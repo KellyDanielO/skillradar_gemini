@@ -80,6 +80,12 @@ class UserModel extends Equatable {
   UserEntity toEntity() => UserEntity(
         id: id,
         email: email,
+        username: username,
+        aboutMe: aboutMe,
+        avatar: aboutMe,
+        bio: bio,
+        location: location,
+        website: website,
         name: name,
         isGoogle: isGoogle,
         skills: skills,
