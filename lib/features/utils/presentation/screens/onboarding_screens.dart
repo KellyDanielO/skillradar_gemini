@@ -7,9 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
+import '../../../../core/constants/router.dart';
 import '../../../../core/constants/sizes.dart';
 import '../../../../core/helpers/functions.dart';
-import '../../../auth/presentation/screens/login_screen.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -114,7 +114,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   SizedBox(height: 10.h),
                   InkWell(
                     onTap: () {
-                      AppHelpers.moveTo(const LoginScreen(), context);
+                      AppHelpers.goNamed(
+                          routeName: AppRouter.loginScreen, context: context);
                     },
                     child: Container(
                       width: width,

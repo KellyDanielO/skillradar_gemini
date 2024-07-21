@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/data_state/data_state.dart';
 import '../../models/token_model.dart';
-import '../../models/user_model.dart';
+import '../../../../../core/models/user_model.dart';
 
 class RemoteDataSource {
   Future<Either<DataState, UserModel>> createAccount({

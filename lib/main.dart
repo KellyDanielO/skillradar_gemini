@@ -11,6 +11,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'core/constants/colors.dart';
 
+import 'core/constants/router.dart';
 import 'core/constants/sizes.dart';
 import 'core/providers/provider_variables.dart';
 import 'features/utils/presentation/screens/splash_screen.dart';
@@ -37,7 +38,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final languageProvider = ref.watch(languageNotifierProvider);
     return ScreenUtilInit(
-      builder: (context, child) => MaterialApp(
+      builder: (context, child) => MaterialApp.router(
         title: 'Skill Radar',
         builder: FToastBuilder(),
         debugShowCheckedModeBanner: false,
@@ -56,7 +57,7 @@ class MyApp extends ConsumerWidget {
         ),
         supportedLocales: L10n.all,
         locale: languageProvider,
-        home: const SplashScreen(),
+        routerConfig: AppRouter.router,
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,

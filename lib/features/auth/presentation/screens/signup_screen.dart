@@ -9,14 +9,13 @@ import 'package:skillradar/core/helpers/app_extensions.dart';
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
+import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/providers/provider_variables.dart';
 import '../../../../core/widgets/custom_btns.dart';
 import '../../../../core/widgets/error_widgets.dart';
 import '../controllers/auth_controller.dart';
 import '../providers/auth_provider.dart';
-import 'login_screen.dart';
-import 'select_username.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -51,20 +50,20 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           ref
               .read(accountCreatingLoadingNotifierProvider.notifier)
               .change(true);
-          final data = await ref
-              .read(authListenerProvider.notifier)
-              .createAccount(
-                userId: credentials.user!.uid,
-                accountTye: 'email',
-                email: credentials.user!.email!,
-                name: nameController.value.text,
-              );
+          final data =
+              await ref.read(authListenerProvider.notifier).createAccount(
+                    userId: credentials.user!.uid,
+                    accountTye: 'email',
+                    email: credentials.user!.email!,
+                    name: nameController.value.text,
+                  );
           if (data) {
             ref
                 .read(accountCreatingLoadingNotifierProvider.notifier)
                 .change(false);
             if (mounted) {
-              AppHelpers.moveTo(const SelectUsernameAndLocation(), context);
+              AppHelpers.goReplacedNamed(
+                  routeName: AppRouter.setUpScreen, context: context);
             }
           } else {
             _authController.signOutFromGoogle();
@@ -84,17 +83,16 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
     if (credentials != null && credentials.user!.email != null) {
       ref.read(accountCreatingLoadingNotifierProvider.notifier).change(true);
-      final data = await ref
-          .read(authListenerProvider.notifier)
-          .createAccount(
-              userId: credentials.user!.uid,
-              accountTye: 'google',
-              email: credentials.user!.email!,
-              name: credentials.user!.displayName!);
+      final data = await ref.read(authListenerProvider.notifier).createAccount(
+          userId: credentials.user!.uid,
+          accountTye: 'google',
+          email: credentials.user!.email!,
+          name: credentials.user!.displayName!);
       if (data) {
         ref.read(accountCreatingLoadingNotifierProvider.notifier).change(false);
         if (mounted) {
-          AppHelpers.moveTo(const SelectUsernameAndLocation(), context);
+          AppHelpers.goReplacedNamed(
+              routeName: AppRouter.setUpScreen, context: context);
         }
       } else {
         _authController.signOutFromGoogle();
@@ -404,7 +402,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         if (Navigator.canPop(context)) {
                           Navigator.pop(context);
                         } else {
-                          AppHelpers.moveTo(const LoginScreen(), context);
+                          AppHelpers.goNamed(
+                              routeName: AppRouter.loginScreen,
+                              context: context);
                         }
                       },
                       child: Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../entities/user_entity.dart';
 import 'provider_classes.dart';
 
 final buttonLoadingNotifierProvider = StateNotifierProvider<BoolNotifier, bool>((ref) {
@@ -16,4 +17,9 @@ final accountSetUpLoadingNotifierProvider = StateNotifierProvider.autoDispose<Bo
 final languageNotifierProvider =
     StateNotifierProvider<LocaleNotifier, Locale>((ref) {
   return LocaleNotifier();
+});
+
+final gobalUserNotifierProvider =
+    StateNotifierProvider<UserStateNotifier, UserEntity?>((ref) {
+  return UserStateNotifier();
 });

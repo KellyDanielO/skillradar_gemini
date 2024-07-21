@@ -9,15 +9,13 @@ import 'package:skillradar/core/helpers/app_extensions.dart';
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
+import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/providers/provider_variables.dart';
 import '../../../../core/widgets/custom_btns.dart';
 import '../../../../core/widgets/error_widgets.dart';
-import '../../../base/presentation/screens/base_screen.dart';
 import '../controllers/auth_controller.dart';
 import '../providers/auth_provider.dart';
-import 'select_username.dart';
-import 'signup_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -54,12 +52,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (data == 'set-up') {
         ref.read(accountCreatingLoadingNotifierProvider.notifier).change(false);
         if (mounted) {
-          AppHelpers.moveTo(const SelectUsernameAndLocation(), context);
+          AppHelpers.goReplacedNamed(
+              routeName: AppRouter.setUpScreen, context: context);
         }
       } else if (data == 'done') {
         ref.read(accountCreatingLoadingNotifierProvider.notifier).change(false);
         if (mounted) {
-          AppHelpers.moveTo(const BaseScreen(), context);
+          AppHelpers.goReplacedNamed(routeName: AppRouter.baseScreen, context: context);
         }
       } else {
         _authController.signOutFromGoogle();
@@ -89,14 +88,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 .read(accountCreatingLoadingNotifierProvider.notifier)
                 .change(false);
             if (mounted) {
-              AppHelpers.moveTo(const SelectUsernameAndLocation(), context);
+              AppHelpers.goReplacedNamed(
+                  routeName: AppRouter.setUpScreen, context: context);
             }
           } else if (data == 'done') {
             ref
                 .read(accountCreatingLoadingNotifierProvider.notifier)
                 .change(false);
             if (mounted) {
-              AppHelpers.moveTo(const BaseScreen(), context);
+              AppHelpers.goReplacedNamed(
+                  routeName: AppRouter.baseScreen, context: context);
             }
           } else {
             _authController.signOutFromGoogle();
@@ -364,7 +365,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        AppHelpers.moveTo(const SignupScreen(), context);
+                        AppHelpers.goNamed(
+                            routeName: AppRouter.registerScreen,
+                            context: context);
                       },
                       child: Text(
                         'Sign up',

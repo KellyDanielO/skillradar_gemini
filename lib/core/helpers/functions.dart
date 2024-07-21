@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:go_router/go_router.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -186,5 +187,31 @@ class AppHelpers {
 
     // Check if the username matches the pattern
     return usernameRegExp.hasMatch(username);
+  }
+
+  static void goNamed({
+    required String routeName,
+    required BuildContext context,
+  }) {
+    context.pushNamed(routeName);
+  }
+
+  static void goReplacedNamed({
+    required String routeName,
+    required BuildContext context,
+  }) {
+    context.goNamed(routeName);
+  }
+
+  static String getGreeting() {
+    final hour = DateTime.now().hour;
+
+    if (hour < 12) {
+      return 'Good Morning';
+    } else if (hour < 18) {
+      return 'Good Afternoon';
+    } else {
+      return 'Good Evening';
+    }
   }
 }

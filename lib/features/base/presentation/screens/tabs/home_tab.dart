@@ -1,5 +1,4 @@
 import 'package:card_swiper/card_swiper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,8 +7,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../../core/constants/router.dart';
 import '../../../../../core/helpers/functions.dart';
-import '../../../../notification/presnetation/screens/notification_screen.dart';
+import '../../../../../core/providers/provider_variables.dart';
 import '../../widgets/profile_card.dart';
 
 class HomeTab extends ConsumerWidget {
@@ -57,6 +57,7 @@ class HomeTab extends ConsumerWidget {
         action: () {},
       ),
     ];
+    final user = ref.watch(gobalUserNotifierProvider);
     return Column(
       children: <Widget>[
         SizedBox(height: 10.h),
@@ -69,14 +70,14 @@ class HomeTab extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Good Morning',
+                    AppHelpers.getGreeting(),
                     style: TextStyle(
                       color: AppColors.whiteColor.withOpacity(.5),
                       fontSize: 14.sp,
                     ),
                   ),
                   Text(
-                    'Kelly Daniel',
+                    user!.name,
                     style: TextStyle(
                       color: AppColors.whiteColor.withOpacity(.8),
                       fontSize: 16.sp,
@@ -93,7 +94,9 @@ class HomeTab extends ConsumerWidget {
                 ),
                 child: IconButton(
                   onPressed: () {
-                     AppHelpers.moveTo(const NotificationScreen(), context);
+                    AppHelpers.goNamed(
+                        routeName: AppRouter.notificationScreen,
+                        context: context);
                   },
                   icon: SvgPicture.asset(
                     AppAssets.bellOutlinedIcon,

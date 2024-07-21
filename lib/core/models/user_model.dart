@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-import '../../domain/entities/user_entity.dart';
-import 'token_model.dart';
+import '../entities/user_entity.dart';
+import '../../features/auth/data/models/token_model.dart';
 
 // ignore: must_be_immutable
 class UserModel extends Equatable {

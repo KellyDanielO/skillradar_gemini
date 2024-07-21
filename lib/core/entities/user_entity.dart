@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import 'token_entity.dart';
+import '../../features/auth/domain/entities/token_entity.dart';
 
 class UserEntity extends Equatable {
   final String id;

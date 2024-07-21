@@ -6,9 +6,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
+import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/widgets/custom_btns.dart';
-import '../../../profile/presentation/screens/profile_screen.dart';
 
 class NotificationScreen extends ConsumerStatefulWidget {
   const NotificationScreen({super.key});
@@ -110,17 +110,17 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
               tabs.length,
               (index) => Tab(
                 child: Text(
-                tabs[index],
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontFamily: AppFonts.sansFont,
-                      color: selectedTab == index ? AppColors.primaryColor.withOpacity(.7) : AppColors.whiteColor,
-                    ),
+                  tabs[index],
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontFamily: AppFonts.sansFont,
+                        color: selectedTab == index
+                            ? AppColors.primaryColor.withOpacity(.7)
+                            : AppColors.whiteColor,
+                      ),
+                ),
               ),
-              ),
-              
             ),
-            
           ),
           scrolledUnderElevation: 0,
           elevation: 0,
@@ -163,11 +163,8 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                   fontSize: 14.sp,
                   width: width * .25,
                   onPressed: () {
-                    AppHelpers.moveTo(
-                        const ProfileScreen(
-                          me: false,
-                        ),
-                        context);
+                    AppHelpers.goNamed(
+                        routeName: AppRouter.profileScreen, context: context);
                   },
                   padding: EdgeInsets.symmetric(vertical: 10.h),
                 ),

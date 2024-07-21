@@ -5,9 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
+import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/widgets/custom_btns.dart';
-import '../../../base/presentation/screens/base_screen.dart';
 
 class SetupAccountSuccessScreen extends ConsumerStatefulWidget {
   const SetupAccountSuccessScreen({super.key});
@@ -19,11 +19,12 @@ class SetupAccountSuccessScreen extends ConsumerStatefulWidget {
 
 class _SetupAccountSuccessScreenState
     extends ConsumerState<SetupAccountSuccessScreen> {
-      @override
+  @override
   void initState() {
     AppHelpers.changeBottomBarColor();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;
@@ -66,7 +67,8 @@ class _SetupAccountSuccessScreenState
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 fontSize: 14.sp,
                 onPressed: () {
-                  AppHelpers.moveTo(const BaseScreen(), context);
+                  AppHelpers.goReplacedNamed(
+                      routeName: AppRouter.baseScreen, context: context);
                 },
               ),
             ),

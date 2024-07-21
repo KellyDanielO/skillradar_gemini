@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,8 +6,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/constants/assets.dart';
 
 import '../../../../core/constants/colors.dart';
+import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
-import '../../../profile/presentation/screens/profile_screen.dart';
 import 'tabs/explore_tab.dart';
 import 'tabs/home_tab.dart';
 import 'tabs/saved_tab.dart';
@@ -59,11 +58,7 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
         activeIcon: AppAssets.userBoldIcon,
         defaultIcon: AppAssets.userOutlinedIcon,
         action: () {
-          AppHelpers.moveTo(
-              const ProfileScreen(
-                me: true,
-              ),
-              context);
+          AppHelpers.goNamed(routeName: AppRouter.profileScreen, context: context);
         },
       ),
     ];
