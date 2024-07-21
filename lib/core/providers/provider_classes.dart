@@ -5,12 +5,11 @@ import '../entities/skill_entity.dart';
 import '../entities/user_entity.dart';
 
 class BoolNotifier extends StateNotifier<bool> {
-  BoolNotifier(): super(false);
+  BoolNotifier() : super(false);
 
-  void change(bool value){
+  void change(bool value) {
     state = value;
   }
-  
 }
 
 class LocaleNotifier extends StateNotifier<Locale> {
@@ -26,6 +25,14 @@ class UserStateNotifier extends StateNotifier<UserEntity?> {
     state = user;
   }
 }
+
+class UsersStateNotifier extends StateNotifier<List<UserEntity>> {
+  UsersStateNotifier() : super([]);
+  void setUsers(List<UserEntity> user) {
+    state = user;
+  }
+}
+
 class SkillsStateNotifier extends StateNotifier<List<SkillEntity>> {
   SkillsStateNotifier() : super([]);
   void setSkill(List<SkillEntity> skills) {

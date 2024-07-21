@@ -31,6 +31,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     await AppHelpers.requestStoragePermission();
     String? accessToken = await AppHelpers().getData('access_token');
     String? refreshToken = await AppHelpers().getData('refresh_token');
+    // print(accessToken);
     if (accessToken == null || refreshToken == null) {
       if (mounted) {
         AppHelpers.goReplacedNamed(

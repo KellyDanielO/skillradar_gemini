@@ -17,6 +17,8 @@ import 'package:geocoding/geocoding.dart';
 
 import '../../features/utils/presentation/screens/image_picker/media_picker.dart';
 import '../constants/colors.dart';
+import '../entities/skill_entity.dart';
+import '../entities/user_entity.dart';
 
 class AppHelpers {
   static void moveTo(Widget newScreen, BuildContext context) {
@@ -212,6 +214,41 @@ class AppHelpers {
       return 'Good Afternoon';
     } else {
       return 'Good Evening';
+    }
+  }
+
+  static SkillEntity findFirstCommonSkill(UserEntity user1, UserEntity user2) {
+    Set<int> skillIds1 = user1.skills.map((skill) => skill.id).toSet();
+
+    for (SkillEntity skill in user2.skills) {
+      if (skillIds1.contains(skill.id)) {
+        return skill;
+      }
+    }
+    return user2.skills.first;
+  }
+
+  static String timeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inSeconds < 60) {
+      return 'just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'} ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'} ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'} ago';
+    } else if (difference.inDays < 30) {
+      final weeks = (difference.inDays / 7).floor();
+      return '$weeks ${weeks == 1 ? 'week' : 'weeks'} ago';
+    } else if (difference.inDays < 365) {
+      final months = (difference.inDays / 30).floor();
+      return '$months ${months == 1 ? 'month' : 'months'} ago';
+    } else {
+      final years = (difference.inDays / 365).floor();
+      return '$years ${years == 1 ? 'year' : 'years'} ago';
     }
   }
 }

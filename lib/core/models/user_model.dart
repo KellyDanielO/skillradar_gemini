@@ -67,7 +67,9 @@ class UserModel extends Equatable {
       name: json['name'] as String,
       bio: json['bio'] as String?,
       isGoogle: json['is_google'] as bool,
-      skills: (json['skills'] as List).map((skill) => SkillModel.fromJson(skill as Map<String, dynamic>)).toList(),
+      skills: (json['skills'] as List)
+          .map((skill) => SkillModel.fromJson(skill as Map<String, dynamic>))
+          .toList(),
       aboutMe: json['about_me'] as String?,
       website: json['website'] as String?,
       avatar: json['avatar'] as String?,
@@ -78,6 +80,9 @@ class UserModel extends Equatable {
     );
   }
 
+  static List<UserModel> fromJsonList(List<dynamic> jsonList) {
+    return jsonList.map((json) => UserModel.fromJson(json)).toList();
+  }
 
   UserEntity toEntity() => UserEntity(
         id: id,
