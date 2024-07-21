@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,8 +6,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/constants/assets.dart';
 
 import '../../../../core/constants/colors.dart';
+import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
-import '../../../profile/presentation/screens/profile_screen.dart';
+import '../provider/providers.dart';
 import 'tabs/explore_tab.dart';
 import 'tabs/home_tab.dart';
 import 'tabs/saved_tab.dart';
@@ -38,32 +38,42 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
         activeIcon: AppAssets.homeBoldIcon,
         defaultIcon: AppAssets.homeOutlinedIcon,
         action: () {
-          _pageController.animateToPage(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+          _pageController.animateToPage(0,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut);
+        },
+        doubleTap: () async {
+          String? accessToken = await AppHelpers().getData('access_token');
+          String? refreshToken = await AppHelpers().getData('refresh_token');
+          ref.read(feedLoadingNotifierProvider.notifier).change(true);
+          ref.read(baseListenerProvider.notifier).getFeedData(
+              ref: ref, accessToken: accessToken!, refreshToken: refreshToken!);
         },
       ),
       BottomTabs(
         activeIcon: AppAssets.compassBoldIcon,
         defaultIcon: AppAssets.compassOutlinedIcon,
         action: () {
-          _pageController.animateToPage(1, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+          _pageController.animateToPage(1,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut);
         },
       ),
       BottomTabs(
         activeIcon: AppAssets.bookmarkBoldIcon,
         defaultIcon: AppAssets.bookmarkOutlinedIcon,
         action: () {
-          _pageController.animateToPage(2, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+          _pageController.animateToPage(2,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut);
         },
       ),
       BottomTabs(
         activeIcon: AppAssets.userBoldIcon,
         defaultIcon: AppAssets.userOutlinedIcon,
         action: () {
-          AppHelpers.moveTo(
-              const ProfileScreen(
-                me: true,
-              ),
-              context);
+          AppHelpers.goNamed(
+              routeName: AppRouter.profileScreen, context: context);
         },
       ),
     ];
@@ -132,6 +142,7 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
                 child: IconButton(
                   key: ValueKey<int>(_selectedIndex),
                   onPressed: bottomTabs[index].action,
+                  
                   icon: SvgPicture.asset(
                     _selectedIndex == index
                         ? bottomTabs[index].activeIcon
@@ -159,9 +170,11 @@ class BottomTabs {
   final String activeIcon;
   final String defaultIcon;
   final void Function() action;
+  final void Function()? doubleTap;
 
   BottomTabs(
       {required this.activeIcon,
       required this.defaultIcon,
+      this.doubleTap,
       required this.action});
 }

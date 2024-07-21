@@ -7,8 +7,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../../core/constants/router.dart';
 import '../../../../../core/helpers/functions.dart';
-import 'select_skills.dart';
 
 class MenuScreen extends ConsumerStatefulWidget {
   const MenuScreen({super.key});
@@ -114,7 +114,8 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                   color: AppColors.whiteColor,
                 ),
                 onTap: () {
-                  AppHelpers.moveTo(const SelectSkillsScreen(), context);
+                  AppHelpers.goNamed(
+                      routeName: AppRouter.addSkillsScreen, context: context);
                 },
               ),
               ListTile(

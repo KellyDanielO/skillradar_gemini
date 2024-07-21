@@ -10,10 +10,9 @@ import 'package:skillradar/core/helpers/app_extensions.dart';
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
+import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../utils/presentation/screens/image_viewer.dart';
-import '../../../utils/presentation/screens/settings/edit_profile_screen.dart';
-import '../../../utils/presentation/screens/settings/menu.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final bool me;
@@ -82,7 +81,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             margin: EdgeInsets.only(right: 10.w),
             child: IconButton(
               onPressed: () {
-                AppHelpers.moveTo(const MenuScreen(), context);
+                AppHelpers.goNamed(
+                    routeName: AppRouter.menuScreen, context: context);
               },
               icon: SvgPicture.asset(
                 AppAssets.menuOutlinedIcon,
@@ -149,10 +149,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                             margin: EdgeInsets.only(right: 10.w),
                             child: IconButton(
-                              onPressed: () async{
-                                if(widget.me){
-                                 final data = await AppHelpers().pickAssets(maxCount: 5, requestType: RequestType.image, context: context);
-                                 
+                              onPressed: () async {
+                                if (widget.me) {
+                                  final data = await AppHelpers().pickAssets(
+                                      maxCount: 5,
+                                      requestType: RequestType.image,
+                                      context: context);
                                 }
                               },
                               icon: widget.me
@@ -372,7 +374,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             Positioned(
               bottom: 10,
               child: InkWell(
-                onTap: () => widget.me ? AppHelpers.moveTo(const EditProfileScreen(), context) : _showBottomSheet(context, width, height),
+                onTap: () => widget.me
+                    ? AppHelpers.goNamed(
+                        routeName: AppRouter.editProfileScreen,
+                        context: context)
+                    : _showBottomSheet(context, width, height),
                 child: Container(
                   width: width - 40.w,
                   decoration: BoxDecoration(
@@ -406,7 +412,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           color: AppColors.blackColor,
                           borderRadius: BorderRadius.circular(50),
                         ),
-                        child:  Icon(
+                        child: Icon(
                           CupertinoIcons.arrow_right,
                           color: AppColors.whiteColor,
                           size: 18.sp,

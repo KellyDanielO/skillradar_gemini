@@ -5,12 +5,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
+import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/providers/provider_variables.dart';
 import '../../../../core/widgets/custom_btns.dart';
 import '../../../../core/widgets/error_widgets.dart';
 import '../providers/auth_provider.dart';
-import 'setup_account_screen.dart';
 
 class SelectUsernameAndLocation extends ConsumerStatefulWidget {
   const SelectUsernameAndLocation({super.key});
@@ -44,7 +44,7 @@ class _SelectUsernameAndLocationState
       if (data) {
         ref.read(accountSetUpLoadingNotifierProvider.notifier).change(false);
         if (mounted) {
-          AppHelpers.moveTo(const SetupAccountSuccessScreen(), context);
+          AppHelpers.goReplacedNamed(routeName: AppRouter.setUpScreen, context: context);
         }
       } else {
         ref.read(accountSetUpLoadingNotifierProvider.notifier).change(false);

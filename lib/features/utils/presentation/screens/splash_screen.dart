@@ -6,10 +6,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
+import '../../../../core/constants/router.dart';
+import '../../../../core/entities/user_entity.dart';
 import '../../../../core/helpers/functions.dart';
-import '../../../auth/presentation/screens/select_username.dart';
-import '../../../base/presentation/screens/base_screen.dart';
-import 'onboarding_screens.dart';
+import '../../../../core/providers/provider_variables.dart';
+import '../providers/initialize_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -23,30 +24,50 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   void initState() {
     AppHelpers.changeBottomBarColor();
     request();
-    Future.delayed(
-      const Duration(seconds: 5),
-      () async {
-        String? accountStage = await AppHelpers().getData('account_stage');
-        if (mounted) {
-          if (accountStage == null) {
-            AppHelpers.moveTo(const OnboardingScreen(), context);
-          } else {
-            if (accountStage == 'set-up') {
-              AppHelpers.moveTo(const SelectUsernameAndLocation(), context);
-            } else if (accountStage == 'done') {
-              AppHelpers.moveTo(const BaseScreen(), context);
-            } else {
-              AppHelpers.moveTo(const OnboardingScreen(), context);
-            }
-          }
-        }
-      },
-    );
     super.initState();
   }
 
   void request() async {
     await AppHelpers.requestStoragePermission();
+    String? accessToken = await AppHelpers().getData('access_token');
+    String? refreshToken = await AppHelpers().getData('refresh_token');
+    // print(accessToken);
+    if (accessToken == null || refreshToken == null) {
+      if (mounted) {
+        AppHelpers.goReplacedNamed(
+            routeName: AppRouter.welcomeScreen, context: context);
+      }
+    } else {
+      ref
+          .read(initializeListenerProvider.notifier)
+          .getUserData(accessToken: accessToken, refreshToken: refreshToken)
+          .then(
+        (UserEntity? user) async {
+          String? accountStage = await AppHelpers().getData('account_stage');
+          ref.read(gobalUserNotifierProvider.notifier).setUser(user);
+          await ref
+              .read(initializeListenerProvider.notifier)
+              .getAllSkills(ref: ref);
+          if (mounted) {
+            if (accountStage == null) {
+              AppHelpers.goReplacedNamed(
+                  routeName: AppRouter.welcomeScreen, context: context);
+            } else {
+              if (accountStage == 'set-up') {
+                AppHelpers.goReplacedNamed(
+                    routeName: AppRouter.setUpScreen, context: context);
+              } else if (accountStage == 'done') {
+                AppHelpers.goReplacedNamed(
+                    routeName: AppRouter.baseScreen, context: context);
+              } else {
+                AppHelpers.goReplacedNamed(
+                    routeName: AppRouter.welcomeScreen, context: context);
+              }
+            }
+          }
+        },
+      );
+    }
   }
 
   @override

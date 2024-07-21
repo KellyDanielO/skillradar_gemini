@@ -7,9 +7,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
+import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/widgets/custom_btns.dart';
-import '../../../profile/presentation/screens/profile_screen.dart';
 import '../../../utils/presentation/screens/image_viewer.dart';
 
 class ProfileCard extends ConsumerWidget {
@@ -185,7 +185,8 @@ class ProfileCard extends ConsumerWidget {
             btnColor: AppColors.blackColor,
             fontSize: 14.sp,
             onPressed: () {
-              AppHelpers.moveTo(const ProfileScreen(me: false,), context);
+              AppHelpers.goNamed(
+                  routeName: AppRouter.profileScreen, context: context);
             },
             padding: EdgeInsets.symmetric(vertical: 18.h),
           )

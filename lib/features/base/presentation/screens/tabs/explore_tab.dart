@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
-import '../../../../../core/constants/skills.dart';
+import '../../../../../core/entities/skill_entity.dart';
+import '../../../../../core/providers/provider_variables.dart';
 
 class ExploreTab extends ConsumerStatefulWidget {
   final double width;
@@ -30,20 +30,25 @@ class _ExploreTabState extends ConsumerState<ExploreTab> {
   }
 
   void _fetchItems() async {
-    List<String> items = await compute(fetchItemsInIsolate, null);
+    List<SkillEntity> skill = ref.read(gobalSkillsNotifierProvider);
+    List<String> skills = [];
+    for (var skill in skill) {
+      skills.add(skill.name);
+    }
     setState(() {
-      _filteredItems = items;
+      _filteredItems = skills;
     });
-  }
-
-  static List<String> fetchItemsInIsolate(_) {
-    return skillList;
   }
 
   void _filterItems() {
     String query = _searchController.text.toLowerCase();
+    List<SkillEntity> skill = ref.read(gobalSkillsNotifierProvider);
+    List<String> skills = [];
+    for (var skill in skill) {
+      skills.add(skill.name);
+    }
     setState(() {
-      _filteredItems = skillList.where((item) {
+      _filteredItems = skills.where((item) {
         return item.toLowerCase().contains(query);
       }).toList();
     });
