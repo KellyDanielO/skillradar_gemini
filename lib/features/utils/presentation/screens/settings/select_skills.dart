@@ -84,7 +84,6 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
       if (user != null) {
         ref.read(gobalUserNotifierProvider.notifier).setUser(user);
         if (mounted) {
-          // TODO: run feed data fetch
           Navigator.pop(context);
         }
       }
