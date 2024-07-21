@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../features/auth/domain/entities/token_entity.dart';
+import 'skill_entity.dart';
 
 class UserEntity extends Equatable {
   final String id;
@@ -9,7 +10,7 @@ class UserEntity extends Equatable {
   final String name;
   final String? bio;
   final bool isGoogle;
-  final List<String> skills;
+  final List<SkillEntity> skills;
   final String? aboutMe;
   final String? website;
   final String? avatar;

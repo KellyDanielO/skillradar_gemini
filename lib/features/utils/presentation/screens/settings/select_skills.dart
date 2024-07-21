@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,8 +9,12 @@ import 'dart:developer';
 import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
-import '../../../../../core/constants/skills.dart';
+import '../../../../../core/entities/skill_entity.dart';
+import '../../../../../core/entities/user_entity.dart';
+import '../../../../../core/helpers/functions.dart';
+import '../../../../../core/providers/provider_variables.dart';
 import '../../../../../core/widgets/error_widgets.dart';
+import '../../providers/initialize_provider.dart';
 
 class SelectSkillsScreen extends ConsumerStatefulWidget {
   const SelectSkillsScreen({super.key});
@@ -31,24 +34,27 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
   void initState() {
     super.initState();
     _fetchItems();
-
+    final data = ref.read(gobalUserNotifierProvider);
+    for (var skill in data!.skills) {
+      selectedSkills.add(skill.name);
+      fetchedSkills.removeWhere((data) => data == skill.name);
+    }
     _searchController.addListener(_filterItems);
   }
 
   void _fetchItems() async {
-    List<String> items = await compute(fetchItemsInIsolate, null);
+    List<SkillEntity> skill = ref.read(gobalSkillsNotifierProvider);
+    List<String> skills = [];
+    for (var skill in skill) {
+      skills.add(skill.name);
+    }
     setState(() {
-      fetchedSkills = items;
-      _filteredItems = items;
+      fetchedSkills = skills;
+      _filteredItems = skills;
     });
   }
 
-  static List<String> fetchItemsInIsolate(_) {
-    return skillList;
-  }
-
   void _filterItems() {
-    log('message');
     String query = _searchController.text.toLowerCase();
     setState(() {
       _filteredItems = fetchedSkills.where((item) {
@@ -63,8 +69,33 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
     super.dispose();
   }
 
+  void saveSkills() async {
+    if (selectedSkills.isEmpty) {
+      errorWidget(message: 'please select a skill');
+    } else {
+      String? accessToken = await AppHelpers().getData('access_token');
+      String? refreshToken = await AppHelpers().getData('refresh_token');
+      ref.read(addingSkillsLoadingNotifierProvider.notifier).change(true);
+      UserEntity? user =
+          await ref.read(initializeListenerProvider.notifier).addSkills(
+                skills: selectedSkills.join(','),
+                accessToken: accessToken!,
+                refreshToken: refreshToken!,
+              );
+      if (user != null) {
+        ref.read(gobalUserNotifierProvider.notifier).setUser(user);
+        if (mounted) {
+          // TODO: run feed data fetch
+          Navigator.pop(context);
+        }
+      }
+      ref.read(addingSkillsLoadingNotifierProvider.notifier).change(false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final addingSkillsLoading = ref.watch(addingSkillsLoadingNotifierProvider);
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 50.w,
@@ -93,14 +124,14 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
       floatingActionButton: selectedSkills.isEmpty
           ? null
           : FloatingActionButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: saveSkills,
               backgroundColor: AppColors.primaryColor,
               shape: const CircleBorder(),
-              child: const Icon(
-                Icons.check,
-              ),
+              child: addingSkillsLoading
+                  ? const CupertinoActivityIndicator()
+                  : const Icon(
+                      Icons.check,
+                    ),
             ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -114,53 +145,58 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
                   fontWeight: FontWeight.bold,
                   fontFamily: AppFonts.sansFont),
             ),
+            if (selectedSkills.isEmpty)
+              const SizedBox()
+            else
+              SizedBox(height: 10.h),
+            if (selectedSkills.isNotEmpty)
+              const Text(
+                'Selected Skills',
+                style: TextStyle(
+                  color: AppColors.whiteColor,
+                  fontFamily: AppFonts.actionFont,
+                ),
+              ).animate().fadeIn()
+            else
+              const SizedBox(),
             selectedSkills.isEmpty ? const SizedBox() : SizedBox(height: 10.h),
-            selectedSkills.isNotEmpty
-                ? const Text(
-                    'Selected Skills',
-                    style: TextStyle(
-                      color: AppColors.whiteColor,
-                      fontFamily: AppFonts.actionFont,
-                    ),
-                  ).animate().fadeIn()
-                : const SizedBox(),
-            selectedSkills.isEmpty ? const SizedBox() : SizedBox(height: 10.h),
-            selectedSkills.isEmpty
-                ? const SizedBox()
-                : SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: List.generate(selectedSkills.reversed.length,
-                          (index) {
-                        return Container(
-                          margin: EdgeInsets.only(right: 10.w),
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                fetchedSkills.add(selectedSkills[index]);
-                                _filteredItems.add(selectedSkills[index]);
-                                selectedSkills.removeAt(index);
-                              });
-                            },
-                            child: Chip(
-                              backgroundColor: AppColors.whiteColor,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30)),
-                              label: Text(
-                                selectedSkills[index],
-                                style: TextStyle(
-                                  color: AppColors.blackColor,
-                                  fontFamily: AppFonts.sansFont,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
+            if (selectedSkills.isEmpty)
+              const SizedBox()
+            else
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children:
+                      List.generate(selectedSkills.reversed.length, (index) {
+                    return Container(
+                      margin: EdgeInsets.only(right: 10.w),
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            fetchedSkills.add(selectedSkills[index]);
+                            _filteredItems.add(selectedSkills[index]);
+                            selectedSkills.removeAt(index);
+                          });
+                        },
+                        child: Chip(
+                          backgroundColor: AppColors.whiteColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          label: Text(
+                            selectedSkills[index],
+                            style: TextStyle(
+                              color: AppColors.blackColor,
+                              fontFamily: AppFonts.sansFont,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12.sp,
                             ),
-                          ).animate().fadeIn(),
-                        );
-                      }),
-                    ),
-                  ),
+                          ),
+                        ),
+                      ).animate().fadeIn(),
+                    );
+                  }),
+                ),
+              ),
             SizedBox(height: 15.h),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 0.h),

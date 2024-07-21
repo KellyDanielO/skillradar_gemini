@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -45,6 +44,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         (UserEntity? user) async {
           String? accountStage = await AppHelpers().getData('account_stage');
           ref.read(gobalUserNotifierProvider.notifier).setUser(user);
+          await ref
+              .read(initializeListenerProvider.notifier)
+              .getAllSkills(ref: ref);
           if (mounted) {
             if (accountStage == null) {
               AppHelpers.goReplacedNamed(

@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../entities/user_entity.dart';
 import '../../features/auth/data/models/token_model.dart';
+import 'skill_model.dart';
 
 // ignore: must_be_immutable
 class UserModel extends Equatable {
@@ -11,7 +12,7 @@ class UserModel extends Equatable {
   final String name;
   final String? bio;
   final bool isGoogle;
-  final List<String> skills;
+  final List<SkillModel> skills;
   final String? aboutMe;
   final String? website;
   final String? avatar;
@@ -66,7 +67,7 @@ class UserModel extends Equatable {
       name: json['name'] as String,
       bio: json['bio'] as String?,
       isGoogle: json['is_google'] as bool,
-      skills: List<String>.from(json['skills']),
+      skills: (json['skills'] as List).map((skill) => SkillModel.fromJson(skill as Map<String, dynamic>)).toList(),
       aboutMe: json['about_me'] as String?,
       website: json['website'] as String?,
       avatar: json['avatar'] as String?,
@@ -76,6 +77,7 @@ class UserModel extends Equatable {
       location: json['location'] as String?,
     );
   }
+
 
   UserEntity toEntity() => UserEntity(
         id: id,
@@ -88,7 +90,7 @@ class UserModel extends Equatable {
         website: website,
         name: name,
         isGoogle: isGoogle,
-        skills: skills,
+        skills: skills.map((skill) => skill.toEntity()).toList(),
         accountType: accountType,
         isActive: isActive,
         dateJoined: dateJoined,

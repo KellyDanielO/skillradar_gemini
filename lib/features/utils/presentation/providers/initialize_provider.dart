@@ -1,14 +1,20 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/data_state/data_state.dart';
+import '../../../../core/entities/skill_entity.dart';
 import '../../../../core/helpers/functions.dart';
+import '../../../../core/providers/provider_variables.dart';
 import '../../../../core/widgets/error_widgets.dart';
 import '../../../../core/widgets/success_widgets.dart';
 import '../../../../core/entities/user_entity.dart';
 import '../../data/datasources/remote/remote_datasource.dart';
 import '../../data/repositories/initilize_repository_impl.dart';
 import '../../domain/repositories/initilize_repository.dart';
+import '../../domain/usecases/add_skills_usecase.dart';
+import '../../domain/usecases/get_skill_usecase.dart';
 import '../../domain/usecases/get_userdata_usecase.dart';
 
 final remoteDataSourceProvider = Provider<RemoteDataSource>((ref) {
@@ -23,15 +29,29 @@ final getUserDataProvider = Provider<GetUserData>((ref) {
   final repository = ref.read(authRepositoryProvider);
   return GetUserData(repository);
 });
+final getAllSkillsProvider = Provider<GetAllSkills>((ref) {
+  final repository = ref.read(authRepositoryProvider);
+  return GetAllSkills(repository);
+});
+final addSkillsProvider = Provider<AddSkills>((ref) {
+  final repository = ref.read(authRepositoryProvider);
+  return AddSkills(repository);
+});
 final initializeListenerProvider =
     StateNotifierProvider<InitializeStateNotifier, UserEntity?>((ref) {
   final getUserData = ref.read(getUserDataProvider);
-  return InitializeStateNotifier(getUserData);
+  final getAllSkills = ref.read(getAllSkillsProvider);
+  final addSkills = ref.read(addSkillsProvider);
+  return InitializeStateNotifier(getUserData, getAllSkills, addSkills);
 });
 
 class InitializeStateNotifier extends StateNotifier<UserEntity?> {
   final GetUserData _getUserData;
-  InitializeStateNotifier(this._getUserData) : super(null);
+  final GetAllSkills _getAllSkills;
+  final AddSkills _addSkills;
+  InitializeStateNotifier(
+      this._getUserData, this._getAllSkills, this._addSkills)
+      : super(null);
 
   Future<UserEntity?> getUserData({
     required String accessToken,
@@ -60,8 +80,63 @@ class InitializeStateNotifier extends StateNotifier<UserEntity?> {
         } else {
           AppHelpers().writeData('account_stage', 'done');
         }
-          successWidget(message: 'Welcome Back');
+        successWidget(message: 'Welcome Back');
         return userEntity;
+      },
+    );
+  }
+
+  Future<UserEntity?> addSkills({
+    required String skills,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    log(skills);
+    Either<DataState, UserEntity> response = await _addSkills.addSkills(
+        skills: skills, accessToken: accessToken, refreshToken: refreshToken);
+    return response.fold(
+      (DataState responseDataState) {
+        if (responseDataState is DataFailureOffline) {
+          errorWidget(message: 'you\'re offline');
+        }
+        if (responseDataState is DataFailure) {
+          if (responseDataState.status != 500) {
+            errorWidget(message: responseDataState.message);
+          } else {
+            errorWidget(message: 'unknown error');
+          }
+        }
+
+        return null;
+      },
+      (UserEntity userEntity) {
+        return userEntity;
+      },
+    );
+  }
+
+  Future<void> getAllSkills({
+    required WidgetRef ref,
+  }) async {
+    Either<DataState, List<SkillEntity>> response =
+        await _getAllSkills.getAllSkills();
+    return response.fold(
+      (DataState responseDataState) {
+        if (responseDataState is DataFailureOffline) {
+          errorWidget(message: 'you\'re offline');
+        }
+        if (responseDataState is DataFailure) {
+          if (responseDataState.status != 500) {
+            errorWidget(message: responseDataState.message);
+          } else {
+            errorWidget(message: 'unknown error');
+          }
+        }
+
+        return null;
+      },
+      (List<SkillEntity> skills) {
+        ref.read(gobalSkillsNotifierProvider.notifier).setSkill(skills);
       },
     );
   }

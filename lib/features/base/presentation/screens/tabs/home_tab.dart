@@ -1,4 +1,3 @@
-import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,7 +9,7 @@ import '../../../../../core/constants/fonts.dart';
 import '../../../../../core/constants/router.dart';
 import '../../../../../core/helpers/functions.dart';
 import '../../../../../core/providers/provider_variables.dart';
-import '../../widgets/profile_card.dart';
+import '../../../../../core/widgets/custom_btns.dart';
 
 class HomeTab extends ConsumerWidget {
   final double width;
@@ -122,27 +121,75 @@ class HomeTab extends ConsumerWidget {
           ),
         ),
         SizedBox(height: 30.h),
-        Flexible(
-          child: Swiper(
-            itemBuilder: (BuildContext context, int index) {
-              final element = profiles[index];
-              return ProfileCard(
-                name: element.name,
-                image: element.image,
-                location: element.location,
-                skill: element.skill,
-                bio: element.bio,
-                joined: element.joined,
-                action: element.action,
-              );
-            },
-            itemCount: profiles.length,
-            viewportFraction: 0.8,
-            scale: 0.9,
-            loop: false,
-          ),
-        ),
-        SizedBox(height: 30.h),
+        if (user.skills.isEmpty)
+          Flexible(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  AppAssets.notFound,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(height: 10.h),
+                Text(
+                  'No skill found!',
+                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                        color: AppColors.whiteColor,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: AppFonts.sansFont,
+                      ),
+                ),
+                SizedBox(height: 10.h),
+                SizedBox(
+                  width: width * .4,
+                  child: CustomBtn(
+                    text: 'Add Skills',
+                    textColor: AppColors.blackColor,
+                    btnColor: AppColors.primaryColor,
+                    fontSize: 14.sp,
+                    onPressed: () {
+                      AppHelpers.goNamed(
+                          routeName: AppRouter.addSkillsScreen, context: context);
+                    },
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                  ),
+                )
+              ],
+            ),
+          )
+        else
+          // Flexible(
+          //   child: Swiper(
+          //     itemCount: 10,
+          //     itemBuilder: (BuildContext context, int index) {
+          //       return FeedShimmer(width: width);
+          //     },
+          //     viewportFraction: 0.8,
+          //     scale: 0.9,
+          //     loop: false,
+          //   ),
+          // ),
+          // Flexible(
+          //   child: Swiper(
+          //     itemBuilder: (BuildContext context, int index) {
+          //       final element = profiles[index];
+          //       return ProfileCard(
+          //         name: element.name,
+          //         image: element.image,
+          //         location: element.location,
+          //         skill: element.skill,
+          //         bio: element.bio,
+          //         joined: element.joined,
+          //         action: element.action,
+          //       );
+          //     },
+          //     itemCount: profiles.length,
+          //     viewportFraction: 0.8,
+          //     scale: 0.9,
+          //     loop: false,
+          //   ),
+          // ),
+          SizedBox(height: 30.h),
         SizedBox(height: height * .12),
       ],
     );

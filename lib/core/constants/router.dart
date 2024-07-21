@@ -91,6 +91,7 @@ class AppRouter {
         },
       ),
       GoRoute(
+        name: loginScreen,
         path: loginScreen,
         pageBuilder: (context, state) {
           return CustomTransitionPage(
@@ -115,6 +116,7 @@ class AppRouter {
         },
       ),
       GoRoute(
+        name: registerScreen,
         path: registerScreen,
         pageBuilder: (context, state) {
           return CustomTransitionPage(
@@ -139,6 +141,7 @@ class AppRouter {
         },
       ),
       GoRoute(
+        name: setUpScreen,
         path: setUpScreen,
         pageBuilder: (context, state) {
           return CustomTransitionPage(
@@ -163,6 +166,7 @@ class AppRouter {
         },
       ),
       GoRoute(
+        name: successScreen,
         path: successScreen,
         pageBuilder: (context, state) {
           return CustomTransitionPage(
@@ -187,6 +191,7 @@ class AppRouter {
         },
       ),
       GoRoute(
+        name: profileScreen,
         path: profileScreen,
         pageBuilder: (context, state) {
           return CustomTransitionPage(
@@ -213,6 +218,7 @@ class AppRouter {
         },
       ),
       GoRoute(
+        name: notificationScreen,
         path: notificationScreen,
         pageBuilder: (context, state) {
           return CustomTransitionPage(
@@ -237,6 +243,7 @@ class AppRouter {
         },
       ),
       GoRoute(
+        name: addSkillsScreen,
         path: addSkillsScreen,
         pageBuilder: (context, state) {
           return CustomTransitionPage(
@@ -261,6 +268,7 @@ class AppRouter {
         },
       ),
       GoRoute(
+        name: editProfileScreen,
         path: editProfileScreen,
         pageBuilder: (context, state) {
           return CustomTransitionPage(
