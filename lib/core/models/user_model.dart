@@ -89,7 +89,7 @@ class UserModel extends Equatable {
         email: email,
         username: username,
         aboutMe: aboutMe,
-        avatar: aboutMe,
+        avatar: avatar,
         bio: bio,
         location: location,
         website: website,

@@ -9,7 +9,9 @@ import '../../../../core/constants/colors.dart';
 class ImageViewer extends StatelessWidget {
   final String image;
   final String heroTag;
-  const ImageViewer({super.key, required this.image, required this.heroTag});
+  final bool? isNetwork;
+  const ImageViewer(
+      {super.key, required this.image, required this.heroTag, this.isNetwork});
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +43,40 @@ class ImageViewer extends StatelessWidget {
             panEnabled: true, // Enable panning
             minScale: 0.5, // Minimum zoom scale
             maxScale: 4.0,
-            child: Image.asset(
-              image,
-              fit: BoxFit.contain,
-            ),
+            child: isNetwork != null && isNetwork == true
+                ? Image.network(
+                    image,
+                    fit: BoxFit.contain,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child;
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      }
+                    },
+                    errorBuilder: (BuildContext context, Object error,
+                        StackTrace? stackTrace) {
+                      return const Center(
+                        child: Icon(
+                          Icons.error,
+                          color: Colors.red,
+                        ),
+                      );
+                    },
+                  )
+                : Image.asset(
+                    image,
+                    fit: BoxFit.contain,
+                  ),
           ),
         ),
       ),

@@ -10,7 +10,11 @@ import 'package:photo_manager/photo_manager.dart';
 import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../../core/entities/user_entity.dart';
 import '../../../../../core/helpers/functions.dart';
+import '../../../../../core/providers/provider_variables.dart';
+import '../../../../../core/widgets/error_widgets.dart';
+import '../../providers/utility_provider.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -26,12 +30,15 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final TextEditingController _locationController = TextEditingController();
   bool fileSelected = false;
   File? selectedFile;
+  UserEntity? user;
+
+  // utilityListenerProvider
   @override
   void initState() {
-    _nameController.text = 'Ace';
-    _locationController.text = 'Port Harcourt, Nigeria';
-    _aboutController.text =
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+    user = ref.read(gobalUserNotifierProvider);
+    _nameController.text = user!.name;
+    _locationController.text = user!.location!;
+    _aboutController.text = user!.bio ?? '';
     super.initState();
   }
 
@@ -43,10 +50,37 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     super.dispose();
   }
 
+  void editProfile() async {
+    if (_locationController.text.isEmpty || _nameController.text.isEmpty) {
+      errorWidget(message: 'Name or Location can\'t be empty!');
+    } else {
+      String? accessToken = await AppHelpers().getData('access_token');
+      String? refreshToken = await AppHelpers().getData('refresh_token');
+      ref.read(editProfileLoadingNotifierProvider.notifier).change(true);
+      UserEntity? user = await ref
+          .read(utilityListenerProvider.notifier)
+          .editProfile(
+              bio: _aboutController.text,
+              name: _nameController.text,
+              location: _locationController.text,
+              accessToken: accessToken!,
+              refreshToken: refreshToken!,
+              profileImage: selectedFile);
+      if (user != null) {
+        ref.read(gobalUserNotifierProvider.notifier).setUser(user);
+        if (mounted) {
+          Navigator.pop(context);
+        }
+      }
+      ref.read(editProfileLoadingNotifierProvider.notifier).change(false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;
     double height = ScreenUtil().screenHeight;
+    final editProfileLoading = ref.watch(editProfileLoadingNotifierProvider);
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 50.w,
@@ -98,10 +132,45 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                               selectedFile!,
                               fit: BoxFit.cover,
                             )
-                          : Image.asset(
-                              AppAssets.avatar1,
-                              fit: BoxFit.cover,
-                            ),
+                          : user!.avatar != null
+                              ? Image.network(
+                                  user!.avatar!,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent? loadingProgress) {
+                                    if (loadingProgress == null) {
+                                      return child;
+                                    } else {
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          color: AppColors.primaryColor,
+                                          value: loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  errorBuilder: (BuildContext context,
+                                      Object error, StackTrace? stackTrace) {
+                                    return const Center(
+                                      child: Icon(
+                                        Icons.error,
+                                        color: Colors.red,
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Image.asset(
+                                  AppAssets.avatar1,
+                                  fit: BoxFit.cover,
+                                ),
                     ),
                     Positioned(
                       bottom: 3,
@@ -290,48 +359,57 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               ],
             ),
             SizedBox(height: 20.h),
-            InkWell(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                width: width - 40.w,
-                decoration: BoxDecoration(
-                  color: AppColors.whiteColor,
-                  borderRadius: BorderRadius.circular(30),
+            if (editProfileLoading)
+              const Align(
+                alignment: Alignment.center,
+                child: CupertinoActivityIndicator(
+                  color: AppColors.primaryColor,
                 ),
-                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    const Expanded(
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Save',
-                          style: TextStyle(
-                            color: AppColors.blackColor,
-                            fontWeight: FontWeight.bold,
+              )
+            else
+              GestureDetector(
+                onTap: editProfile,
+                child: Container(
+                  width: width - 40.w,
+                  decoration: BoxDecoration(
+                    color: AppColors.whiteColor,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const Expanded(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Save',
+                            style: TextStyle(
+                              color: AppColors.blackColor,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Container(
-                      width: 40.w,
-                      height: 40.w,
-                      decoration: BoxDecoration(
-                        color: AppColors.blackColor,
-                        borderRadius: BorderRadius.circular(50),
+                      Container(
+                        width: 40.w,
+                        height: 40.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.blackColor,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Icon(
+                          CupertinoIcons.check_mark_circled,
+                          color: AppColors.whiteColor,
+                          size: 18.sp,
+                        ),
                       ),
-                      child: Icon(
-                        CupertinoIcons.check_mark_circled,
-                        color: AppColors.whiteColor,
-                        size: 18.sp,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            )
+              )
           ],
         ),
       ),

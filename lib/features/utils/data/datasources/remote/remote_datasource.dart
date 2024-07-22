@@ -21,7 +21,7 @@ class RemoteDataSource {
         },
       );
       final statusCode = response.statusCode;
-        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
       if (response.statusCode == 200) {
         UserModel user = UserModel.fromJson(jsonResponse['data']);
         return Right(user);
@@ -53,14 +53,69 @@ class RemoteDataSource {
         },
       );
       final statusCode = response.statusCode;
-        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
       if (response.statusCode == 201) {
         UserModel user = UserModel.fromJson(jsonResponse['data']);
         return Right(user);
       } else if (statusCode == 401) {
         return Left(DataFailure(response.statusCode, 'unauthorized access'));
       } else {
-        return Left(DataFailure(response.statusCode,  jsonResponse['response']));
+        return Left(DataFailure(response.statusCode, jsonResponse['response']));
+      }
+    } catch (e) {
+      if (e.toString().contains('SocketException')) {
+        return Left(DataFailureOffline(700, 'network error'));
+      }
+      return Left(DataFailure(500, e.toString()));
+    }
+  }
+
+  Future<Either<DataState, UserModel>> editProfile({
+    required String bio,
+    required String name,
+    required String location,
+    File? profileImage,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    try {
+      final uri = Uri.parse('${AppConstants.baseUrl}/user/');
+
+      // Create a multipart request
+      final request = http.MultipartRequest('PUT', uri)
+        ..headers[HttpHeaders.authorizationHeader] = 'Bearer $accessToken'
+        ..fields['bio'] = bio
+        ..fields['name'] = name
+        ..fields['location'] = location;
+
+      // If a file is provided, add it to the request
+      if (profileImage != null) {
+        final fileStream = http.ByteStream(profileImage.openRead());
+        final length = await profileImage.length();
+        final multipartFile = http.MultipartFile(
+          'profile_picture',
+          fileStream,
+          length,
+          filename: profileImage.uri.pathSegments.last,
+        );
+        request.files.add(multipartFile);
+      }
+
+      // Send the request and get the response
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      final statusCode = response.statusCode;
+      final jsonResponse = json.decode(responseBody);
+      if (response.statusCode == 201 || statusCode == 200) {
+        UserModel user = UserModel.fromJson(jsonResponse['user']);
+        return Right(user);
+      } else if (statusCode == 401) {
+        return Left(DataFailure(response.statusCode, 'unauthorized access'));
+      } else if (statusCode == 404) {
+        return Left(DataFailure(response.statusCode, 'address not found'));
+      } else {
+        return Left(DataFailure(response.statusCode, jsonResponse));
       }
     } catch (e) {
       if (e.toString().contains('SocketException')) {
@@ -83,7 +138,7 @@ class RemoteDataSource {
       } else if (statusCode == 401) {
         return Left(DataFailure(response.statusCode, 'unauthorized access'));
       } else {
-        return Left(DataFailure(response.statusCode,  'error'));
+        return Left(DataFailure(response.statusCode, 'error'));
       }
     } catch (e) {
       if (e.toString().contains('SocketException')) {

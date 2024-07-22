@@ -150,15 +150,17 @@ class _MediaPickerState extends State<MediaPicker> {
         ),
         body: assetList.isEmpty
             ? const Center(
-                child: CupertinoActivityIndicator(),
+                child: CupertinoActivityIndicator(
+                  color: AppColors.primaryColor,
+                ),
               )
             : Padding(
-              padding:  EdgeInsets.symmetric(horizontal: 5.w),
-              child: GridView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 5.w),
+                child: GridView.builder(
                   physics: const BouncingScrollPhysics(),
                   itemCount: assetList.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3),
+                      crossAxisCount: 2),
                   itemBuilder: (context, index) {
                     AssetEntity assetEntity = assetList[index];
                     return Padding(
@@ -167,7 +169,7 @@ class _MediaPickerState extends State<MediaPicker> {
                     );
                   },
                 ),
-            ),
+              ),
       ),
     );
   }

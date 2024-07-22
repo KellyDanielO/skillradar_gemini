@@ -12,6 +12,7 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
 import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
+import '../../../../core/providers/provider_variables.dart';
 import '../../../utils/presentation/screens/image_viewer.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -52,6 +53,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     double width = ScreenUtil().screenWidth;
     double height = ScreenUtil().screenHeight;
     final transH = AppLocalizations.of(context)!;
+    final user = ref.watch(gobalUserNotifierProvider);
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 50.w,
@@ -68,7 +70,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
         title: Text(
-          '@Ace',
+          '@${user!.username}',
           style: TextStyle(
             color: AppColors.whiteColor,
             fontSize: 18.sp,
@@ -180,9 +182,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           child: GestureDetector(
                             onTap: () {
                               AppHelpers.moveTo(
-                                  const ImageViewer(
-                                    image: AppAssets.avatar1,
+                                   ImageViewer(
+                                    image: user.avatar ?? AppAssets.avatar1,
                                     heroTag: 'ace_profile',
+                                    isNetwork: user.avatar != null,
+
                                   ),
                                   context);
                             },
@@ -195,12 +199,59 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     color: AppColors.blackColor, width: 8),
                               ),
                               clipBehavior: Clip.antiAlias,
-                              child: const Hero(
+                              child: Hero(
                                 tag: 'ace_profile',
                                 transitionOnUserGestures: true,
-                                child: CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage(AppAssets.avatar1),
+                                child: Container(
+                                  width: 86.w,
+                                  height: 86.w,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.greyColor.withOpacity(.5),
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: user.avatar != null
+                                      ? Image.network(
+                                          user.avatar!,
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (BuildContext context,
+                                              Widget child,
+                                              ImageChunkEvent?
+                                                  loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            } else {
+                                              return Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      color: AppColors.primaryColor,
+                                                  value: loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                      : null,
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          errorBuilder: (BuildContext context,
+                                              Object error,
+                                              StackTrace? stackTrace) {
+                                            return const Center(
+                                              child: Icon(
+                                                Icons.error,
+                                                color: Colors.red,
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      : Image.asset(
+                                          AppAssets.avatar1,
+                                          fit: BoxFit.cover,
+                                        ),
                                 ),
                               ),
                             ),
@@ -213,7 +264,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   Column(
                     children: <Widget>[
                       Text(
-                        'Ace',
+                        user.name,
                         style:
                             Theme.of(context).textTheme.headlineSmall!.copyWith(
                                   fontWeight: FontWeight.w600,
@@ -234,7 +285,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           ConstrainedBox(
                             constraints: BoxConstraints(maxWidth: width * .6),
                             child: Text(
-                              'Port Harcourt, Nigeria',
+                              user.location!,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall!
@@ -359,9 +410,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 ),
                       ),
                       SizedBox(height: 10.h),
-                      const Text(
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                        style: TextStyle(
+                      Text(
+                        user.bio ?? '',
+                        style: const TextStyle(
                           color: AppColors.greyColor,
                         ),
                       ),
@@ -373,7 +424,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
             Positioned(
               bottom: 10,
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () => widget.me
                     ? AppHelpers.goNamed(
                         routeName: AppRouter.editProfileScreen,
