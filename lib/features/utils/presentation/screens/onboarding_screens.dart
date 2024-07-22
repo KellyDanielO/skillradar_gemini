@@ -42,6 +42,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       setState(() {
         _currentIndex = (_currentIndex + 1) % _imageUrls.length;
       });
+      // timer.cancel();
     });
   }
 
