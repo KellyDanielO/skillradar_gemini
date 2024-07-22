@@ -107,7 +107,7 @@ class _SelectUsernameAndLocationState
                       });
                     },
                     decoration: InputDecoration(
-                      hintText: 'Enter email address',
+                      hintText: 'Enter username',
                       hintStyle: TextStyle(
                         color: AppColors.whiteColor.withOpacity(.7),
                       ),

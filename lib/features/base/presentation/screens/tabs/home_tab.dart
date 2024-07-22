@@ -153,6 +153,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         else
           feedLoading
               ? Flexible(
+                  key: const ValueKey(1),
                   child: Swiper(
                     itemCount: 10,
                     itemBuilder: (BuildContext context, int index) {
@@ -164,6 +165,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                   ),
                 )
               : Flexible(
+                  key: const ValueKey(2),
                   child: Swiper(
                     itemBuilder: (BuildContext context, int index) {
                       final element = feedUsers[index];
