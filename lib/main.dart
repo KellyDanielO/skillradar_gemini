@@ -14,7 +14,6 @@ import 'core/constants/colors.dart';
 import 'core/constants/router.dart';
 import 'core/constants/sizes.dart';
 import 'core/providers/provider_variables.dart';
-import 'features/utils/presentation/screens/splash_screen.dart';
 import 'l10n/l10n.dart';
 import 'firebase_options.dart';
 

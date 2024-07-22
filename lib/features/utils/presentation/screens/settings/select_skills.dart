@@ -168,7 +168,7 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
                       List.generate(selectedSkills.reversed.length, (index) {
                     return Container(
                       margin: EdgeInsets.only(right: 10.w),
-                      child: InkWell(
+                      child: GestureDetector(
                         onTap: () {
                           setState(() {
                             fetchedSkills.add(selectedSkills[index]);
@@ -236,7 +236,7 @@ class _SelectSkillsScreenState extends ConsumerState<SelectSkillsScreen> {
               spacing: 8.0, // Gap between adjacent items
               runSpacing: 4.0, // Gap between lines
               children: List.generate(_filteredItems.length, (index) {
-                return InkWell(
+                return GestureDetector(
                   onTap: () {
                     if (selectedSkills.length > 4) {
                       errorWidget(message: 'Skill limit exceeded');

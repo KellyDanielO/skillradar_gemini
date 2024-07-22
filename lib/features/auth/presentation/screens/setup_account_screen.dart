@@ -68,7 +68,7 @@ class _SetupAccountSuccessScreenState
                 fontSize: 14.sp,
                 onPressed: () {
                   AppHelpers.goReplacedNamed(
-                      routeName: AppRouter.baseScreen, context: context);
+                      routeName: AppRouter.splashScreen, context: context);
                 },
               ),
             ),

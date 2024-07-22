@@ -31,8 +31,12 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       String? accessToken = await AppHelpers().getData('access_token');
       String? refreshToken = await AppHelpers().getData('refresh_token');
       ref.read(feedLoadingNotifierProvider.notifier).change(true);
-      ref.read(baseListenerProvider.notifier).getFeedData(
-          ref: ref, accessToken: accessToken!, refreshToken: refreshToken!);
+
+      final globalUser = ref.read(gobalUserNotifierProvider);
+      if (globalUser!.skills.isNotEmpty) {
+        ref.read(baseListenerProvider.notifier).getFeedData(
+            ref: ref, accessToken: accessToken!, refreshToken: refreshToken!);
+      }
     });
     super.initState();
   }
@@ -149,6 +153,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         else
           feedLoading
               ? Flexible(
+                  key: const ValueKey(1),
                   child: Swiper(
                     itemCount: 10,
                     itemBuilder: (BuildContext context, int index) {
@@ -160,6 +165,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                   ),
                 )
               : Flexible(
+                  key: const ValueKey(2),
                   child: Swiper(
                     itemBuilder: (BuildContext context, int index) {
                       final element = feedUsers[index];
