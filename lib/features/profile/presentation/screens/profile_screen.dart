@@ -411,7 +411,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       SizedBox(height: 10.h),
                       Text(
-                        user.aboutMe ?? '',
+                        user.bio ?? '',
                         style: const TextStyle(
                           color: AppColors.greyColor,
                         ),
