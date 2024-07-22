@@ -44,7 +44,7 @@ class _SelectUsernameAndLocationState
       if (data) {
         ref.read(accountSetUpLoadingNotifierProvider.notifier).change(false);
         if (mounted) {
-          AppHelpers.goReplacedNamed(routeName: AppRouter.setUpScreen, context: context);
+          AppHelpers.goReplacedNamed(routeName: AppRouter.successScreen, context: context);
         }
       } else {
         ref.read(accountSetUpLoadingNotifierProvider.notifier).change(false);
