@@ -21,14 +21,14 @@ class RemoteDataSource {
         },
       );
       final statusCode = response.statusCode;
-      if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      if (response.statusCode == 200) {
         UserModel user = UserModel.fromJson(jsonResponse['data']);
         return Right(user);
       } else if (statusCode == 401) {
         return Left(DataFailure(response.statusCode, 'unauthorized access'));
       } else {
-        return Left(DataFailure(response.statusCode, response.body));
+        return Left(DataFailure(response.statusCode, jsonResponse['response']));
       }
     } catch (e) {
       if (e.toString().contains('SocketException')) {
@@ -53,14 +53,14 @@ class RemoteDataSource {
         },
       );
       final statusCode = response.statusCode;
-      if (response.statusCode == 201) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      if (response.statusCode == 201) {
         UserModel user = UserModel.fromJson(jsonResponse['data']);
         return Right(user);
       } else if (statusCode == 401) {
         return Left(DataFailure(response.statusCode, 'unauthorized access'));
       } else {
-        return Left(DataFailure(response.statusCode, response.body));
+        return Left(DataFailure(response.statusCode,  jsonResponse['response']));
       }
     } catch (e) {
       if (e.toString().contains('SocketException')) {
@@ -83,7 +83,7 @@ class RemoteDataSource {
       } else if (statusCode == 401) {
         return Left(DataFailure(response.statusCode, 'unauthorized access'));
       } else {
-        return Left(DataFailure(response.statusCode, response.body));
+        return Left(DataFailure(response.statusCode,  'error'));
       }
     } catch (e) {
       if (e.toString().contains('SocketException')) {

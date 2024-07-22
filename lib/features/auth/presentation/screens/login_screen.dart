@@ -58,7 +58,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       } else if (data == 'done') {
         ref.read(accountCreatingLoadingNotifierProvider.notifier).change(false);
         if (mounted) {
-          AppHelpers.goReplacedNamed(routeName: AppRouter.baseScreen, context: context);
+          AppHelpers.goReplacedNamed(
+              routeName: AppRouter.splashScreen, context: context);
         }
       } else {
         _authController.signOutFromGoogle();
@@ -97,7 +98,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 .change(false);
             if (mounted) {
               AppHelpers.goReplacedNamed(
-                  routeName: AppRouter.baseScreen, context: context);
+                  routeName: AppRouter.splashScreen, context: context);
             }
           } else {
             _authController.signOutFromGoogle();

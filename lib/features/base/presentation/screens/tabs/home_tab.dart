@@ -31,8 +31,12 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       String? accessToken = await AppHelpers().getData('access_token');
       String? refreshToken = await AppHelpers().getData('refresh_token');
       ref.read(feedLoadingNotifierProvider.notifier).change(true);
-      ref.read(baseListenerProvider.notifier).getFeedData(
-          ref: ref, accessToken: accessToken!, refreshToken: refreshToken!);
+
+      final globalUser = ref.read(gobalUserNotifierProvider);
+      if (globalUser!.skills.isNotEmpty) {
+        ref.read(baseListenerProvider.notifier).getFeedData(
+            ref: ref, accessToken: accessToken!, refreshToken: refreshToken!);
+      }
     });
     super.initState();
   }

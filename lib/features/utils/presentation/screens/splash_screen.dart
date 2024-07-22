@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skillradar/core/helpers/extensions.dart';
 
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
@@ -32,7 +33,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     String? accessToken = await AppHelpers().getData('access_token');
     String? refreshToken = await AppHelpers().getData('refresh_token');
     // print(accessToken);
-    if (accessToken == null || refreshToken == null) {
+    if (accessToken.isNull || refreshToken.isNull) {
       if (mounted) {
         AppHelpers.goReplacedNamed(
             routeName: AppRouter.welcomeScreen, context: context);
@@ -40,7 +41,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     } else {
       ref
           .read(initializeListenerProvider.notifier)
-          .getUserData(accessToken: accessToken, refreshToken: refreshToken)
+          .getUserData(accessToken: accessToken!, refreshToken: refreshToken!)
           .then(
         (UserEntity? user) async {
           String? accountStage = await AppHelpers().getData('account_stage');

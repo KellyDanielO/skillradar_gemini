@@ -8,6 +8,8 @@ import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
+import '../../../../core/providers/provider_variables.dart';
+import '../../../../core/widgets/error_widgets.dart';
 import '../provider/providers.dart';
 import 'tabs/explore_tab.dart';
 import 'tabs/home_tab.dart';
@@ -46,8 +48,16 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
           String? accessToken = await AppHelpers().getData('access_token');
           String? refreshToken = await AppHelpers().getData('refresh_token');
           ref.read(feedLoadingNotifierProvider.notifier).change(true);
-          ref.read(baseListenerProvider.notifier).getFeedData(
-              ref: ref, accessToken: accessToken!, refreshToken: refreshToken!);
+
+          final globalUser = ref.read(gobalUserNotifierProvider);
+          if (globalUser!.skills.isNotEmpty) {
+            ref.read(baseListenerProvider.notifier).getFeedData(
+                ref: ref,
+                accessToken: accessToken!,
+                refreshToken: refreshToken!);
+          } else {
+            errorWidget(message: 'Please add a skill');
+          }
         },
       ),
       BottomTabs(
@@ -126,7 +136,7 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
             color: AppColors.whiteColor,
             borderRadius: BorderRadius.circular(100),
           ),
-          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+          padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.w),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(
@@ -139,11 +149,11 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
                     child: child,
                   );
                 },
-                child: IconButton(
+                child: InkWell(
                   key: ValueKey<int>(_selectedIndex),
-                  onPressed: bottomTabs[index].action,
-                  
-                  icon: SvgPicture.asset(
+                  onTap: bottomTabs[index].action,
+                  onDoubleTap: bottomTabs[index].doubleTap,
+                  child: SvgPicture.asset(
                     _selectedIndex == index
                         ? bottomTabs[index].activeIcon
                         : bottomTabs[index].defaultIcon,

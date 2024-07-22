@@ -31,7 +31,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   void initState() {
     super.initState();
     AppHelpers.changeBottomBarColor();
-    _startImageTimer();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _startImageTimer();
+    });
   }
 
   void _startImageTimer() {
@@ -40,6 +43,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         _currentIndex = (_currentIndex + 1) % _imageUrls.length;
       });
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _preloadImages();
+  }
+
+  void _preloadImages() async {
+    for (String imageUrl in _imageUrls) {
+      await precacheImage(AssetImage(imageUrl), context);
+    }
   }
 
   @override
