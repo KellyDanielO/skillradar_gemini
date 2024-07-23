@@ -469,7 +469,67 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                 ),
                 contentPadding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
+                        title: Text(
+                          'Logout',
+                          style: TextStyle(
+                            fontSize: width * .01 + 18,
+                            fontFamily: AppFonts.actionFont,
+                            color:
+                                Theme.of(context).textTheme.bodyMedium!.color,
+                          ),
+                        ),
+                        content: Text(
+                          'Are you sure, you wan to logout!',
+                          style: TextStyle(
+                            fontSize: width * .01 + 16,
+                            color:
+                                Theme.of(context).textTheme.bodyMedium!.color,
+                          ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .color,
+                                fontSize: width * .01 + 14,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              AppHelpers().logout().then((data) {
+                                AppHelpers.goReplacedNamed(
+                                    routeName: AppRouter.splashScreen,
+                                    context: context);
+                              });
+                            },
+                            child: Text(
+                              'Logout',
+                              style: TextStyle(
+                                color: AppColors.redColor,
+                                fontSize: width * .01 + 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),

@@ -5,6 +5,7 @@ class AppAssets{
   static const String facebook = 'assets/images/facebook.png';
   static const String google = 'assets/images/google.png';
   static const String notFound = 'assets/images/not-found.png';
+  static const String notInternet = 'assets/images/no-internet.png';
   // Avatars
   // ====================
   static const String avatar1 = 'assets/images/avatar-1.jpeg';

@@ -21,6 +21,8 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   int _currentIndex = 0;
+  Timer? _timer;
+
   final List<String> _imageUrls = [
     'assets/images/onboarding1.jpg',
     'assets/images/onboarding2.jpg',
@@ -32,13 +34,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     super.initState();
     AppHelpers.changeBottomBarColor();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _startImageTimer();
-    });
+    _startImageTimer();
   }
 
   void _startImageTimer() {
-    Timer.periodic(const Duration(seconds: 10), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 10), (Timer timer) {
       setState(() {
         _currentIndex = (_currentIndex + 1) % _imageUrls.length;
       });
@@ -56,6 +56,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     for (String imageUrl in _imageUrls) {
       await precacheImage(AssetImage(imageUrl), context);
     }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override

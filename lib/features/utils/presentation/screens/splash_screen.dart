@@ -44,27 +44,32 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           .getUserData(accessToken: accessToken!, refreshToken: refreshToken!)
           .then(
         (UserEntity? user) async {
-          String? accountStage = await AppHelpers().getData('account_stage');
-          ref.read(gobalUserNotifierProvider.notifier).setUser(user);
-          await ref
-              .read(initializeListenerProvider.notifier)
-              .getAllSkills(ref: ref);
-          if (mounted) {
-            if (accountStage == null) {
-              AppHelpers.goReplacedNamed(
-                  routeName: AppRouter.welcomeScreen, context: context);
-            } else {
-              if (accountStage == 'set-up') {
-                AppHelpers.goReplacedNamed(
-                    routeName: AppRouter.setUpScreen, context: context);
-              } else if (accountStage == 'done') {
-                AppHelpers.goReplacedNamed(
-                    routeName: AppRouter.baseScreen, context: context);
-              } else {
+          if (user != null) {
+            String? accountStage = await AppHelpers().getData('account_stage');
+            ref.read(gobalUserNotifierProvider.notifier).setUser(user);
+            await ref
+                .read(initializeListenerProvider.notifier)
+                .getAllSkills(ref: ref);
+            if (mounted) {
+              if (accountStage == null) {
                 AppHelpers.goReplacedNamed(
                     routeName: AppRouter.welcomeScreen, context: context);
+              } else {
+                if (accountStage == 'set-up') {
+                  AppHelpers.goReplacedNamed(
+                      routeName: AppRouter.setUpScreen, context: context);
+                } else if (accountStage == 'done') {
+                  AppHelpers.goReplacedNamed(
+                      routeName: AppRouter.baseScreen, context: context);
+                } else {
+                  AppHelpers.goReplacedNamed(
+                      routeName: AppRouter.welcomeScreen, context: context);
+                }
               }
             }
+          } else {
+            AppHelpers.goReplacedNamed(
+                routeName: AppRouter.noInternetScreen, context: context);
           }
         },
       );

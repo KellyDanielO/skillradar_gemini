@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../entities/user_entity.dart';
 import '../../features/auth/data/models/token_model.dart';
+import 'featured_media_model.dart';
 import 'skill_model.dart';
 
 // ignore: must_be_immutable
@@ -21,6 +22,12 @@ class UserModel extends Equatable {
   final DateTime dateJoined;
   final String? location;
   TokenModel? tokens;
+  final String? coverPhoto;
+  final List<FeaturedMediaModel> featured;
+  final String? phoneNumber;
+  final bool showEmail;
+  final bool showProfile;
+  final bool showPhoneNumber;
 
   UserModel({
     required this.id,
@@ -38,6 +45,12 @@ class UserModel extends Equatable {
     required this.isActive,
     required this.dateJoined,
     this.location,
+    this.coverPhoto,
+    required this.featured,
+    this.phoneNumber,
+    required this.showEmail,
+    required this.showProfile,
+    required this.showPhoneNumber,
   });
 
   @override
@@ -57,9 +70,14 @@ class UserModel extends Equatable {
         dateJoined,
         location,
         tokens,
+        featured,
+        showEmail,
+        showPhoneNumber,
+        showProfile
       ];
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    var featuredList = json['featured'] as List;
     return UserModel(
       id: json['id'] as String,
       email: json['email'] as String,
@@ -77,6 +95,13 @@ class UserModel extends Equatable {
       isActive: json['is_active'] as bool,
       dateJoined: DateTime.parse(json['date_joined'] as String),
       location: json['location'] as String?,
+      coverPhoto: json['cover_photo'],
+      featured:
+          featuredList.map((i) => FeaturedMediaModel.fromJson(i)).toList(),
+      phoneNumber: json['phone_number'],
+      showEmail: json['show_email'],
+      showProfile: json['show_profile'],
+      showPhoneNumber: json['show_phone_number'],
     );
   }
 
@@ -100,5 +125,11 @@ class UserModel extends Equatable {
         isActive: isActive,
         dateJoined: dateJoined,
         tokens: tokens?.toEntity(),
+        featured: featured.map((feature) => feature.toEntity()).toList(),
+        showEmail: showEmail,
+        showPhoneNumber: showPhoneNumber,
+        showProfile: showProfile,
+        coverPhoto: coverPhoto,
+        phoneNumber: phoneNumber,
       );
 }

@@ -29,7 +29,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
-  bool obSecure = false;
+  bool obSecure = true;
   @override
   void initState() {
     AppHelpers.changeBottomBarColor();

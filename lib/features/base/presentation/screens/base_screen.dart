@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +11,8 @@ import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/providers/provider_variables.dart';
 import '../../../../core/widgets/error_widgets.dart';
+import '../constants/enums.dart';
+import '../controllers/base_controllers.dart';
 import '../provider/providers.dart';
 import 'tabs/explore_tab.dart';
 import 'tabs/home_tab.dart';
@@ -28,12 +31,28 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
   @override
   void initState() {
     AppHelpers.changeBottomBarColor();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final globalUser = ref.read(gobalUserNotifierProvider);
+      if (globalUser!.skills.isEmpty) {
+        ref.read(feedStateNotifierProvider.notifier).change(FeedState.noSkill);
+      } else {
+        BaseController().fetchFeedData(ref: ref);
+        if (globalUser.avatar != null) {
+          AppHelpers().precacheNetworkImages(context, [globalUser.avatar!]);
+        }
+        if (globalUser.coverPhoto != null) {
+          AppHelpers().precacheNetworkImages(context, [globalUser.coverPhoto!]);
+        }
+      }
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     double height = ScreenUtil().screenHeight;
+    ref.watch(feedStateNotifierProvider);
     double width = ScreenUtil().screenWidth;
     List<BottomTabs> bottomTabs = [
       BottomTabs(
@@ -45,16 +64,9 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
               curve: Curves.easeInOut);
         },
         doubleTap: () async {
-          String? accessToken = await AppHelpers().getData('access_token');
-          String? refreshToken = await AppHelpers().getData('refresh_token');
-          ref.read(feedLoadingNotifierProvider.notifier).change(true);
-
           final globalUser = ref.read(gobalUserNotifierProvider);
           if (globalUser!.skills.isNotEmpty) {
-            ref.read(baseListenerProvider.notifier).getFeedData(
-                ref: ref,
-                accessToken: accessToken!,
-                refreshToken: refreshToken!);
+            BaseController().fetchFeedData(ref: ref);
           } else {
             errorWidget(message: 'Please add a skill');
           }
@@ -124,6 +136,7 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
   }
 
   Positioned bottomNavigationArea(double width, List<BottomTabs> bottomTabs) {
+    final feedState = ref.watch(feedStateNotifierProvider);
     return Positioned(
       left: 0,
       right: 0,
@@ -153,19 +166,23 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
                   key: ValueKey<int>(_selectedIndex),
                   onTap: bottomTabs[index].action,
                   onDoubleTap: bottomTabs[index].doubleTap,
-                  child: SvgPicture.asset(
-                    _selectedIndex == index
-                        ? bottomTabs[index].activeIcon
-                        : bottomTabs[index].defaultIcon,
-                    colorFilter: ColorFilter.mode(
-                      _selectedIndex == index
-                          ? AppColors.blackColor
-                          : AppColors.blackColor.withOpacity(.6),
-                      BlendMode.srcIn,
-                    ),
-                    width: 22.w,
-                    height: 22.h,
-                  ),
+                  child: index == 0 && feedState == FeedState.loading
+                      ? const CupertinoActivityIndicator(
+                          color: AppColors.primaryColor,
+                        )
+                      : SvgPicture.asset(
+                          _selectedIndex == index
+                              ? bottomTabs[index].activeIcon
+                              : bottomTabs[index].defaultIcon,
+                          colorFilter: ColorFilter.mode(
+                            _selectedIndex == index
+                                ? AppColors.blackColor
+                                : AppColors.blackColor.withOpacity(.6),
+                            BlendMode.srcIn,
+                          ),
+                          width: 22.w,
+                          height: 22.h,
+                        ),
                 ),
               ),
             ),

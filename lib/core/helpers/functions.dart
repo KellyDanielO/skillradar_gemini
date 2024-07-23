@@ -128,6 +128,16 @@ class AppHelpers {
     );
   }
 
+  Future<void> deleteAllData() async {
+    await _secureStorage.deleteAll(
+      aOptions: _getAndroidOptions(),
+    );
+  }
+
+  Future<void> logout() async {
+    await deleteAllData();
+  }
+
   Future<String?> getData(
     String key,
   ) async {
@@ -249,6 +259,12 @@ class AppHelpers {
     } else {
       final years = (difference.inDays / 365).floor();
       return '$years ${years == 1 ? 'year' : 'years'} ago';
+    }
+  }
+
+  void precacheNetworkImages(BuildContext context, List<String> imageUrls) {
+    for (String imageUrl in imageUrls) {
+      precacheImage(NetworkImage(imageUrl), context);
     }
   }
 }
