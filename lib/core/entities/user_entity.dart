@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../features/auth/domain/entities/token_entity.dart';
+import 'featured_media_entity.dart';
 import 'skill_entity.dart';
 
 class UserEntity extends Equatable {
@@ -19,6 +20,12 @@ class UserEntity extends Equatable {
   final DateTime dateJoined;
   final String? location;
   final TokenEntity? tokens;
+  final String? coverPhoto;
+  final List<FeaturedMediaEntity> featured;
+  final String? phoneNumber;
+  final bool showEmail;
+  final bool showProfile;
+  final bool showPhoneNumber;
 
   const UserEntity({
     required this.id,
@@ -36,6 +43,12 @@ class UserEntity extends Equatable {
     required this.isActive,
     required this.dateJoined,
     this.location,
+    this.coverPhoto,
+    required this.featured,
+    this.phoneNumber,
+    required this.showEmail,
+    required this.showProfile,
+    required this.showPhoneNumber,
   });
 
   @override

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +15,7 @@ import '../../../../core/constants/fonts.dart';
 import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/providers/provider_variables.dart';
+import '../../../utils/presentation/providers/utility_provider.dart';
 import '../../../utils/presentation/screens/image_viewer.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -24,7 +27,8 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  List<String> userSkills = ['Photograher', 'Fashionista'];
+  bool fileSelected = false;
+  File? selectedFile;
   void _showBottomSheet(BuildContext context, double width, double height) {
     showModalBottomSheet(
       context: context,
@@ -46,6 +50,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   void initState() {
     AppHelpers.changeBottomBarColor();
     super.initState();
+  }
+
+  void uploadCoverPhoto() async {
+    if (widget.me) {
+      final data = await AppHelpers().pickAssets(
+          maxCount: 1, requestType: RequestType.image, context: context);
+      if (data != null) {
+        final file = await data.first.file;
+        setState(() {
+          fileSelected = true;
+          selectedFile = file;
+        });
+        String? accessToken = await AppHelpers().getData('access_token');
+        String? refreshToken = await AppHelpers().getData('refresh_token');
+        final user =
+            await ref.read(utilityListenerProvider.notifier).uploadCoverPhoto(
+                  coverPhoto: selectedFile!,
+                  accessToken: accessToken!,
+                  refreshToken: refreshToken!,
+                );
+        ref.read(gobalUserNotifierProvider.notifier).setUser(user);
+      }
+    }
   }
 
   @override
@@ -118,9 +145,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           child: GestureDetector(
                             onTap: () {
                               AppHelpers.moveTo(
-                                  const ImageViewer(
-                                    image: AppAssets.background2,
+                                  ImageViewer(
                                     heroTag: 'ace_background',
+                                    image: user.coverPhoto ??
+                                        AppAssets.background2,
+                                    isNetwork: user.coverPhoto != null,
                                   ),
                                   context);
                             },
@@ -132,10 +161,56 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 child: Hero(
                                   tag: 'ace_background',
                                   transitionOnUserGestures: true,
-                                  child: Image.asset(
-                                    AppAssets.background2,
-                                    fit: BoxFit.cover,
-                                  ),
+                                  child: fileSelected
+                                      ? Image.file(
+                                          selectedFile!,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : user.coverPhoto != null
+                                          ? Image.network(
+                                              user.coverPhoto!,
+                                              fit: BoxFit.cover,
+                                              loadingBuilder:
+                                                  (BuildContext context,
+                                                      Widget child,
+                                                      ImageChunkEvent?
+                                                          loadingProgress) {
+                                                if (loadingProgress == null) {
+                                                  return child;
+                                                } else {
+                                                  return Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      color: AppColors
+                                                          .primaryColor,
+                                                      value: loadingProgress
+                                                                  .expectedTotalBytes !=
+                                                              null
+                                                          ? loadingProgress
+                                                                  .cumulativeBytesLoaded /
+                                                              loadingProgress
+                                                                  .expectedTotalBytes!
+                                                          : null,
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                              errorBuilder:
+                                                  (BuildContext context,
+                                                      Object error,
+                                                      StackTrace? stackTrace) {
+                                                return const Center(
+                                                  child: Icon(
+                                                    Icons.error,
+                                                    color: Colors.red,
+                                                  ),
+                                                );
+                                              },
+                                            )
+                                          : Image.asset(
+                                              AppAssets.background1,
+                                              fit: BoxFit.cover,
+                                            ),
                                 ),
                               ),
                             ),
@@ -151,14 +226,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                             margin: EdgeInsets.only(right: 10.w),
                             child: IconButton(
-                              onPressed: () async {
-                                if (widget.me) {
-                                  final data = await AppHelpers().pickAssets(
-                                      maxCount: 5,
-                                      requestType: RequestType.image,
-                                      context: context);
-                                }
-                              },
+                              onPressed: uploadCoverPhoto,
                               icon: widget.me
                                   ? Icon(
                                       Icons.change_circle_outlined,
@@ -182,11 +250,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           child: GestureDetector(
                             onTap: () {
                               AppHelpers.moveTo(
-                                   ImageViewer(
+                                  ImageViewer(
                                     image: user.avatar ?? AppAssets.avatar1,
                                     heroTag: 'ace_profile',
                                     isNetwork: user.avatar != null,
-
                                   ),
                                   context);
                             },
@@ -224,7 +291,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               return Center(
                                                 child:
                                                     CircularProgressIndicator(
-                                                      color: AppColors.primaryColor,
+                                                  color: AppColors.primaryColor,
                                                   value: loadingProgress
                                                               .expectedTotalBytes !=
                                                           null
@@ -345,57 +412,62 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ],
                   ),
                   SizedBox(height: 10.h),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'Featured Images',
-                        style:
-                            Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: AppFonts.sansFont,
-                                  color: AppColors.whiteColor,
-                                ),
-                      ),
-                      SizedBox(height: 10.h),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children:
-                              List.generate(backgroundAvatar.length, (index) {
-                            return Container(
-                              margin: EdgeInsets.only(right: 10.w),
-                              child: InkWell(
-                                onTap: () {
-                                  AppHelpers.moveTo(
-                                      ImageViewer(
-                                        image: backgroundAvatar[index],
-                                        heroTag: backgroundAvatar[index],
-                                      ),
-                                      context);
-                                },
-                                child: Container(
-                                  width: width * .75,
-                                  height: height * .15,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: Hero(
-                                    tag: backgroundAvatar[index],
-                                    transitionOnUserGestures: true,
-                                    child: Image.asset(
-                                      backgroundAvatar[index],
-                                      fit: BoxFit.cover,
-                                    ),
+                  user.featured.isEmpty
+                      ? const SizedBox.shrink()
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Featured Images',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall!
+                                  .copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: AppFonts.sansFont,
+                                    color: AppColors.whiteColor,
                                   ),
-                                ),
+                            ),
+                            SizedBox(height: 10.h),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: List.generate(backgroundAvatar.length,
+                                    (index) {
+                                  return Container(
+                                    margin: EdgeInsets.only(right: 10.w),
+                                    child: InkWell(
+                                      onTap: () {
+                                        AppHelpers.moveTo(
+                                            ImageViewer(
+                                              image: backgroundAvatar[index],
+                                              heroTag: backgroundAvatar[index],
+                                            ),
+                                            context);
+                                      },
+                                      child: Container(
+                                        width: width * .75,
+                                        height: height * .15,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: Hero(
+                                          tag: backgroundAvatar[index],
+                                          transitionOnUserGestures: true,
+                                          child: Image.asset(
+                                            backgroundAvatar[index],
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }),
                               ),
-                            );
-                          }),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
                   SizedBox(height: 10.h),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -411,7 +483,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       SizedBox(height: 10.h),
                       Text(
-                        user.bio ?? '',
+                        user.bio ?? 'No bio',
                         style: const TextStyle(
                           color: AppColors.greyColor,
                         ),

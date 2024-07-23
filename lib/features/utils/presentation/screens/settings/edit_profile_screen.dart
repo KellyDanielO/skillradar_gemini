@@ -10,6 +10,7 @@ import 'package:photo_manager/photo_manager.dart';
 import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../../core/constants/router.dart';
 import '../../../../../core/entities/user_entity.dart';
 import '../../../../../core/helpers/functions.dart';
 import '../../../../../core/providers/provider_variables.dart';
@@ -347,27 +348,27 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         width: 2,
                       ),
                     ),
-                      suffixIcon: locating
-                          ? const CupertinoActivityIndicator(
-                              color: AppColors.primaryColor,
-                            )
-                          : IconButton(
-                              onPressed: () async {
-                                setState(() {
-                                  locating = true;
-                                });
-                                final location =
-                                    await AppHelpers.getCompleteAddress();
-                                setState(() {
-                                  _locationController.text = location;
-                                  locating = false;
-                                });
-                              },
-                              icon: Icon(
-                                Icons.location_on_outlined,
-                                color: AppColors.whiteColor.withOpacity(.7),
-                              ),
+                    suffixIcon: locating
+                        ? const CupertinoActivityIndicator(
+                            color: AppColors.primaryColor,
+                          )
+                        : IconButton(
+                            onPressed: () async {
+                              setState(() {
+                                locating = true;
+                              });
+                              final location =
+                                  await AppHelpers.getCompleteAddress();
+                              setState(() {
+                                _locationController.text = location;
+                                locating = false;
+                              });
+                            },
+                            icon: Icon(
+                              Icons.location_on_outlined,
+                              color: AppColors.whiteColor.withOpacity(.7),
                             ),
+                          ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 15),
                   ),
                 ),
@@ -424,7 +425,73 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     ],
                   ),
                 ),
-              )
+              ),
+            SizedBox(height: 20.h),
+            Text(
+              'You can also',
+              style: TextStyle(
+                color: AppColors.whiteColor,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                fontFamily: AppFonts.actionFont,
+              ),
+            ),
+            SizedBox(height: 5.h),
+            Container(
+              width: width,
+              height: 1.h,
+              decoration: const BoxDecoration(
+                color: AppColors.greyColor,
+              ),
+            ),
+            ListTile(
+              title: Text(
+                'Add skills',
+                style: TextStyle(
+                  color: AppColors.primaryColor,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: AppFonts.sansFont,
+                ),
+              ),
+              minVerticalPadding: 5.h,
+              minTileHeight: 5.h,
+              contentPadding: const EdgeInsets.all(0),
+              onTap: () {
+                AppHelpers.goNamed(
+                    routeName: AppRouter.addSkillsScreen, context: context);
+              },
+            ),
+            ListTile(
+              title: Text(
+                'Connect Social Accounts',
+                style: TextStyle(
+                  color: AppColors.primaryColor,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: AppFonts.sansFont,
+                ),
+              ),
+              minVerticalPadding: 5.h,
+              minTileHeight: 5.h,
+              contentPadding: const EdgeInsets.all(0),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text(
+                'Add Featured Images',
+                style: TextStyle(
+                  color: AppColors.primaryColor,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: AppFonts.sansFont,
+                ),
+              ),
+              minVerticalPadding: 5.h,
+              minTileHeight: 5.h,
+              contentPadding: const EdgeInsets.all(0),
+              onTap: () {},
+            ),
           ],
         ),
       ),

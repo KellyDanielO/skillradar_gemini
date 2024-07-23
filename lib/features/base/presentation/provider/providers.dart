@@ -9,6 +9,7 @@ import '../../data/datasources/remote/remote_datasource.dart';
 import '../../data/repositories/base_repository_impl.dart';
 import '../../domain/repositories/base_repository.dart';
 import '../../domain/usecases/get_feed_data_usecase.dart';
+import '../constants/enums.dart';
 
 class IntNotifier extends StateNotifier<int> {
   IntNotifier() : super(0);
@@ -18,13 +19,20 @@ class IntNotifier extends StateNotifier<int> {
   }
 }
 
+class FeedStateNotifier extends StateNotifier<FeedState> {
+  FeedStateNotifier() : super(FeedState.none);
+  void change(FeedState data) {
+    state = data;
+  }
+}
+
 final bottomNavProvider = StateNotifierProvider<IntNotifier, int>((ref) {
   return IntNotifier();
 });
 
-final feedLoadingNotifierProvider =
-    StateNotifierProvider<BoolNotifier, bool>((ref) {
-  return BoolNotifier();
+final feedStateNotifierProvider =
+    StateNotifierProvider<FeedStateNotifier, FeedState>((ref) {
+  return FeedStateNotifier();
 });
 
 final feedUsersNotifierProvider =
@@ -68,6 +76,11 @@ class BaseRepositoryStateNotifier extends StateNotifier<UserEntity?> {
         }
         if (responseDataState is DataFailure) {
           if (responseDataState.status != 500) {
+            if (responseDataState.status == 404) {
+              ref
+                  .read(feedStateNotifierProvider.notifier)
+                  .change(FeedState.noUsers);
+            }
             errorWidget(message: responseDataState.message);
           } else {
             errorWidget(message: 'unknown error');
@@ -75,8 +88,14 @@ class BaseRepositoryStateNotifier extends StateNotifier<UserEntity?> {
         }
       },
       (List<UserEntity> users) {
-        ref.read(feedUsersNotifierProvider.notifier).setUsers(users);
-        ref.read(feedLoadingNotifierProvider.notifier).change(false);
+        if (users.isEmpty) {
+          ref
+              .read(feedStateNotifierProvider.notifier)
+              .change(FeedState.noUsers);
+        } else {
+          ref.read(feedUsersNotifierProvider.notifier).setUsers(users);
+          ref.read(feedStateNotifierProvider.notifier).change(FeedState.none);
+        }
       },
     );
   }

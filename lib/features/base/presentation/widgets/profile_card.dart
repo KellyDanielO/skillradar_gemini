@@ -19,6 +19,7 @@ class ProfileCard extends ConsumerWidget {
   final String skill;
   final String bio;
   final String joined;
+  final bool? isUrl;
   final void Function() action;
   const ProfileCard({
     required this.name,
@@ -28,6 +29,7 @@ class ProfileCard extends ConsumerWidget {
     required this.bio,
     required this.joined,
     required this.action,
+    this.isUrl,
     super.key,
   });
 
@@ -88,22 +90,56 @@ class ProfileCard extends ConsumerWidget {
                   ImageViewer(
                     image: image,
                     heroTag: heroId,
+                    isNetwork: isUrl != null || isUrl == true,
                   ),
                   context);
             },
-            child: SizedBox(
+            child: Container(
               width: 70.w,
               height: 70.h,
-              child: ClipRRect(
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                child: Hero(
-                  tag: heroId,
-                  transitionOnUserGestures: true,
-                  child: Image.asset(
-                    image,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                color: AppColors.greyColor.withOpacity(.5),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Hero(
+                tag: heroId,
+                transitionOnUserGestures: true,
+                child: isUrl != null && isUrl == true
+                    ? Image.network(
+                        image,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primaryColor,
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          }
+                        },
+                        errorBuilder: (BuildContext context, Object error,
+                            StackTrace? stackTrace) {
+                          return const Center(
+                            child: Icon(
+                              Icons.error,
+                              color: Colors.red,
+                            ),
+                          );
+                        },
+                      )
+                    : Image.asset(
+                        image,
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
           ),

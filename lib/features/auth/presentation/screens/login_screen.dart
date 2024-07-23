@@ -28,7 +28,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final AuthController _authController = AuthController();
-  bool obSecure = false;
+  bool obSecure = true;
   @override
   void initState() {
     AppHelpers.changeBottomBarColor();

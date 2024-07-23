@@ -4,20 +4,17 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/data_state/data_state.dart';
 import '../../../../core/entities/user_entity.dart';
+import '../repositories/utility_repository.dart';
 
-abstract class UtilityRepository {
-  Future<Either<DataState, UserEntity>> editProfile({
-    required String bio,
-    required String name,
-    required String location,
-    File? profileImage,
-    required String accessToken,
-    required String refreshToken,
-  });
+class UploadCoverPhoto {
+  UtilityRepository repository;
+  UploadCoverPhoto(this.repository);
 
   Future<Either<DataState, UserEntity>> uploadCoverPhoto({
     required File coverPhoto,
     required String accessToken,
     required String refreshToken,
-  });
+  }) {
+    return repository.uploadCoverPhoto(coverPhoto: coverPhoto, accessToken: accessToken, refreshToken: refreshToken);
+  }
 }

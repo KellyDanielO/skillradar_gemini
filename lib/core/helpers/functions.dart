@@ -261,4 +261,10 @@ class AppHelpers {
       return '$years ${years == 1 ? 'year' : 'years'} ago';
     }
   }
+
+  void precacheNetworkImages(BuildContext context, List<String> imageUrls) {
+    for (String imageUrl in imageUrls) {
+      precacheImage(NetworkImage(imageUrl), context);
+    }
+  }
 }
