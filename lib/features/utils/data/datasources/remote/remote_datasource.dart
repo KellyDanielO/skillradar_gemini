@@ -19,7 +19,7 @@ class RemoteDataSource {
         headers: {
           HttpHeaders.authorizationHeader: 'Bearer $accessToken',
         },
-      );
+      ).timeout(const Duration(minutes: 2));
       final statusCode = response.statusCode;
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
       if (response.statusCode == 200) {

@@ -28,6 +28,18 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
   @override
   void initState() {
     AppHelpers.changeBottomBarColor();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      String? accessToken = await AppHelpers().getData('access_token');
+      String? refreshToken = await AppHelpers().getData('refresh_token');
+      ref.read(feedLoadingNotifierProvider.notifier).change(true);
+
+      final globalUser = ref.read(gobalUserNotifierProvider);
+      if (globalUser!.skills.isNotEmpty) {
+        ref.read(baseListenerProvider.notifier).getFeedData(
+            ref: ref, accessToken: accessToken!, refreshToken: refreshToken!);
+      }
+    });
     super.initState();
   }
 

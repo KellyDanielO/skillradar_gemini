@@ -29,6 +29,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final TextEditingController _aboutController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   bool fileSelected = false;
+  bool locating = false;
   File? selectedFile;
   UserEntity? user;
 
@@ -346,13 +347,27 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         width: 2,
                       ),
                     ),
-                    suffixIcon: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.location_on_outlined,
-                        color: AppColors.whiteColor.withOpacity(.7),
-                      ),
-                    ),
+                      suffixIcon: locating
+                          ? const CupertinoActivityIndicator(
+                              color: AppColors.primaryColor,
+                            )
+                          : IconButton(
+                              onPressed: () async {
+                                setState(() {
+                                  locating = true;
+                                });
+                                final location =
+                                    await AppHelpers.getCompleteAddress();
+                                setState(() {
+                                  _locationController.text = location;
+                                  locating = false;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.location_on_outlined,
+                                color: AppColors.whiteColor.withOpacity(.7),
+                              ),
+                            ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 15),
                   ),
                 ),

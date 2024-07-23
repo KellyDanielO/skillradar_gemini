@@ -128,6 +128,16 @@ class AppHelpers {
     );
   }
 
+  Future<void> deleteAllData() async {
+    await _secureStorage.deleteAll(
+      aOptions: _getAndroidOptions(),
+    );
+  }
+
+  Future<void> logout() async {
+    await deleteAllData();
+  }
+
   Future<String?> getData(
     String key,
   ) async {

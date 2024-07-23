@@ -25,21 +25,7 @@ class HomeTab extends ConsumerStatefulWidget {
 }
 
 class _HomeTabState extends ConsumerState<HomeTab> {
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      String? accessToken = await AppHelpers().getData('access_token');
-      String? refreshToken = await AppHelpers().getData('refresh_token');
-      ref.read(feedLoadingNotifierProvider.notifier).change(true);
 
-      final globalUser = ref.read(gobalUserNotifierProvider);
-      if (globalUser!.skills.isNotEmpty) {
-        ref.read(baseListenerProvider.notifier).getFeedData(
-            ref: ref, accessToken: accessToken!, refreshToken: refreshToken!);
-      }
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -319,7 +319,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         spacing: 8.0, // Gap between adjacent items
                         runSpacing: 4.0, // Gap between lines
                         children: List.generate(
-                          userSkills.length,
+                          user.skills.length,
                           (index) {
                             return Chip(
                               backgroundColor: index == 0
@@ -328,7 +328,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30)),
                               label: Text(
-                                userSkills[index],
+                                user.skills[index].name,
                                 style: TextStyle(
                                   color: index == 0
                                       ? AppColors.blackColor
