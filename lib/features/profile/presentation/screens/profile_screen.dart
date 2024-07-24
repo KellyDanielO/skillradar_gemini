@@ -170,6 +170,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 children: [
                   Positioned.fill(
                     child: ListView(
+                      physics: const BouncingScrollPhysics(),
                       children: <Widget>[
                         SizedBox(height: 5.h),
                         SizedBox(
@@ -314,6 +315,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                             SizedBox(height: 5.h),
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Icon(
@@ -336,13 +338,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                           color: AppColors.whiteColor,
                                         ),
                                     overflow: TextOverflow.ellipsis,
+                                    softWrap: true,
+                                    maxLines: 3,
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                               ],
                             ),
                           ],
                         ),
-                        SizedBox(height: 10.h),
+                        SizedBox(height: 20.h),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -373,18 +378,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   user.skills.length,
                                   (index) {
                                     return Chip(
-                                      backgroundColor: index == 0
-                                          ? AppColors.whiteColor
-                                          : AppColors.blackColor,
+                                      backgroundColor:  AppColors.blackColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(30)),
                                       label: Text(
                                         user.skills[index].name,
                                         style: TextStyle(
-                                          color: index == 0
-                                              ? AppColors.blackColor
-                                              : AppColors.whiteColor,
+                                          color: AppColors.whiteColor,
                                           fontFamily: AppFonts.sansFont,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 12.sp,

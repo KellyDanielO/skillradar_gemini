@@ -103,38 +103,38 @@ class SavedTab extends ConsumerWidget {
                 fontFamily: AppFonts.sansFont),
           ),
         ),
-        SizedBox(height: 15.h),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Row(
-              children: List.generate(skillList.length, (index) {
-                return Container(
-                  margin: EdgeInsets.only(right: 10.w),
-                  child: Chip(
-                    backgroundColor:
-                        index == 0 ? AppColors.whiteColor : AppColors.blackColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
-                    label: Text(
-                      skillList[index],
-                      style: TextStyle(
-                        color: index == 0
-                            ? AppColors.blackColor
-                            : AppColors.whiteColor,
-                        fontFamily: AppFonts.sansFont,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
-        SizedBox(height: 10.h),
+        // SizedBox(height: 15.h),
+        // SingleChildScrollView(
+        //   scrollDirection: Axis.horizontal,
+        //   child: Padding(
+        //     padding: EdgeInsets.symmetric(horizontal: 20.w),
+        //     child: Row(
+        //       children: List.generate(skillList.length, (index) {
+        //         return Container(
+        //           margin: EdgeInsets.only(right: 10.w),
+        //           child: Chip(
+        //             backgroundColor:
+        //                 index == 0 ? AppColors.whiteColor : AppColors.blackColor,
+        //             shape: RoundedRectangleBorder(
+        //                 borderRadius: BorderRadius.circular(30)),
+        //             label: Text(
+        //               skillList[index],
+        //               style: TextStyle(
+        //                 color: index == 0
+        //                     ? AppColors.blackColor
+        //                     : AppColors.whiteColor,
+        //                 fontFamily: AppFonts.sansFont,
+        //                 fontWeight: FontWeight.w600,
+        //                 fontSize: 12.sp,
+        //               ),
+        //             ),
+        //           ),
+        //         );
+        //       }),
+        //     ),
+        //   ),
+        // ),
+        SizedBox(height: 30.h),
         Flexible(
           child: Swiper(
             itemBuilder: (BuildContext context, int index) {
@@ -155,6 +155,7 @@ class SavedTab extends ConsumerWidget {
             loop: false,
           ),
         ),
+        SizedBox(height: 30.h),
         SizedBox(height: height * .12),
       ],
     );

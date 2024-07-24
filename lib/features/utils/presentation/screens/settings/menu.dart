@@ -9,6 +9,7 @@ import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
 import '../../../../../core/constants/router.dart';
 import '../../../../../core/helpers/functions.dart';
+import '../../../../../core/providers/provider_variables.dart';
 
 class MenuScreen extends ConsumerStatefulWidget {
   const MenuScreen({super.key});
@@ -29,6 +30,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
+    final user = ref.watch(gobalUserNotifierProvider);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -179,40 +181,44 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                   color: AppColors.whiteColor,
                 ),
                 onTap: () {
-                  AppHelpers.goNamed(routeName: AppRouter.addFeaturedScreen, context: context);
+                  AppHelpers.goNamed(
+                      routeName: AppRouter.addFeaturedScreen, context: context);
                 },
               ),
-              ListTile(
-                leading: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: AppColors.whiteColor.withOpacity(.2),
-                    borderRadius: BorderRadius.circular(99),
+              if (user!.accountType == 'google')
+                const SizedBox.shrink()
+              else
+                ListTile(
+                  leading: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: AppColors.whiteColor.withOpacity(.2),
+                      borderRadius: BorderRadius.circular(99),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      CupertinoIcons.padlock,
+                      color: AppColors.whiteColor,
+                    ),
                   ),
-                  alignment: Alignment.center,
-                  child: const Icon(
-                    CupertinoIcons.padlock,
+                  title: Text(
+                    'Change password',
+                    style: TextStyle(
+                      color: AppColors.whiteColor.withOpacity(.7),
+                      fontFamily: AppFonts.sansFont,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
                     color: AppColors.whiteColor,
                   ),
+                  onTap: () {},
                 ),
-                title: Text(
-                  'Change password',
-                  style: TextStyle(
-                    color: AppColors.whiteColor.withOpacity(.7),
-                    fontFamily: AppFonts.sansFont,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios,
-                  color: AppColors.whiteColor,
-                ),
-                onTap: () {},
-              ),
               SizedBox(height: height * .02),
               Text(
                 'Preferences',
@@ -313,7 +319,9 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                   Icons.arrow_forward_ios,
                   color: AppColors.whiteColor,
                 ),
-                onTap: () {},
+                onTap: () {
+                  AppHelpers.goNamed(routeName: AppRouter.visibilityScreen, context: context);
+                },
               ),
               SizedBox(height: height * .02),
               Text(

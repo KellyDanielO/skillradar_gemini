@@ -175,6 +175,40 @@ class RemoteDataSource {
     }
   }
 
+  Future<Either<DataState, UserModel>> removeFeatured({
+    required String id,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('${AppConstants.baseUrl}/user/featured/$id/'),
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+        },
+      ).timeout(const Duration(minutes: 2));
+      final statusCode = response.statusCode;
+      final jsonResponse = json.decode(response.body);
+      if (response.statusCode == 201 || statusCode == 200) {
+        UserModel user = UserModel.fromJson(jsonResponse['user']);
+        return Right(user);
+      } else if (statusCode == 401) {
+        return Left(DataFailure(response.statusCode, 'unauthorized access'));
+      } else if (statusCode == 404) {
+        return Left(DataFailure(response.statusCode, 'profile not found'));
+      } else if (statusCode == 400) {
+        return Left(DataFailure(response.statusCode, 'missing data'));
+      } else {
+        return Left(DataFailure(response.statusCode, jsonResponse));
+      }
+    } catch (e) {
+      if (e.toString().contains('SocketException')) {
+        return Left(DataFailureOffline(700, 'network error'));
+      }
+      return Left(DataFailure(500, e.toString()));
+    }
+  }
+
   Future<Either<DataState, UserModel>> uploadCoverPhoto({
     required File coverPhoto,
     required String accessToken,

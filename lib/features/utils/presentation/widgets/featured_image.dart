@@ -1,14 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
+import '../../../../core/entities/user_entity.dart';
 import '../../../../core/helpers/functions.dart';
+import '../../../../core/providers/provider_variables.dart';
 import '../../../../core/widgets/network_image.dart';
+import '../providers/utility_provider.dart';
 import '../screens/image_viewer.dart';
 
-class FeaturedImageWidget extends StatelessWidget {
+class FeaturedImageWidget extends ConsumerStatefulWidget {
   const FeaturedImageWidget({
     super.key,
     required this.width,
@@ -23,12 +27,44 @@ class FeaturedImageWidget extends StatelessWidget {
   final String id;
 
   @override
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _FeaturedImageWidgetState();
+}
+
+class _FeaturedImageWidgetState extends ConsumerState<FeaturedImageWidget> {
+  bool deleting = false;
+  void removeFeatured() async {
+    String? accessToken = await AppHelpers().getData('access_token');
+    String? refreshToken = await AppHelpers().getData('refresh_token');
+    if (mounted) {
+      setState(() {
+        deleting = true;
+      });
+    }
+    UserEntity? user = await ref
+        .read(utilityListenerProvider.notifier)
+        .removeFeatured(
+            id: widget.id,
+            accessToken: accessToken!,
+            refreshToken: refreshToken!);
+    if (user != null) {
+      ref.read(gobalUserNotifierProvider.notifier).setUser(user);
+
+      if (mounted) {
+        setState(() {
+          deleting = false;
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
       clipBehavior: Clip.antiAlias,
       margin: EdgeInsets.only(bottom: 10.h),
-      width: width,
+      width: widget.width,
       child: Stack(
         children: [
           Column(
@@ -37,28 +73,29 @@ class FeaturedImageWidget extends StatelessWidget {
                 onTap: () {
                   AppHelpers.moveTo(
                       ImageViewer(
-                        heroTag: 'featured_image$image$summary',
-                        image: image,
+                        heroTag:
+                            'featured_image${widget.image}${widget.summary}',
+                        image: widget.image,
                         isNetwork: true,
-                        summary: summary,
+                        summary: widget.summary,
                       ),
                       context);
                 },
                 child: Container(
-                  width: width,
+                  width: widget.width,
                   constraints: BoxConstraints(minHeight: 250.h),
                   child: Hero(
-                    tag: 'featured_image$image$summary',
-                    child: CustomNetworkImage(imageurl: image),
+                    tag: 'featured_image${widget.image}${widget.summary}',
+                    child: CustomNetworkImage(imageurl: widget.image),
                   ),
                 ),
               ),
               Container(
-                width: width,
+                width: widget.width,
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 15.w),
                 color: AppColors.whiteColor.withOpacity(.9),
                 child: Text(
-                  summary,
+                  widget.summary,
                   style: TextStyle(
                     color: AppColors.blackColor,
                     fontSize: 14.sp,
@@ -75,15 +112,17 @@ class FeaturedImageWidget extends StatelessWidget {
             child: Container(
               margin: EdgeInsets.all(10.w),
               child: IconButton.filled(
-                onPressed: () {},
+                onPressed: removeFeatured,
                 style: const ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(AppColors.redColor),
                 ),
-                icon: Icon(
-                  CupertinoIcons.trash,
-                  color: AppColors.whiteColor,
-                  size: 18.sp,
-                ),
+                icon: deleting
+                    ? const CupertinoActivityIndicator()
+                    : Icon(
+                        CupertinoIcons.trash,
+                        color: AppColors.whiteColor,
+                        size: 18.sp,
+                      ),
               ),
             ),
           ),

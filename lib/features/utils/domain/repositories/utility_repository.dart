@@ -27,4 +27,9 @@ abstract class UtilityRepository {
     required String accessToken,
     required String refreshToken,
   });
+  Future<Either<DataState, UserEntity>> removedFeatured({
+    required String id,
+    required String accessToken,
+    required String refreshToken,
+  });
 }

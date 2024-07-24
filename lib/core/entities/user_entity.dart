@@ -26,6 +26,7 @@ class UserEntity extends Equatable {
   final bool showEmail;
   final bool showProfile;
   final bool showPhoneNumber;
+  final bool isSaved;
 
   const UserEntity({
     required this.id,
@@ -46,6 +47,7 @@ class UserEntity extends Equatable {
     this.coverPhoto,
     required this.featured,
     this.phoneNumber,
+    required this.isSaved,
     required this.showEmail,
     required this.showProfile,
     required this.showPhoneNumber,

@@ -17,6 +17,7 @@ import '../../features/utils/presentation/screens/settings/edit_profile_screen.d
 import '../../features/utils/presentation/screens/settings/featured_screen.dart';
 import '../../features/utils/presentation/screens/settings/menu.dart';
 import '../../features/utils/presentation/screens/settings/select_skills.dart';
+import '../../features/utils/presentation/screens/settings/visiblity_screen.dart';
 import '../../features/utils/presentation/screens/splash_screen.dart';
 
 class AppRouter {
@@ -34,6 +35,7 @@ class AppRouter {
   static String addSkillsScreen = '/menu/add-skills';
   static String socialScreen = '/menu/add-socials';
   static String addFeaturedScreen = '/menu/add-featured';
+  static String visibilityScreen = '/menu/visibility';
   static String noInternetScreen = '/no-internet';
 
   static final GoRouter _routerConfig = GoRouter(
@@ -101,6 +103,31 @@ class AppRouter {
           return CustomTransitionPage(
             key: state.pageKey,
             child: const FeaturedScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+
+              var tween = Tween(begin: begin, end: end).chain(
+                CurveTween(curve: curve),
+              );
+
+              return SlideTransition(
+                position: animation.drive(tween),
+                child: child,
+              );
+            },
+          );
+        },
+      ),
+      GoRoute(
+        name: visibilityScreen,
+        path: visibilityScreen,
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: const VisiblityScreen(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               const begin = Offset(1.0, 0.0);

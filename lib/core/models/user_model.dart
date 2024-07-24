@@ -28,6 +28,7 @@ class UserModel extends Equatable {
   final bool showEmail;
   final bool showProfile;
   final bool showPhoneNumber;
+  final bool isSaved;
 
   UserModel({
     required this.id,
@@ -48,6 +49,7 @@ class UserModel extends Equatable {
     this.coverPhoto,
     required this.featured,
     this.phoneNumber,
+    required this.isSaved,
     required this.showEmail,
     required this.showProfile,
     required this.showPhoneNumber,
@@ -102,6 +104,7 @@ class UserModel extends Equatable {
       showEmail: json['show_email'],
       showProfile: json['show_profile'],
       showPhoneNumber: json['show_phone_number'],
+      isSaved: json['is_saved'],
     );
   }
 
@@ -131,5 +134,6 @@ class UserModel extends Equatable {
         showProfile: showProfile,
         coverPhoto: coverPhoto,
         phoneNumber: phoneNumber,
+        isSaved: isSaved,
       );
 }

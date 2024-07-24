@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,7 +19,6 @@ class ImageViewer extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;
     double height = ScreenUtil().screenHeight;
-    print(isNetwork);
     return Scaffold(
       // appBar: AppBar(
       //   leadingWidth: 50.w,
@@ -82,7 +80,7 @@ class ImageViewer extends StatelessWidget {
               ),
             ),
             Positioned(
-              bottom: 10,
+              bottom: 0,
               left: 0,
               child: summary != null ? Container(
                 width: width,

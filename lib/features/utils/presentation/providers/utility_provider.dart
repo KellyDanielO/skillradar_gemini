@@ -13,6 +13,7 @@ import '../../data/repositories/utility_repository_impl.dart';
 import '../../domain/repositories/utility_repository.dart';
 import '../../domain/usecases/add_featured_usecase.dart';
 import '../../domain/usecases/edit_profile_usecase.dart';
+import '../../domain/usecases/remove_deatured_usecase.dart';
 import '../../domain/usecases/upload_cover_usecase.dart';
 
 final remoteDataSourceProvider = Provider<RemoteDataSource>((ref) {
@@ -39,13 +40,19 @@ final addFeaturedPhotoProvider = Provider<AddFeatured>((ref) {
   return AddFeatured(repository);
 });
 
+final removeFeaturedPhotoProvider = Provider<RemoveFeatured>((ref) {
+  final repository = ref.read(authRepositoryProvider);
+  return RemoveFeatured(repository);
+});
+
 final utilityListenerProvider =
     StateNotifierProvider<UtilityStateNotifier, UserEntity?>((ref) {
   final editProfileData = ref.read(editProfileDataProvider);
   final uploadCoverPhoto = ref.read(uploadCoverPhotoProvider);
   final addFeaturedPhoto = ref.read(addFeaturedPhotoProvider);
+  final removeFeaturedPhoto = ref.read(removeFeaturedPhotoProvider);
   return UtilityStateNotifier(
-      editProfileData, uploadCoverPhoto, addFeaturedPhoto);
+      editProfileData, uploadCoverPhoto, addFeaturedPhoto, removeFeaturedPhoto);
 });
 
 final editProfileLoadingNotifierProvider =
@@ -62,8 +69,9 @@ class UtilityStateNotifier extends StateNotifier<UserEntity?> {
   final EditProfile _editProfile;
   final UploadCoverPhoto _uploadCoverPhoto;
   final AddFeatured _addFeatured;
-  UtilityStateNotifier(
-      this._editProfile, this._uploadCoverPhoto, this._addFeatured)
+  final RemoveFeatured _removeFeatured;
+  UtilityStateNotifier(this._editProfile, this._uploadCoverPhoto,
+      this._addFeatured, this._removeFeatured)
       : super(null);
 
   Future<UserEntity?> editProfile({
@@ -115,6 +123,35 @@ class UtilityStateNotifier extends StateNotifier<UserEntity?> {
       accessToken: accessToken,
       refreshToken: refreshToken,
     );
+    return response.fold(
+      (DataState responseDataState) {
+        if (responseDataState is DataFailureOffline) {
+          errorWidget(message: 'you\'re offline');
+        }
+        if (responseDataState is DataFailure) {
+          if (responseDataState.status != 500) {
+            errorWidget(message: responseDataState.message);
+          } else {
+            errorWidget(message: 'unknown error');
+          }
+        }
+
+        return null;
+      },
+      (UserEntity userEntity) {
+        return userEntity;
+      },
+    );
+  }
+
+  Future<UserEntity?> removeFeatured({
+    required String id,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    Either<DataState, UserEntity> response =
+        await _removeFeatured.removeFeatured(
+            id: id, accessToken: accessToken, refreshToken: refreshToken);
     return response.fold(
       (DataState responseDataState) {
         if (responseDataState is DataFailureOffline) {
