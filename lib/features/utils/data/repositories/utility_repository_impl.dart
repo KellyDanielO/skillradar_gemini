@@ -38,15 +38,34 @@ class UtilityRepositoryImpl implements UtilityRepository {
   }
 
   @override
-  Future<Either<DataState, UserEntity>> uploadCoverPhoto(
-      {required File coverPhoto,
-      required String accessToken,
-      required String refreshToken}) async {
+  Future<Either<DataState, UserEntity>> uploadCoverPhoto({
+    required File coverPhoto,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
     Either<DataState, UserModel> response =
         await remoteDataSource.uploadCoverPhoto(
             coverPhoto: coverPhoto,
             accessToken: accessToken,
             refreshToken: refreshToken);
+    return response.fold(
+      (DataState responseDataState) => Left(responseDataState),
+      (UserModel userModel) => Right(userModel.toEntity()),
+    );
+  }
+
+  @override
+  Future<Either<DataState, UserEntity>> addFeatured(
+      {required File media,
+      required String summary,
+      required String accessToken,
+      required String refreshToken}) async {
+    Either<DataState, UserModel> response = await remoteDataSource.addFeatured(
+      summary: summary,
+      media: media,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    );
     return response.fold(
       (DataState responseDataState) => Left(responseDataState),
       (UserModel userModel) => Right(userModel.toEntity()),

@@ -223,13 +223,14 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                     name: element.name,
                     isUrl: element.avatar != null,
                     image:
-                        element.avatar != null ? element.avatar! : AppAssets.avatar1,
+                        element.avatar != null ? element.avatar! : AppAssets.user,
                     location: element.location!,
                     skill: AppHelpers.findFirstCommonSkill(globalUser!, element)
                         .name,
                     bio: element.bio ?? 'no bio',
                     joined: AppHelpers.timeAgo(element.dateJoined),
                     action: () {},
+                    user: element,
                   );
                 },
                 itemCount: feedUsers.length,

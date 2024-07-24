@@ -20,4 +20,11 @@ abstract class UtilityRepository {
     required String accessToken,
     required String refreshToken,
   });
+  
+  Future<Either<DataState, UserEntity>> addFeatured({
+    required File media,
+    required String summary,
+    required String accessToken,
+    required String refreshToken,
+  });
 }
