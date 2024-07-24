@@ -125,6 +125,56 @@ class RemoteDataSource {
     }
   }
 
+  Future<Either<DataState, UserModel>> addFeatured({
+    required String summary,
+    required File media,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    try {
+      final uri = Uri.parse('${AppConstants.baseUrl}/user/featured/');
+
+      // Create a multipart request
+      final request = http.MultipartRequest('POST', uri)
+        ..headers[HttpHeaders.authorizationHeader] = 'Bearer $accessToken'
+        ..fields['summary'] = summary;
+
+      final fileStream = http.ByteStream(media.openRead());
+      final length = await media.length();
+      final multipartFile = http.MultipartFile(
+        'media',
+        fileStream,
+        length,
+        filename: media.uri.pathSegments.last,
+      );
+      request.files.add(multipartFile);
+
+      // Send the request and get the response
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      final statusCode = response.statusCode;
+      final jsonResponse = json.decode(responseBody);
+      if (response.statusCode == 201 || statusCode == 200) {
+        UserModel user = UserModel.fromJson(jsonResponse['user']);
+        return Right(user);
+      } else if (statusCode == 401) {
+        return Left(DataFailure(response.statusCode, 'unauthorized access'));
+      } else if (statusCode == 404) {
+        return Left(DataFailure(response.statusCode, 'profile not found'));
+      } else if (statusCode == 400) {
+        return Left(DataFailure(response.statusCode, 'missing data'));
+      } else {
+        return Left(DataFailure(response.statusCode, jsonResponse));
+      }
+    } catch (e) {
+      if (e.toString().contains('SocketException')) {
+        return Left(DataFailureOffline(700, 'network error'));
+      }
+      return Left(DataFailure(500, e.toString()));
+    }
+  }
+
   Future<Either<DataState, UserModel>> uploadCoverPhoto({
     required File coverPhoto,
     required String accessToken,
@@ -136,18 +186,16 @@ class RemoteDataSource {
       // Create a multipart request
       final request = http.MultipartRequest('PATCH', uri)
         ..headers[HttpHeaders.authorizationHeader] = 'Bearer $accessToken';
-    
 
-    
-        final fileStream = http.ByteStream(coverPhoto.openRead());
-        final length = await coverPhoto.length();
-        final multipartFile = http.MultipartFile(
-          'cover_photo',
-          fileStream,
-          length,
-          filename: coverPhoto.uri.pathSegments.last,
-        );
-        request.files.add(multipartFile);
+      final fileStream = http.ByteStream(coverPhoto.openRead());
+      final length = await coverPhoto.length();
+      final multipartFile = http.MultipartFile(
+        'cover_photo',
+        fileStream,
+        length,
+        filename: coverPhoto.uri.pathSegments.last,
+      );
+      request.files.add(multipartFile);
 
       // Send the request and get the response
       final response = await request.send();

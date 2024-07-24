@@ -178,7 +178,9 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                   Icons.arrow_forward_ios,
                   color: AppColors.whiteColor,
                 ),
-                onTap: () {},
+                onTap: () {
+                  AppHelpers.goNamed(routeName: AppRouter.addFeaturedScreen, context: context);
+                },
               ),
               ListTile(
                 leading: Container(

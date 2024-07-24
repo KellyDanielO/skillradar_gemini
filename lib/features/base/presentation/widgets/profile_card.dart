@@ -8,8 +8,11 @@ import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
 import '../../../../core/constants/router.dart';
+import '../../../../core/entities/user_entity.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/widgets/custom_btns.dart';
+import '../../../../core/widgets/network_image.dart';
+import '../../../profile/presentation/providers/provider.dart';
 import '../../../utils/presentation/screens/image_viewer.dart';
 
 class ProfileCard extends ConsumerWidget {
@@ -20,6 +23,7 @@ class ProfileCard extends ConsumerWidget {
   final String bio;
   final String joined;
   final bool? isUrl;
+  final UserEntity? user;
   final void Function() action;
   const ProfileCard({
     required this.name,
@@ -30,6 +34,7 @@ class ProfileCard extends ConsumerWidget {
     required this.joined,
     required this.action,
     this.isUrl,
+    this.user,
     super.key,
   });
 
@@ -87,12 +92,13 @@ class ProfileCard extends ConsumerWidget {
           InkWell(
             onTap: () {
               AppHelpers.moveTo(
-                  ImageViewer(
-                    image: image,
-                    heroTag: heroId,
-                    isNetwork: isUrl != null || isUrl == true,
-                  ),
-                  context);
+                ImageViewer(
+                  image: image,
+                  heroTag: heroId,
+                  isNetwork: isUrl,
+                ),
+                context,
+              );
             },
             child: Container(
               width: 70.w,
@@ -106,36 +112,7 @@ class ProfileCard extends ConsumerWidget {
                 tag: heroId,
                 transitionOnUserGestures: true,
                 child: isUrl != null && isUrl == true
-                    ? Image.network(
-                        image,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (BuildContext context, Widget child,
-                            ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
-                          } else {
-                            return Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.primaryColor,
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            );
-                          }
-                        },
-                        errorBuilder: (BuildContext context, Object error,
-                            StackTrace? stackTrace) {
-                          return const Center(
-                            child: Icon(
-                              Icons.error,
-                              color: Colors.red,
-                            ),
-                          );
-                        },
-                      )
+                    ? CustomNetworkImage(imageurl: image)
                     : Image.asset(
                         image,
                         fit: BoxFit.cover,
@@ -221,6 +198,7 @@ class ProfileCard extends ConsumerWidget {
             btnColor: AppColors.blackColor,
             fontSize: 14.sp,
             onPressed: () {
+              ref.read(navigatedUserNotifierProvider.notifier).setUser(user);
               AppHelpers.goNamed(
                   routeName: AppRouter.profileScreen, context: context);
             },

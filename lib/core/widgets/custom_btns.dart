@@ -134,12 +134,12 @@ class CustomBtn extends ConsumerWidget {
       width: width,
       child: ElevatedButton(
         style: ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(btnColor),
-            padding: MaterialStatePropertyAll(
+            backgroundColor: WidgetStatePropertyAll(btnColor),
+            padding: WidgetStatePropertyAll(
               padding ??
                   const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
             ),
-            shape: MaterialStatePropertyAll(
+            shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(
                 borderRadius: borderRadius ??
                     BorderRadius.circular(99.0), // Adjust the value as needed

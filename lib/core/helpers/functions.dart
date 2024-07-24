@@ -15,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
+import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/utils/presentation/screens/image_picker/media_picker.dart';
 import '../constants/colors.dart';
 import '../entities/skill_entity.dart';
@@ -135,6 +136,7 @@ class AppHelpers {
   }
 
   Future<void> logout() async {
+    await AuthController().signOutFromGoogle();
     await deleteAllData();
   }
 
@@ -266,5 +268,15 @@ class AppHelpers {
     for (String imageUrl in imageUrls) {
       precacheImage(NetworkImage(imageUrl), context);
     }
+  }
+
+  static String getRandomValue(List<String> array) {
+    final random = Random();
+
+    int randomIndex = random.nextInt(array.length);
+
+    String randomValue = array[randomIndex];
+
+    return randomValue;
   }
 }

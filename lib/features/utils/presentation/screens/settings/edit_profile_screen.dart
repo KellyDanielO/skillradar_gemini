@@ -15,6 +15,7 @@ import '../../../../../core/entities/user_entity.dart';
 import '../../../../../core/helpers/functions.dart';
 import '../../../../../core/providers/provider_variables.dart';
 import '../../../../../core/widgets/error_widgets.dart';
+import '../../../../../core/widgets/network_image.dart';
 import '../../providers/utility_provider.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
@@ -135,42 +136,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                               fit: BoxFit.cover,
                             )
                           : user!.avatar != null
-                              ? Image.network(
-                                  user!.avatar!,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder: (BuildContext context,
-                                      Widget child,
-                                      ImageChunkEvent? loadingProgress) {
-                                    if (loadingProgress == null) {
-                                      return child;
-                                    } else {
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          color: AppColors.primaryColor,
-                                          value: loadingProgress
-                                                      .expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  errorBuilder: (BuildContext context,
-                                      Object error, StackTrace? stackTrace) {
-                                    return const Center(
-                                      child: Icon(
-                                        Icons.error,
-                                        color: Colors.red,
-                                      ),
-                                    );
-                                  },
-                                )
+                              ? CustomNetworkImage(imageurl: user!.avatar!)
                               : Image.asset(
-                                  AppAssets.avatar1,
+                                  AppAssets.user,
                                   fit: BoxFit.cover,
                                 ),
                     ),
@@ -262,7 +230,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'About',
+                  'Bio',
                   style: TextStyle(
                       color: AppColors.whiteColor.withOpacity(.7),
                       fontWeight: FontWeight.w600,
@@ -490,7 +458,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               minVerticalPadding: 5.h,
               minTileHeight: 5.h,
               contentPadding: const EdgeInsets.all(0),
-              onTap: () {},
+              onTap: () {
+                AppHelpers.goNamed(
+                    routeName: AppRouter.addFeaturedScreen, context: context);
+              },
             ),
           ],
         ),

@@ -11,6 +11,7 @@ import '../../../../core/constants/router.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/providers/provider_variables.dart';
 import '../../../../core/widgets/error_widgets.dart';
+import '../../../profile/presentation/providers/provider.dart';
 import '../constants/enums.dart';
 import '../controllers/base_controllers.dart';
 import '../provider/providers.dart';
@@ -94,6 +95,8 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
         activeIcon: AppAssets.userBoldIcon,
         defaultIcon: AppAssets.userOutlinedIcon,
         action: () {
+          final globalUser = ref.read(gobalUserNotifierProvider);
+          ref.read(navigatedUserNotifierProvider.notifier).setUser(globalUser);
           AppHelpers.goNamed(
               routeName: AppRouter.profileScreen, context: context);
         },
