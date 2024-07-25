@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -53,7 +54,6 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
   @override
   Widget build(BuildContext context) {
     double height = ScreenUtil().screenHeight;
-    ref.watch(feedStateNotifierProvider);
     double width = ScreenUtil().screenWidth;
     List<BottomTabs> bottomTabs = [
       BottomTabs(
@@ -107,7 +107,20 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
       ExploreTab(width: width, height: height),
       SavedTab(width: width, height: height),
     ];
+    final selectedSkills = ref.watch(selectedSkillsProvider);
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+      floatingActionButton: selectedSkills.isEmpty || _selectedIndex != 1
+          ? null
+          : FloatingActionButton(
+              onPressed: () {},
+              backgroundColor: AppColors.primaryColor,
+              shape: const CircleBorder(),
+              child: const Icon(
+                Icons.search,
+                color: AppColors.whiteColor,
+              ),
+            ),
       body: SafeArea(
         child: SizedBox(
           width: width,
@@ -130,7 +143,10 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
                   ),
                 ),
               ),
-              bottomNavigationArea(width, bottomTabs),
+              if (_selectedIndex == 1 && selectedSkills.isNotEmpty)
+                const SizedBox.shrink()
+              else
+                bottomNavigationArea(width, bottomTabs).animate().fade(),
             ],
           ),
         ),

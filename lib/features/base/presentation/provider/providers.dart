@@ -26,6 +26,29 @@ class FeedStateNotifier extends StateNotifier<FeedState> {
   }
 }
 
+class ListNotifier extends StateNotifier<List<String>> {
+  ListNotifier() : super([]);
+  void setList(List<String> list) {
+    state = list;
+  }
+
+  void addSkill(String skill) {
+    state = [...state, skill];
+  }
+
+  void removeSkill(String skill) {
+    state = state.where((s) => s != skill).toList();
+  }
+
+  void clearSkills() {
+    state = [];
+  }
+}
+
+final selectedSkillsProvider = StateNotifierProvider<ListNotifier, List<String>>((ref) {
+  return ListNotifier();
+});
+
 final bottomNavProvider = StateNotifierProvider<IntNotifier, int>((ref) {
   return IntNotifier();
 });
