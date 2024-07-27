@@ -112,7 +112,64 @@ class _FeaturedImageWidgetState extends ConsumerState<FeaturedImageWidget> {
             child: Container(
               margin: EdgeInsets.all(10.w),
               child: IconButton.filled(
-                onPressed: removeFeatured,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
+                        title: Text(
+                          'Delete featured',
+                          style: TextStyle(
+                            fontSize: widget.width * .01 + 18,
+                            fontFamily: AppFonts.actionFont,
+                            color:
+                                Theme.of(context).textTheme.bodyMedium!.color,
+                          ),
+                        ),
+                        content: Text(
+                          widget.summary,
+                          style: TextStyle(
+                            fontSize: widget.width * .01 + 16,
+                            color:
+                                Theme.of(context).textTheme.bodyMedium!.color,
+                          ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .color,
+                                fontSize: widget.width * .01 + 14,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              removeFeatured();
+                            },
+                            child: Text(
+                              'Delete',
+                              style: TextStyle(
+                                color: AppColors.redColor,
+                                fontSize: widget.width * .01 + 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
                 style: const ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(AppColors.redColor),
                 ),

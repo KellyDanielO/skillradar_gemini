@@ -8,13 +8,14 @@ import '../../../../../core/data_state/data_state.dart';
 import '../../../../../core/models/user_model.dart';
 
 class RemoteDataSource {
-  Future<Either<DataState, List<UserModel>>> getFeedData({
+  Future<Either<DataState, List<UserModel>>>  skillSearch({
+    required String skills,
     required String accessToken,
     required String refreshToken,
   }) async {
     try {
       final response = await http.get(
-        Uri.parse('${AppConstants.baseUrl}/get-all-users-with-same-skill/'),
+        Uri.parse('${AppConstants.baseUrl}/skill/search/?skills=$skills'),
         headers: {
           HttpHeaders.authorizationHeader: 'Bearer $accessToken',
           HttpHeaders.contentTypeHeader: "application/json",

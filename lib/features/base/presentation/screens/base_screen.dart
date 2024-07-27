@@ -113,7 +113,9 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
       floatingActionButton: selectedSkills.isEmpty || _selectedIndex != 1
           ? null
           : FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                AppHelpers.goNamed(routeName: AppRouter.searchScreen, context: context);
+              },
               backgroundColor: AppColors.primaryColor,
               shape: const CircleBorder(),
               child: const Icon(

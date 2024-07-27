@@ -11,6 +11,7 @@ import '../../features/auth/presentation/screens/signup_screen.dart';
 import '../../features/base/presentation/screens/base_screen.dart';
 import '../../features/notification/presnetation/screens/notification_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/utils/presentation/screens/no_internet_screen.dart';
 import '../../features/utils/presentation/screens/onboarding_screens.dart';
 import '../../features/utils/presentation/screens/settings/edit_profile_screen.dart';
@@ -37,6 +38,7 @@ class AppRouter {
   static String addFeaturedScreen = '/menu/add-featured';
   static String visibilityScreen = '/menu/visibility';
   static String noInternetScreen = '/no-internet';
+  static String searchScreen = '/search';
 
   static final GoRouter _routerConfig = GoRouter(
     initialLocation: splashScreen,
@@ -78,6 +80,31 @@ class AppRouter {
           return CustomTransitionPage(
             key: state.pageKey,
             child: const NoInternetScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+
+              var tween = Tween(begin: begin, end: end).chain(
+                CurveTween(curve: curve),
+              );
+
+              return SlideTransition(
+                position: animation.drive(tween),
+                child: child,
+              );
+            },
+          );
+        },
+      ),
+      GoRoute(
+        name: searchScreen,
+        path: searchScreen,
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: const SearchScreen(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               const begin = Offset(1.0, 0.0);

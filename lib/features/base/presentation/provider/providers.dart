@@ -26,6 +26,13 @@ class FeedStateNotifier extends StateNotifier<FeedState> {
   }
 }
 
+class ExploreStateNotifier extends StateNotifier<ExploreState> {
+  ExploreStateNotifier() : super(ExploreState.none);
+  void change(ExploreState data) {
+    state = data;
+  }
+}
+
 class ListNotifier extends StateNotifier<List<String>> {
   ListNotifier() : super([]);
   void setList(List<String> list) {
@@ -57,8 +64,17 @@ final feedStateNotifierProvider =
     StateNotifierProvider<FeedStateNotifier, FeedState>((ref) {
   return FeedStateNotifier();
 });
+final exploreStateNotifierProvider =
+    StateNotifierProvider<ExploreStateNotifier, ExploreState>((ref) {
+  return ExploreStateNotifier();
+});
 
 final feedUsersNotifierProvider =
+    StateNotifierProvider<UsersStateNotifier, List<UserEntity>>((ref) {
+  return UsersStateNotifier();
+});
+
+final discoveredUsersNotifierProvider =
     StateNotifierProvider<UsersStateNotifier, List<UserEntity>>((ref) {
   return UsersStateNotifier();
 });

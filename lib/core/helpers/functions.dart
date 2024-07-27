@@ -240,6 +240,17 @@ class AppHelpers {
     return user2.skills.first;
   }
 
+  static String findFirstCommonSkillSet(List<SkillEntity> skills1, List<String> skills2) {
+    Set<String> skillIds1 = skills1.map((skill) => skill.name).toSet();
+
+    for (String skill in skills2) {
+      if (skillIds1.contains(skill)) {
+        return skill;
+      }
+    }
+    return skills2.first;
+  }
+
   static String timeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);

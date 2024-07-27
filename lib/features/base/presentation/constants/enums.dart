@@ -5,3 +5,17 @@ enum FeedState{
   noSkill,
   noUsers
 }
+
+enum ExploreState{
+  loading,
+  none,
+  done,
+  noUsers
+}
+
+enum SkillSearchState{
+  loading,
+  none,
+  done,
+  noUsers
+}

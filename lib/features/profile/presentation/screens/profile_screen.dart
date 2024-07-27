@@ -253,8 +253,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   onTap: () {
                                     AppHelpers.moveTo(
                                         ImageViewer(
-                                          image:
-                                              user.avatar ?? AppAssets.user,
+                                          image: user.avatar ?? AppAssets.user,
                                           heroTag: 'ace_profile',
                                           isNetwork: user.avatar != null,
                                         ),
@@ -378,7 +377,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   user.skills.length,
                                   (index) {
                                     return Chip(
-                                      backgroundColor:  AppColors.blackColor,
+                                      backgroundColor: AppColors.blackColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(30)),
@@ -462,12 +461,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   ),
                                 ],
                               ),
-                        SizedBox(height: 10.h),
+                        SizedBox(height: 20.h),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              transH.about.capitalizeFirst.toString(),
+                              'Bio',
                               style: Theme.of(context)
                                   .textTheme
                                   .headlineSmall!
@@ -479,7 +478,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                             SizedBox(height: 10.h),
                             Text(
-                              user.bio ?? 'No bio',
+                              user.bio == null || user.bio == ''
+                                  ? 'No bio'
+                                  : user.bio!,
                               style: const TextStyle(
                                 color: AppColors.greyColor,
                               ),

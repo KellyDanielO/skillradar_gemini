@@ -18,6 +18,7 @@ class RemoteDataSource {
         Uri.parse('${AppConstants.baseUrl}/user/'),
         headers: {
           HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+          HttpHeaders.contentTypeHeader: "application/json",
         },
       ).timeout(const Duration(minutes: 2));
       final statusCode = response.statusCode;
@@ -84,6 +85,7 @@ class RemoteDataSource {
       // Create a multipart request
       final request = http.MultipartRequest('PUT', uri)
         ..headers[HttpHeaders.authorizationHeader] = 'Bearer $accessToken'
+        ..headers[HttpHeaders.contentTypeHeader] = "application/json"
         ..fields['bio'] = bio
         ..fields['name'] = name
         ..fields['location'] = location;

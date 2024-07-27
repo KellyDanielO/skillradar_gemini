@@ -38,26 +38,33 @@ class _AddFeaturedImageScreenState
   }
 
   void addFeatured() async {
-    if (selectedFile.isNull || summary.text.isEmpty) {
-      errorWidget(message: 'All fields are required!');
-    } else {
-      String? accessToken = await AppHelpers().getData('access_token');
-      String? refreshToken = await AppHelpers().getData('refresh_token');
-      ref.read(uploadingFeaturedLoadingNotifierProvider.notifier).change(true);
-      UserEntity? user =
-          await ref.read(utilityListenerProvider.notifier).addFeatured(
-                summary: summary.text,
-                media: selectedFile!,
-                accessToken: accessToken!,
-                refreshToken: refreshToken!,
-              );
-      if (user != null) {
-        ref.read(gobalUserNotifierProvider.notifier).setUser(user);
-        if (mounted) {
-          Navigator.pop(context);
+    final buttonLoading = ref.read(uploadingFeaturedLoadingNotifierProvider);
+    if (!buttonLoading) {
+      if (selectedFile.isNull || summary.text.isEmpty) {
+        errorWidget(message: 'All fields are required!');
+      } else {
+        String? accessToken = await AppHelpers().getData('access_token');
+        String? refreshToken = await AppHelpers().getData('refresh_token');
+        ref
+            .read(uploadingFeaturedLoadingNotifierProvider.notifier)
+            .change(true);
+        UserEntity? user =
+            await ref.read(utilityListenerProvider.notifier).addFeatured(
+                  summary: summary.text,
+                  media: selectedFile!,
+                  accessToken: accessToken!,
+                  refreshToken: refreshToken!,
+                );
+        if (user != null) {
+          ref.read(gobalUserNotifierProvider.notifier).setUser(user);
+          if (mounted) {
+            Navigator.pop(context);
+          }
         }
+        ref
+            .read(uploadingFeaturedLoadingNotifierProvider.notifier)
+            .change(false);
       }
-      ref.read(uploadingFeaturedLoadingNotifierProvider.notifier).change(false);
     }
   }
 
