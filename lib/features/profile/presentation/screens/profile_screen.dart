@@ -13,6 +13,7 @@ import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
 import '../../../../core/constants/router.dart';
+import '../../../../core/entities/user_entity.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/providers/provider_variables.dart';
 import '../../../../core/widgets/network_image.dart';
@@ -33,12 +34,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   File? selectedFile;
   bool me = false;
   void _showBottomSheet(BuildContext context, double width, double height) {
+    final user = ref.read(displayUserNotifierProvider);
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return BottomSheetContent(
           width: width,
           height: height,
+          user: user!,
         );
       },
     );
@@ -554,8 +557,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 class BottomSheetContent extends StatelessWidget {
   final double width;
   final double height;
+  final UserEntity user;
   const BottomSheetContent(
-      {super.key, required this.width, required this.height});
+      {super.key,
+      required this.width,
+      required this.height,
+      required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -568,39 +575,56 @@ class BottomSheetContent extends StatelessWidget {
           topRight: Radius.circular(15),
         ),
       ),
-      child: Column(
-        children: [
-          SizedBox(height: 10.h),
-          Text(
-            'Connect Via',
-            style: TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
-                fontFamily: AppFonts.sansFont),
-          ),
-          SizedBox(height: 10.h),
-          SingleChildScrollView(
-            child: Container(
-              constraints: BoxConstraints(maxHeight: height * .4),
-              padding: const EdgeInsets.all(16.0),
-              child: Wrap(
-                spacing: 16.0, // Gap between adjacent items
-                runSpacing: 16.0, // Gap between lines
-                children: List.generate(
-                  SocialIcons.all.length,
-                  (index) {
-                    return SizedBox(
-                      width: 50.w,
-                      height: 50.h,
-                      child: Image.asset(SocialIcons.all[index]),
-                    );
-                  },
-                ),
+      child: user.socials.isEmpty
+          ? Padding(
+              padding: EdgeInsets.all(15.w),
+              child: Text(
+                'This user has no connected social account!',
+                style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: AppFonts.sansFont),
               ),
+            )
+          : Column(
+              children: [
+                SizedBox(height: 10.h),
+                Text(
+                  'Connect Via',
+                  style: TextStyle(
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: AppFonts.sansFont),
+                ),
+                SizedBox(height: 10.h),
+                SingleChildScrollView(
+                  child: Container(
+                    constraints: BoxConstraints(maxHeight: height * .4),
+                    padding: const EdgeInsets.all(16.0),
+                    child: Wrap(
+                      spacing: 16.0, // Gap between adjacent items
+                      runSpacing: 16.0, // Gap between lines
+                      children: List.generate(
+                        user.socials.length,
+                        (index) {
+                          return GestureDetector(
+                            onTap: () {
+                              AppHelpers.launchUrlNow(user.socials[index].link);
+                            },
+                            child: SizedBox(
+                              width: 50.w,
+                              height: 50.h,
+                              child:
+                                  Image.asset(user.socials[index].social.logo),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -88,4 +88,39 @@ class UtilityRepositoryImpl implements UtilityRepository {
       (UserModel userModel) => Right(userModel.toEntity()),
     );
   }
+
+  @override
+  Future<Either<DataState, UserEntity>> addSocial({
+    required String social,
+    required String link,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    Either<DataState, UserModel> response = await remoteDataSource.addSocial(
+      social: social,
+      link: link,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    );
+    return response.fold(
+      (DataState responseDataState) => Left(responseDataState),
+      (UserModel userModel) => Right(userModel.toEntity()),
+    );
+  }
+
+  @override
+  Future<Either<DataState, UserEntity>> removedSocial(
+      {required String id,
+      required String accessToken,
+      required String refreshToken}) async {
+    Either<DataState, UserModel> response = await remoteDataSource.removeSocial(
+      id: id,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    );
+    return response.fold(
+      (DataState responseDataState) => Left(responseDataState),
+      (UserModel userModel) => Right(userModel.toEntity()),
+    );
+  }
 }

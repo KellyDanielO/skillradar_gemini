@@ -149,7 +149,10 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                   Icons.arrow_forward_ios,
                   color: AppColors.whiteColor,
                 ),
-                onTap: () {},
+                onTap: () {
+                  AppHelpers.goNamed(
+                      routeName: AppRouter.addSocialScreen, context: context);
+                },
               ),
               ListTile(
                 leading: Container(
@@ -320,7 +323,8 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                   color: AppColors.whiteColor,
                 ),
                 onTap: () {
-                  AppHelpers.goNamed(routeName: AppRouter.visibilityScreen, context: context);
+                  AppHelpers.goNamed(
+                      routeName: AppRouter.visibilityScreen, context: context);
                 },
               ),
               SizedBox(height: height * .02),

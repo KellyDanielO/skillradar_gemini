@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../entities/skill_entity.dart';
+import '../entities/social_entity.dart';
 import '../entities/user_entity.dart';
 import 'provider_classes.dart';
 
@@ -30,4 +31,8 @@ final gobalUserNotifierProvider =
 final gobalSkillsNotifierProvider =
     StateNotifierProvider<SkillsStateNotifier, List<SkillEntity>>((ref) {
   return SkillsStateNotifier();
+});
+final gobalSocialsNotifierProvider =
+    StateNotifierProvider<SocialsStateNotifier, List<SocialEntity>>((ref) {
+  return SocialsStateNotifier();
 });

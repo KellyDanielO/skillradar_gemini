@@ -7,6 +7,7 @@ import '../../../../../core/constants/constants.dart';
 import '../../../../../core/data_state/data_state.dart';
 import '../../../../../core/models/skill_model.dart';
 import '../../../../../core/models/user_model.dart';
+import '../../models/initialize_model.dart';
 
 class RemoteDataSource {
   Future<Either<DataState, UserModel>> getUserData({
@@ -30,6 +31,33 @@ class RemoteDataSource {
         return Left(DataFailure(response.statusCode, 'unauthorized access'));
       } else {
         return Left(DataFailure(response.statusCode, jsonResponse['response']));
+      }
+    } catch (e) {
+      if (e.toString().contains('SocketException')) {
+        return Left(DataFailureOffline(700, 'network error'));
+      }
+      print(e);
+      return Left(DataFailure(500, e.toString()));
+    }
+  }
+
+  Future<Either<DataState, InitilizeModel>> initialize() async {
+    try {
+      final response = await http.get(
+        Uri.parse('${AppConstants.baseUrl}/initializer/'),
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        },
+      ).timeout(const Duration(minutes: 2));
+      final statusCode = response.statusCode;
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      if (response.statusCode == 200) {
+        InitilizeModel initializedData = InitilizeModel.fromJson(jsonResponse);
+        return Right(initializedData);
+      } else if (statusCode == 401) {
+        return Left(DataFailure(response.statusCode, 'unauthorized access'));
+      } else {
+        return Left(DataFailure(response.statusCode, 'unknown error'));
       }
     } catch (e) {
       if (e.toString().contains('SocketException')) {
@@ -177,6 +205,41 @@ class RemoteDataSource {
     }
   }
 
+  Future<Either<DataState, UserModel>> addSocial({
+    required String social,
+    required String link,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConstants.baseUrl}/user/social/'),
+        body: {
+          'social': social,
+          'link': link,
+        },
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+        },
+      );
+      final statusCode = response.statusCode;
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      if (response.statusCode == 201) {
+        UserModel user = UserModel.fromJson(jsonResponse['user']);
+        return Right(user);
+      } else if (statusCode == 401) {
+        return Left(DataFailure(response.statusCode, 'unauthorized access'));
+      } else {
+        return Left(DataFailure(response.statusCode, jsonResponse['response']));
+      }
+    } catch (e) {
+      if (e.toString().contains('SocketException')) {
+        return Left(DataFailureOffline(700, 'network error'));
+      }
+      return Left(DataFailure(500, e.toString()));
+    }
+  }
+
   Future<Either<DataState, UserModel>> removeFeatured({
     required String id,
     required String accessToken,
@@ -185,6 +248,40 @@ class RemoteDataSource {
     try {
       final response = await http.delete(
         Uri.parse('${AppConstants.baseUrl}/user/featured/$id/'),
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+        },
+      ).timeout(const Duration(minutes: 2));
+      final statusCode = response.statusCode;
+      final jsonResponse = json.decode(response.body);
+      if (response.statusCode == 201 || statusCode == 200) {
+        UserModel user = UserModel.fromJson(jsonResponse['user']);
+        return Right(user);
+      } else if (statusCode == 401) {
+        return Left(DataFailure(response.statusCode, 'unauthorized access'));
+      } else if (statusCode == 404) {
+        return Left(DataFailure(response.statusCode, 'profile not found'));
+      } else if (statusCode == 400) {
+        return Left(DataFailure(response.statusCode, 'missing data'));
+      } else {
+        return Left(DataFailure(response.statusCode, jsonResponse));
+      }
+    } catch (e) {
+      if (e.toString().contains('SocketException')) {
+        return Left(DataFailureOffline(700, 'network error'));
+      }
+      return Left(DataFailure(500, e.toString()));
+    }
+  }
+
+  Future<Either<DataState, UserModel>> removeSocial({
+    required String id,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('${AppConstants.baseUrl}/user/social/$id/'),
         headers: {
           HttpHeaders.authorizationHeader: 'Bearer $accessToken',
         },

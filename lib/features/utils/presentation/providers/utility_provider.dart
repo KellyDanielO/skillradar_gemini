@@ -12,8 +12,10 @@ import '../../data/datasources/remote/remote_datasource.dart';
 import '../../data/repositories/utility_repository_impl.dart';
 import '../../domain/repositories/utility_repository.dart';
 import '../../domain/usecases/add_featured_usecase.dart';
+import '../../domain/usecases/add_social_usecase.dart';
 import '../../domain/usecases/edit_profile_usecase.dart';
-import '../../domain/usecases/remove_deatured_usecase.dart';
+import '../../domain/usecases/remove_featured_usecase.dart';
+import '../../domain/usecases/remove_social_usecase.dart';
 import '../../domain/usecases/upload_cover_usecase.dart';
 
 final remoteDataSourceProvider = Provider<RemoteDataSource>((ref) {
@@ -40,9 +42,19 @@ final addFeaturedPhotoProvider = Provider<AddFeatured>((ref) {
   return AddFeatured(repository);
 });
 
+final addSocialProvider = Provider<AddSocial>((ref) {
+  final repository = ref.read(authRepositoryProvider);
+  return AddSocial(repository);
+});
+
 final removeFeaturedPhotoProvider = Provider<RemoveFeatured>((ref) {
   final repository = ref.read(authRepositoryProvider);
   return RemoveFeatured(repository);
+});
+
+final removeSocialProvider = Provider<RemoveSocial>((ref) {
+  final repository = ref.read(authRepositoryProvider);
+  return RemoveSocial(repository);
 });
 
 final utilityListenerProvider =
@@ -51,8 +63,10 @@ final utilityListenerProvider =
   final uploadCoverPhoto = ref.read(uploadCoverPhotoProvider);
   final addFeaturedPhoto = ref.read(addFeaturedPhotoProvider);
   final removeFeaturedPhoto = ref.read(removeFeaturedPhotoProvider);
-  return UtilityStateNotifier(
-      editProfileData, uploadCoverPhoto, addFeaturedPhoto, removeFeaturedPhoto);
+  final addSocial = ref.read(addSocialProvider);
+  final removeSocial = ref.read(removeSocialProvider);
+  return UtilityStateNotifier(editProfileData, uploadCoverPhoto,
+      addFeaturedPhoto, removeFeaturedPhoto, addSocial, removeSocial);
 });
 
 final editProfileLoadingNotifierProvider =
@@ -65,13 +79,25 @@ final uploadingFeaturedLoadingNotifierProvider =
   return BoolNotifier();
 });
 
+final addingSocialLoadingNotifierProvider =
+    StateNotifierProvider.autoDispose<BoolNotifier, bool>((ref) {
+  return BoolNotifier();
+});
+
 class UtilityStateNotifier extends StateNotifier<UserEntity?> {
   final EditProfile _editProfile;
   final UploadCoverPhoto _uploadCoverPhoto;
   final AddFeatured _addFeatured;
   final RemoveFeatured _removeFeatured;
-  UtilityStateNotifier(this._editProfile, this._uploadCoverPhoto,
-      this._addFeatured, this._removeFeatured)
+  final AddSocial _addSocial;
+  final RemoveSocial _removeSocial;
+  UtilityStateNotifier(
+      this._editProfile,
+      this._uploadCoverPhoto,
+      this._addFeatured,
+      this._removeFeatured,
+      this._addSocial,
+      this._removeSocial)
       : super(null);
 
   Future<UserEntity?> editProfile({
@@ -144,6 +170,39 @@ class UtilityStateNotifier extends StateNotifier<UserEntity?> {
     );
   }
 
+  Future<UserEntity?> addSocial({
+    required String social,
+    required String link,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    Either<DataState, UserEntity> response = await _addSocial.addSocial(
+      social: social,
+      link: link,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    );
+    return response.fold(
+      (DataState responseDataState) {
+        if (responseDataState is DataFailureOffline) {
+          errorWidget(message: 'you\'re offline');
+        }
+        if (responseDataState is DataFailure) {
+          if (responseDataState.status != 500) {
+            errorWidget(message: responseDataState.message);
+          } else {
+            errorWidget(message: 'unknown error');
+          }
+        }
+
+        return null;
+      },
+      (UserEntity userEntity) {
+        return userEntity;
+      },
+    );
+  }
+
   Future<UserEntity?> removeFeatured({
     required String id,
     required String accessToken,
@@ -152,6 +211,34 @@ class UtilityStateNotifier extends StateNotifier<UserEntity?> {
     Either<DataState, UserEntity> response =
         await _removeFeatured.removeFeatured(
             id: id, accessToken: accessToken, refreshToken: refreshToken);
+    return response.fold(
+      (DataState responseDataState) {
+        if (responseDataState is DataFailureOffline) {
+          errorWidget(message: 'you\'re offline');
+        }
+        if (responseDataState is DataFailure) {
+          if (responseDataState.status != 500) {
+            errorWidget(message: responseDataState.message);
+          } else {
+            errorWidget(message: 'unknown error');
+          }
+        }
+
+        return null;
+      },
+      (UserEntity userEntity) {
+        return userEntity;
+      },
+    );
+  }
+
+  Future<UserEntity?> removeSocial({
+    required String id,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    Either<DataState, UserEntity> response = await _removeSocial.removeSocial(
+        id: id, accessToken: accessToken, refreshToken: refreshToken);
     return response.fold(
       (DataState responseDataState) {
         if (responseDataState is DataFailureOffline) {

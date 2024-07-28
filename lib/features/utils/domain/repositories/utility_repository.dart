@@ -20,7 +20,7 @@ abstract class UtilityRepository {
     required String accessToken,
     required String refreshToken,
   });
-  
+
   Future<Either<DataState, UserEntity>> addFeatured({
     required File media,
     required String summary,
@@ -29,6 +29,17 @@ abstract class UtilityRepository {
   });
   Future<Either<DataState, UserEntity>> removedFeatured({
     required String id,
+    required String accessToken,
+    required String refreshToken,
+  });
+  Future<Either<DataState, UserEntity>> removedSocial({
+    required String id,
+    required String accessToken,
+    required String refreshToken,
+  });
+  Future<Either<DataState, UserEntity>> addSocial({
+    required String social,
+    required String link,
     required String accessToken,
     required String refreshToken,
   });

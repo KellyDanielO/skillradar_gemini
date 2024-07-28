@@ -8,7 +8,7 @@ import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
 import '../../../../../core/providers/provider_variables.dart';
 import '../../../../../core/widgets/custom_btns.dart';
-import '../../widgets/add_featured_image_screen.dart';
+import '../../widgets/add_featured_image_widget.dart';
 import '../../widgets/featured_image.dart';
 
 class FeaturedScreen extends ConsumerStatefulWidget {

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
 import '../entities/skill_entity.dart';
+import '../entities/social_entity.dart';
 import '../entities/user_entity.dart';
 
 class BoolNotifier extends StateNotifier<bool> {
@@ -36,6 +37,13 @@ class UsersStateNotifier extends StateNotifier<List<UserEntity>> {
 class SkillsStateNotifier extends StateNotifier<List<SkillEntity>> {
   SkillsStateNotifier() : super([]);
   void setSkill(List<SkillEntity> skills) {
+    state = skills;
+  }
+}
+
+class SocialsStateNotifier extends StateNotifier<List<SocialEntity>> {
+  SocialsStateNotifier() : super([]);
+  void setSkill(List<SocialEntity> skills) {
     state = skills;
   }
 }

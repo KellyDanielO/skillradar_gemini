@@ -163,6 +163,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   scale: 0.9,
                   loop: false,
                   scrollDirection: Axis.vertical,
+                  index: 2,
                 ),
               ),
             if (skillSearchState == SkillSearchState.done)
@@ -188,7 +189,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   },
                   physics: const BouncingScrollPhysics(),
                   itemCount: skillSearchUsers.length,
-                  viewportFraction: 0.7,
+                  viewportFraction: 0.6,
                   scale: 0.9,
                   loop: false,
                   scrollDirection: Axis.vertical,

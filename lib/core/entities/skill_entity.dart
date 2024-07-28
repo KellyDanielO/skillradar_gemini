@@ -1,7 +1,4 @@
-
-import 'package:equatable/equatable.dart';
-
-class SkillEntity  extends Equatable {
+class SkillEntity {
   final int id;
   final String name;
 
@@ -9,9 +6,4 @@ class SkillEntity  extends Equatable {
     required this.id,
     required this.name,
   });
-
-  
-  @override
-  List<Object?> get props => [id, name];
-
 }

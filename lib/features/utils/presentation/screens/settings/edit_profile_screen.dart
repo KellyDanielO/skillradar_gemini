@@ -443,7 +443,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               minVerticalPadding: 5.h,
               minTileHeight: 5.h,
               contentPadding: const EdgeInsets.all(0),
-              onTap: () {},
+              onTap: () {
+                AppHelpers.goNamed(
+                    routeName: AppRouter.addSocialScreen, context: context);
+              },
             ),
             ListTile(
               title: Text(

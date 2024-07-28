@@ -1,12 +1,11 @@
-import 'package:equatable/equatable.dart';
-
 import '../entities/user_entity.dart';
 import '../../features/auth/data/models/token_model.dart';
 import 'featured_media_model.dart';
 import 'skill_model.dart';
+import 'user_social_entity.dart';
 
 // ignore: must_be_immutable
-class UserModel extends Equatable {
+class UserModel {
   final String id;
   final String email;
   final String? username;
@@ -24,6 +23,7 @@ class UserModel extends Equatable {
   TokenModel? tokens;
   final String? coverPhoto;
   final List<FeaturedMediaModel> featured;
+  final List<UserSocialModel> socials;
   final String? phoneNumber;
   final bool showEmail;
   final bool showProfile;
@@ -48,6 +48,7 @@ class UserModel extends Equatable {
     this.location,
     this.coverPhoto,
     required this.featured,
+    required this.socials,
     this.phoneNumber,
     required this.isSaved,
     required this.showEmail,
@@ -55,31 +56,9 @@ class UserModel extends Equatable {
     required this.showPhoneNumber,
   });
 
-  @override
-  List<Object?> get props => [
-        id,
-        email,
-        username,
-        name,
-        bio,
-        isGoogle,
-        skills,
-        aboutMe,
-        website,
-        avatar,
-        accountType,
-        isActive,
-        dateJoined,
-        location,
-        tokens,
-        featured,
-        showEmail,
-        showPhoneNumber,
-        showProfile
-      ];
-
   factory UserModel.fromJson(Map<String, dynamic> json) {
     var featuredList = json['featured'] as List;
+    var socialsList = json['socials'] as List;
     return UserModel(
       id: json['id'] as String,
       email: json['email'] as String,
@@ -105,6 +84,7 @@ class UserModel extends Equatable {
       showProfile: json['show_profile'],
       showPhoneNumber: json['show_phone_number'],
       isSaved: json['is_saved'],
+      socials: socialsList.map((i) => UserSocialModel.fromJson(i)).toList(),
     );
   }
 
@@ -135,5 +115,6 @@ class UserModel extends Equatable {
         coverPhoto: coverPhoto,
         phoneNumber: phoneNumber,
         isSaved: isSaved,
+        socials: socials.map((social) => social.toEntity()).toList(),
       );
 }

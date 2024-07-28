@@ -12,10 +12,12 @@ import '../../../../core/widgets/success_widgets.dart';
 import '../../../../core/entities/user_entity.dart';
 import '../../data/datasources/remote/remote_datasource.dart';
 import '../../data/repositories/initilize_repository_impl.dart';
+import '../../domain/entities/initilize_entity.dart';
 import '../../domain/repositories/initilize_repository.dart';
 import '../../domain/usecases/add_skills_usecase.dart';
 import '../../domain/usecases/get_skill_usecase.dart';
 import '../../domain/usecases/get_userdata_usecase.dart';
+import '../../domain/usecases/initializer_usecase.dart';
 
 final remoteDataSourceProvider = Provider<RemoteDataSource>((ref) {
   return RemoteDataSource();
@@ -37,20 +39,27 @@ final addSkillsProvider = Provider<AddSkills>((ref) {
   final repository = ref.read(authRepositoryProvider);
   return AddSkills(repository);
 });
+final initializeProvider = Provider<Initializer>((ref) {
+  final repository = ref.read(authRepositoryProvider);
+  return Initializer(repository);
+});
 final initializeListenerProvider =
     StateNotifierProvider<InitializeStateNotifier, UserEntity?>((ref) {
   final getUserData = ref.read(getUserDataProvider);
   final getAllSkills = ref.read(getAllSkillsProvider);
   final addSkills = ref.read(addSkillsProvider);
-  return InitializeStateNotifier(getUserData, getAllSkills, addSkills);
+  final initialize = ref.read(initializeProvider);
+  return InitializeStateNotifier(
+      getUserData, getAllSkills, addSkills, initialize);
 });
 
 class InitializeStateNotifier extends StateNotifier<UserEntity?> {
   final GetUserData _getUserData;
   final GetAllSkills _getAllSkills;
   final AddSkills _addSkills;
+  final Initializer _initializer;
   InitializeStateNotifier(
-      this._getUserData, this._getAllSkills, this._addSkills)
+      this._getUserData, this._getAllSkills, this._addSkills, this._initializer)
       : super(null);
 
   Future<UserEntity?> getUserData({
@@ -82,6 +91,33 @@ class InitializeStateNotifier extends StateNotifier<UserEntity?> {
         }
         successWidget(message: 'Welcome Back');
         return userEntity;
+      },
+    );
+  }
+
+  Future<void> initilize({
+    required WidgetRef ref,
+  }) async {
+    Either<DataState, InitilizeEntity> response =
+        await _initializer.initialize();
+    return response.fold(
+      (DataState responseDataState) {
+        if (responseDataState is DataFailureOffline) {
+          errorWidget(message: 'you\'re offline');
+        }
+        if (responseDataState is DataFailure) {
+          if (responseDataState.status != 500) {
+            errorWidget(message: responseDataState.message);
+          } else {
+            errorWidget(message: 'unknown error');
+          }
+        }
+
+        return null;
+      },
+      (InitilizeEntity data) {
+        ref.read(gobalSkillsNotifierProvider.notifier).setSkill(data.skills);
+        ref.read(gobalSocialsNotifierProvider.notifier).setSkill(data.socials);
       },
     );
   }

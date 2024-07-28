@@ -4,11 +4,13 @@ import 'package:skillradar/core/data_state/data_state.dart';
 import 'package:skillradar/core/entities/skill_entity.dart';
 
 import 'package:skillradar/core/entities/user_entity.dart';
+import 'package:skillradar/features/utils/domain/entities/initilize_entity.dart';
 
 import '../../../../core/models/skill_model.dart';
 import '../../../../core/models/user_model.dart';
 import '../../domain/repositories/initilize_repository.dart';
 import '../datasources/remote/remote_datasource.dart';
+import '../models/initialize_model.dart';
 
 class InitilizeRepositoryImpl implements InitilizeRepository {
   RemoteDataSource remoteDataSource;
@@ -49,6 +51,16 @@ class InitilizeRepositoryImpl implements InitilizeRepository {
     return response.fold(
       (DataState responseDataState) => Left(responseDataState),
       (UserModel userModel) => Right(userModel.toEntity()),
+    );
+  }
+
+  @override
+  Future<Either<DataState, InitilizeEntity>> initialize() async {
+    Either<DataState, InitilizeModel> response =
+        await remoteDataSource.initialize();
+    return response.fold(
+      (DataState responseDataState) => Left(responseDataState),
+      (InitilizeModel data) => Right(data.toEntity()),
     );
   }
 }
