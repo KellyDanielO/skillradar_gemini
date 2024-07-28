@@ -586,45 +586,50 @@ class BottomSheetContent extends StatelessWidget {
                     fontFamily: AppFonts.sansFont),
               ),
             )
-          : Column(
-              children: [
-                SizedBox(height: 10.h),
-                Text(
-                  'Connect Via',
-                  style: TextStyle(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: AppFonts.sansFont),
-                ),
-                SizedBox(height: 10.h),
-                SingleChildScrollView(
-                  child: Container(
-                    constraints: BoxConstraints(maxHeight: height * .4),
-                    padding: const EdgeInsets.all(16.0),
-                    child: Wrap(
-                      spacing: 16.0, // Gap between adjacent items
-                      runSpacing: 16.0, // Gap between lines
-                      children: List.generate(
-                        user.socials.length,
-                        (index) {
-                          return GestureDetector(
-                            onTap: () {
-                              AppHelpers.launchUrlNow(user.socials[index].link);
-                            },
-                            child: SizedBox(
-                              width: 50.w,
-                              height: 50.h,
-                              child:
-                                  Image.asset(user.socials[index].social.logo),
-                            ),
-                          );
-                        },
+          : FittedBox(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10.h),
+                  Text(
+                    'Connect Via',
+                    style: TextStyle(
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: AppFonts.sansFont),
+                  ),
+                  SizedBox(height: 10.h),
+                  SingleChildScrollView(
+                    child: Container(
+                      constraints: BoxConstraints(maxHeight: height * .4),
+                      padding: const EdgeInsets.all(16.0),
+                      child: Wrap(
+                        spacing: 16.0, // Gap between adjacent items
+                        runSpacing: 16.0, // Gap between lines
+                        children: List.generate(
+                          user.socials.length,
+                          (index) {
+                            return GestureDetector(
+                              onTap: () {
+                                AppHelpers.launchUrlNow(user.socials[index].link);
+                              },
+                              child: SizedBox(
+                                width: 50.w,
+                                height: 50.h,
+                                child: CustomNetworkImage(
+                                  imageurl: user.socials[index].social.logo,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+          ),
     );
   }
 }
