@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -18,6 +19,7 @@ import 'package:geocoding/geocoding.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/utils/presentation/screens/image_picker/media_picker.dart';
 import '../constants/colors.dart';
+import '../constants/constants.dart';
 import '../entities/skill_entity.dart';
 import '../entities/user_entity.dart';
 
@@ -313,5 +315,17 @@ class AppHelpers {
     String randomValue = array[randomIndex];
 
     return randomValue;
+  }
+
+  Future<String?> generateText({required String promptText}) async {
+    final model = GenerativeModel(
+      model: 'gemini-1.5-flash-latest',
+      apiKey: AppConstants.geminiAPIKey,
+    );
+
+    final prompt = promptText;
+    final content = [Content.text(prompt)];
+    final response = await model.generateContent(content);
+    return response.text;
   }
 }
