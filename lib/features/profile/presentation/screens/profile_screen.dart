@@ -47,11 +47,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  List<String> backgroundAvatar = [
-    AppAssets.background3,
-    AppAssets.background1,
-    AppAssets.background2,
-  ];
   @override
   void initState() {
     AppHelpers.changeBottomBarColor();
@@ -143,8 +138,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   fontFamily: AppFonts.actionFont,
                 ),
               ),
-        centerTitle: true,
+        centerTitle: false,
         actions: [
+          user!.showPhoneNumber
+              ? IconButton(
+                  onPressed: () {
+                    AppHelpers.launchPhoneCall(user.phoneNumber!);
+                  },
+                  icon: Icon(
+                    CupertinoIcons.phone,
+                    size: 24.sp,
+                    color: AppColors.whiteColor,
+                  ),
+                )
+              : const SizedBox.shrink(),
+          user.showEmail
+              ? IconButton(
+                  onPressed: () {
+                    AppHelpers.launchEmail(
+                        to: user.email,
+                        subject: 'Hey I\'m ${user.name} from Skill Radar.',
+                        body: '');
+                  },
+                  icon: Icon(
+                    CupertinoIcons.envelope,
+                    size: 24.sp,
+                    color: AppColors.whiteColor,
+                  ),
+                )
+              : const SizedBox.shrink(),
           Container(
             margin: EdgeInsets.only(right: 10.w),
             child: IconButton(
@@ -163,393 +185,375 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ],
       ),
-      body: user == null
-          ? null
-          : Container(
-              width: width,
-              height: height,
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: ListView(
-                      physics: const BouncingScrollPhysics(),
-                      children: <Widget>[
-                        SizedBox(height: 5.h),
-                        SizedBox(
-                          width: width,
-                          height: height * .35,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                top: 0,
-                                left: 0,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    AppHelpers.moveTo(
-                                        ImageViewer(
-                                          heroTag: 'ace_background',
-                                          image: user.coverPhoto ??
+      body: Container(
+        width: width,
+        height: height,
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                children: <Widget>[
+                  SizedBox(height: 5.h),
+                  SizedBox(
+                    width: width,
+                    height: height * .35,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          child: GestureDetector(
+                            onTap: () {
+                              AppHelpers.moveTo(
+                                  ImageViewer(
+                                    heroTag: 'ace_background',
+                                    image: user.coverPhoto ?? AppAssets.cover,
+                                    isNetwork: user.coverPhoto != null,
+                                  ),
+                                  context);
+                            },
+                            child: SizedBox(
+                              width: width * .88,
+                              height: height * .25,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Hero(
+                                  tag: 'ace_background',
+                                  transitionOnUserGestures: true,
+                                  child: fileSelected
+                                      ? Image.file(
+                                          selectedFile!,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : user.coverPhoto != null
+                                          ? CustomNetworkImage(
+                                              imageurl: user.coverPhoto!,
+                                            )
+                                          : Image.asset(
                                               AppAssets.cover,
-                                          isNetwork: user.coverPhoto != null,
-                                        ),
-                                        context);
-                                  },
-                                  child: SizedBox(
-                                    width: width * .88,
-                                    height: height * .25,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: Hero(
-                                        tag: 'ace_background',
-                                        transitionOnUserGestures: true,
-                                        child: fileSelected
-                                            ? Image.file(
-                                                selectedFile!,
-                                                fit: BoxFit.cover,
-                                              )
-                                            : user.coverPhoto != null
-                                                ? CustomNetworkImage(
-                                                    imageurl: user.coverPhoto!,
-                                                  )
-                                                : Image.asset(
-                                                    AppAssets.cover,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                      ),
-                                    ),
-                                  ),
+                                              fit: BoxFit.cover,
+                                            ),
                                 ),
                               ),
-                              Positioned(
-                                top: 10,
-                                right: 10,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColors.greyColor.withOpacity(.3),
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  margin: EdgeInsets.only(right: 10.w),
-                                  child: IconButton(
-                                    onPressed: uploadCoverPhoto,
-                                    icon: me
-                                        ? Icon(
-                                            Icons.change_circle_outlined,
-                                            color: AppColors.whiteColor,
-                                            size: 20.sp,
-                                          )
-                                        : SvgPicture.asset(
-                                            AppAssets.bookmarkOutlinedIcon,
-                                            colorFilter: const ColorFilter.mode(
-                                                AppColors.whiteColor,
-                                                BlendMode.srcIn),
-                                            width: 15.w,
-                                            height: 15.h,
-                                          ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 10.h,
-                                left: (width - 100.w) / 2 - 20.w,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    AppHelpers.moveTo(
-                                        ImageViewer(
-                                          image: user.avatar ?? AppAssets.user,
-                                          heroTag: 'ace_profile',
-                                          isNetwork: user.avatar != null,
-                                        ),
-                                        context);
-                                  },
-                                  child: Container(
-                                    width: 100.w,
-                                    height: 100.w,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(50),
-                                      border: Border.all(
-                                          color: AppColors.blackColor,
-                                          width: 8),
-                                    ),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: Hero(
-                                      tag: 'ace_profile',
-                                      transitionOnUserGestures: true,
-                                      child: Container(
-                                        width: 86.w,
-                                        height: 86.w,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.greyColor
-                                              .withOpacity(.5),
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                        ),
-                                        clipBehavior: Clip.antiAlias,
-                                        child: user.avatar != null
-                                            ? CustomNetworkImage(
-                                                imageurl: user.avatar!,
-                                              )
-                                            : Image.asset(
-                                                AppAssets.user,
-                                                fit: BoxFit.cover,
-                                              ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
-                        SizedBox(height: 15.h),
-                        Column(
-                          children: <Widget>[
-                            Text(
-                              user.name,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: AppFonts.sansFont,
-                                    color: AppColors.whiteColor,
-                                  ),
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.greyColor.withOpacity(.3),
+                              borderRadius: BorderRadius.circular(30),
                             ),
-                            SizedBox(height: 5.h),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.location_on_outlined,
-                                  color: AppColors.whiteColor,
-                                  size: 20.sp,
-                                ),
-                                SizedBox(width: 10.w),
-                                ConstrainedBox(
-                                  constraints:
-                                      BoxConstraints(maxWidth: width * .6),
-                                  child: Text(
-                                    user.location!,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .copyWith(
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: AppFonts.interFont,
-                                          color: AppColors.whiteColor,
-                                        ),
-                                    overflow: TextOverflow.ellipsis,
-                                    softWrap: true,
-                                    maxLines: 3,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20.h),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              transH.skills.capitalizeFirst.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: AppFonts.sansFont,
-                                    color: AppColors.whiteColor,
-                                  ),
-                            ),
-                            SizedBox(height: 10.h),
-                            if (user.skills.isEmpty)
-                              const Text(
-                                'No skill',
-                                style: TextStyle(
-                                  color: AppColors.greyColor,
-                                ),
-                              )
-                            else
-                              Wrap(
-                                spacing: 8.0,
-                                runSpacing: 4.0,
-                                children: List.generate(
-                                  user.skills.length,
-                                  (index) {
-                                    return Chip(
-                                      backgroundColor: AppColors.blackColor,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30)),
-                                      label: Text(
-                                        user.skills[index].name,
-                                        style: TextStyle(
-                                          color: AppColors.whiteColor,
-                                          fontFamily: AppFonts.sansFont,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 12.sp,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                          ],
-                        ),
-                        SizedBox(height: 10.h),
-                        user.featured.isEmpty
-                            ? const SizedBox.shrink()
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    'Featured Images',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .copyWith(
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: AppFonts.sansFont,
-                                          color: AppColors.whiteColor,
-                                        ),
-                                  ),
-                                  SizedBox(height: 10.h),
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: List.generate(
-                                          user.featured.length, (index) {
-                                        return Container(
-                                          margin: EdgeInsets.only(right: 10.w),
-                                          child: InkWell(
-                                            onTap: () {
-                                              AppHelpers.moveTo(
-                                                  ImageViewer(
-                                                    image: user
-                                                        .featured[index].media,
-                                                    isNetwork: true,
-                                                    heroTag:
-                                                        'featured_image${user.featured[index].media}${user.featured[index].summary}',
-                                                    summary: user
-                                                        .featured[index]
-                                                        .summary,
-                                                  ),
-                                                  context);
-                                            },
-                                            child: Container(
-                                              width: width * .75,
-                                              height: height * .15,
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              clipBehavior: Clip.antiAlias,
-                                              child: Hero(
-                                                tag:
-                                                    'featured_image${user.featured[index].media}${user.featured[index].summary}',
-                                                transitionOnUserGestures: true,
-                                                child: CustomNetworkImage(
-                                                  imageurl: user
-                                                      .featured[index].media,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }),
+                            margin: EdgeInsets.only(right: 10.w),
+                            child: IconButton(
+                              onPressed: uploadCoverPhoto,
+                              icon: me
+                                  ? Icon(
+                                      Icons.change_circle_outlined,
+                                      color: AppColors.whiteColor,
+                                      size: 20.sp,
+                                    )
+                                  : SvgPicture.asset(
+                                      AppAssets.bookmarkOutlinedIcon,
+                                      colorFilter: const ColorFilter.mode(
+                                          AppColors.whiteColor,
+                                          BlendMode.srcIn),
+                                      width: 15.w,
+                                      height: 15.h,
                                     ),
-                                  ),
-                                ],
-                              ),
-                        SizedBox(height: 20.h),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'Bio',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: AppFonts.sansFont,
-                                    color: AppColors.whiteColor,
-                                  ),
                             ),
-                            SizedBox(height: 10.h),
-                            Text(
-                              user.bio == null || user.bio == ''
-                                  ? 'No bio'
-                                  : user.bio!,
-                              style: const TextStyle(
-                                color: AppColors.greyColor,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 10.h,
+                          left: (width - 100.w) / 2 - 20.w,
+                          child: GestureDetector(
+                            onTap: () {
+                              AppHelpers.moveTo(
+                                  ImageViewer(
+                                    image: user.avatar ?? AppAssets.user,
+                                    heroTag: 'ace_profile',
+                                    isNetwork: user.avatar != null,
+                                  ),
+                                  context);
+                            },
+                            child: Container(
+                              width: 100.w,
+                              height: 100.w,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                    color: AppColors.blackColor, width: 8),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Hero(
+                                tag: 'ace_profile',
+                                transitionOnUserGestures: true,
+                                child: Container(
+                                  width: 86.w,
+                                  height: 86.w,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.greyColor.withOpacity(.5),
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: user.avatar != null
+                                      ? CustomNetworkImage(
+                                          imageurl: user.avatar!,
+                                        )
+                                      : Image.asset(
+                                          AppAssets.user,
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
                               ),
                             ),
-                            SizedBox(height: 100.h),
-                          ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  Positioned(
-                    bottom: 10,
-                    child: GestureDetector(
-                      onTap: () => me
-                          ? AppHelpers.goNamed(
-                              routeName: AppRouter.editProfileScreen,
-                              context: context)
-                          : _showBottomSheet(context, width, height),
-                      child: Container(
-                        width: width - 40.w,
-                        decoration: BoxDecoration(
-                          color: AppColors.whiteColor,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                            vertical: 5.h, horizontal: 10.w),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  me
-                                      ? 'Edit'
-                                      : transH.connect.capitalizeFirst
-                                          .toString(),
-                                  style: const TextStyle(
-                                    color: AppColors.blackColor,
-                                    fontWeight: FontWeight.bold,
+                  SizedBox(height: 15.h),
+                  Column(
+                    children: <Widget>[
+                      Text(
+                        user.name,
+                        style:
+                            Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: AppFonts.sansFont,
+                                  color: AppColors.whiteColor,
+                                ),
+                      ),
+                      SizedBox(height: 5.h),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.location_on_outlined,
+                            color: AppColors.whiteColor,
+                            size: 20.sp,
+                          ),
+                          SizedBox(width: 10.w),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: width * .6),
+                            child: Text(
+                              user.location!,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: AppFonts.interFont,
+                                    color: AppColors.whiteColor,
+                                  ),
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: true,
+                              maxLines: 3,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20.h),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        transH.skills.capitalizeFirst.toString(),
+                        style:
+                            Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: AppFonts.sansFont,
+                                  color: AppColors.whiteColor,
+                                ),
+                      ),
+                      SizedBox(height: 10.h),
+                      if (user.skills.isEmpty)
+                        const Text(
+                          'No skill',
+                          style: TextStyle(
+                            color: AppColors.greyColor,
+                          ),
+                        )
+                      else
+                        Wrap(
+                          spacing: 8.0,
+                          runSpacing: 4.0,
+                          children: List.generate(
+                            user.skills.length,
+                            (index) {
+                              return Chip(
+                                backgroundColor: AppColors.blackColor,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30)),
+                                label: Text(
+                                  user.skills[index].name,
+                                  style: TextStyle(
+                                    color: AppColors.whiteColor,
+                                    fontFamily: AppFonts.sansFont,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12.sp,
                                   ),
                                 ),
-                              ),
+                              );
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                  SizedBox(height: 10.h),
+                  user.featured.isEmpty
+                      ? const SizedBox.shrink()
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Featured Images',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall!
+                                  .copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: AppFonts.sansFont,
+                                    color: AppColors.whiteColor,
+                                  ),
                             ),
-                            Container(
-                              width: 40.w,
-                              height: 40.w,
-                              decoration: BoxDecoration(
-                                color: AppColors.blackColor,
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Icon(
-                                CupertinoIcons.arrow_right,
-                                color: AppColors.whiteColor,
-                                size: 18.sp,
+                            SizedBox(height: 10.h),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: List.generate(user.featured.length,
+                                    (index) {
+                                  return Container(
+                                    margin: EdgeInsets.only(right: 10.w),
+                                    child: InkWell(
+                                      onTap: () {
+                                        AppHelpers.moveTo(
+                                            ImageViewer(
+                                              image: user.featured[index].media,
+                                              isNetwork: true,
+                                              heroTag:
+                                                  'featured_image${user.featured[index].media}${user.featured[index].summary}',
+                                              summary:
+                                                  user.featured[index].summary,
+                                            ),
+                                            context);
+                                      },
+                                      child: Container(
+                                        width: width * .75,
+                                        height: height * .15,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: Hero(
+                                          tag:
+                                              'featured_image${user.featured[index].media}${user.featured[index].summary}',
+                                          transitionOnUserGestures: true,
+                                          child: CustomNetworkImage(
+                                            imageurl:
+                                                user.featured[index].media,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }),
                               ),
                             ),
                           ],
                         ),
+                  SizedBox(height: 20.h),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'Bio',
+                        style:
+                            Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: AppFonts.sansFont,
+                                  color: AppColors.whiteColor,
+                                ),
                       ),
-                    ),
+                      SizedBox(height: 10.h),
+                      Text(
+                        user.bio == null || user.bio == ''
+                            ? 'No bio'
+                            : user.bio!,
+                        style: const TextStyle(
+                          color: AppColors.greyColor,
+                        ),
+                      ),
+                      SizedBox(height: 100.h),
+                    ],
                   ),
                 ],
               ),
             ),
+            Positioned(
+              bottom: 10,
+              child: GestureDetector(
+                onTap: () => me
+                    ? AppHelpers.goNamed(
+                        routeName: AppRouter.editProfileScreen,
+                        context: context)
+                    : _showBottomSheet(context, width, height),
+                child: Container(
+                  width: width - 40.w,
+                  decoration: BoxDecoration(
+                    color: AppColors.whiteColor,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            me
+                                ? 'Edit'
+                                : transH.connect.capitalizeFirst.toString(),
+                            style: const TextStyle(
+                              color: AppColors.blackColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 40.w,
+                        height: 40.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.blackColor,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Icon(
+                          CupertinoIcons.arrow_right,
+                          color: AppColors.whiteColor,
+                          size: 18.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -558,11 +562,12 @@ class BottomSheetContent extends StatelessWidget {
   final double width;
   final double height;
   final UserEntity user;
-  const BottomSheetContent(
-      {super.key,
-      required this.width,
-      required this.height,
-      required this.user});
+  const BottomSheetContent({
+    super.key,
+    required this.width,
+    required this.height,
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -587,18 +592,22 @@ class BottomSheetContent extends StatelessWidget {
               ),
             )
           : FittedBox(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 10.h),
-                  Text(
-                    'Connect Via',
-                    style: TextStyle(
+                  Container(
+                    width: width,
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Connect Via',
+                      style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
-                        fontFamily: AppFonts.sansFont),
+                        fontFamily: AppFonts.sansFont,
+                      ),
+                    ),
                   ),
-                  SizedBox(height: 10.h),
                   SingleChildScrollView(
                     child: Container(
                       constraints: BoxConstraints(maxHeight: height * .4),
@@ -611,7 +620,8 @@ class BottomSheetContent extends StatelessWidget {
                           (index) {
                             return GestureDetector(
                               onTap: () {
-                                AppHelpers.launchUrlNow(user.socials[index].link);
+                                AppHelpers.launchUrlNow(
+                                    user.socials[index].link);
                               },
                               child: SizedBox(
                                 width: 50.w,
@@ -629,7 +639,7 @@ class BottomSheetContent extends StatelessWidget {
                   ),
                 ],
               ),
-          ),
+            ),
     );
   }
 }

@@ -80,8 +80,8 @@ class _SocialBoxWidgetState extends ConsumerState<SocialBoxWidget> {
           Positioned(
             top: 0,
             right: 0,
-            child: IconButton.filled(
-              onPressed: () {
+            child: GestureDetector(
+              onTap: () {
                 showDialog(
                   context: context,
                   builder: (context) {
@@ -138,16 +138,18 @@ class _SocialBoxWidgetState extends ConsumerState<SocialBoxWidget> {
                   },
                 );
               },
-              style: const ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(AppColors.redColor),
+              child: Container(
+                decoration: const BoxDecoration(
+                    color: AppColors.redColor, shape: BoxShape.circle),
+                padding: EdgeInsets.all(8.w),
+                child: deleting
+                    ? const CupertinoActivityIndicator()
+                    : Icon(
+                        CupertinoIcons.trash,
+                        color: AppColors.whiteColor,
+                        size: 14.sp,
+                      ),
               ),
-              icon: deleting
-                  ? const CupertinoActivityIndicator()
-                  : Icon(
-                      CupertinoIcons.trash,
-                      color: AppColors.whiteColor,
-                      size: 18.sp,
-                    ),
             ),
           ),
         ],

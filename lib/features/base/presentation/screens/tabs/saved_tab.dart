@@ -7,7 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
-import '../../../../../core/constants/skills.dart';
 import '../../widgets/profile_card.dart';
 
 class SavedTab extends ConsumerWidget {
@@ -20,7 +19,7 @@ class SavedTab extends ConsumerWidget {
     List<UserProfile> profiles = [
       UserProfile(
         name: 'Ace',
-        image: AppAssets.avatar1,
+        image: AppAssets.user,
         location: 'Nigeria, Port Harcourt',
         skill: 'Photographer',
         bio: 'I\'m a cool guy',
@@ -29,7 +28,7 @@ class SavedTab extends ConsumerWidget {
       ),
       UserProfile(
         name: 'Kelly Daniel',
-        image: AppAssets.avatar2,
+        image: AppAssets.user,
         location: 'Nigeria, Port Harcourt',
         skill: 'Flutter Developer',
         bio: 'I\'m a cool guy',
@@ -38,7 +37,7 @@ class SavedTab extends ConsumerWidget {
       ),
       UserProfile(
         name: 'Livingstone',
-        image: AppAssets.avatar3,
+        image: AppAssets.user,
         location: 'Nigeria, Port Harcourt',
         skill: 'Flutter Developer',
         bio: 'I\'m a cool guy',
@@ -47,7 +46,7 @@ class SavedTab extends ConsumerWidget {
       ),
       UserProfile(
         name: 'Victor Chiaka',
-        image: AppAssets.avatar4,
+        image: AppAssets.user,
         location: 'Nigeria, Port Harcourt',
         skill: 'Flutter Developer',
         bio: 'I\'m a cool guy',

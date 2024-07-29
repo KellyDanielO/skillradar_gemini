@@ -45,6 +45,9 @@ class _AddSocialWidgetState extends ConsumerState<AddSocialWidget> {
     if (!buttonLoading) {
       if (link.text.isEmpty) {
         errorWidget(message: 'All fields are required!');
+      }
+      if (link.text.isURL == false) {
+        errorWidget(message: 'Please fill in a valid link!');
       } else {
         String? accessToken = await AppHelpers().getData('access_token');
         String? refreshToken = await AppHelpers().getData('refresh_token');
@@ -167,6 +170,7 @@ class _AddSocialWidgetState extends ConsumerState<AddSocialWidget> {
                               style: TextStyle(
                                 color: AppColors.whiteColor.withOpacity(.7),
                               ),
+                              keyboardType: TextInputType.url,
                               decoration: InputDecoration(
                                 hintText: 'Paste in link...',
                                 hintStyle: TextStyle(

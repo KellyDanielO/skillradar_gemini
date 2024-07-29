@@ -51,6 +51,29 @@ class AppHelpers {
     }
   }
 
+  static void launchEmail({
+    required String to,
+    required String subject,
+    required String body,
+  }) async {
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: to,
+      queryParameters: {
+        'subject': subject,
+        'body': body,
+      },
+    );
+
+    await launch(emailLaunchUri.toString());
+  }
+
+  static void launchPhoneCall(String phoneNumber) async {
+    final Uri phoneCallUri = Uri(scheme: 'tel', path: phoneNumber);
+
+    await launch(phoneCallUri.toString());
+  }
+
   static void navigateNamed(BuildContext context, String routName,
       [Object? arguments]) {
     Navigator.pushNamed(context, routName, arguments: arguments);
@@ -240,7 +263,8 @@ class AppHelpers {
     return user2.skills.first;
   }
 
-  static String findFirstCommonSkillSet(List<SkillEntity> skills1, List<String> skills2) {
+  static String findFirstCommonSkillSet(
+      List<SkillEntity> skills1, List<String> skills2) {
     Set<String> skillIds1 = skills1.map((skill) => skill.name).toSet();
 
     for (String skill in skills2) {

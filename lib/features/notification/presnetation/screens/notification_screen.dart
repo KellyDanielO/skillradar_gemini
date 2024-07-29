@@ -22,7 +22,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
   List<UserProfile> profiles = [
     UserProfile(
       name: 'Ace',
-      image: AppAssets.avatar1,
+      image: AppAssets.user,
       location: 'Nigeria, Port Harcourt',
       skill: 'Photographer',
       bio: 'I\'m a cool guy',
@@ -31,7 +31,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
     ),
     UserProfile(
       name: 'Kelly Daniel',
-      image: AppAssets.avatar2,
+      image: AppAssets.user,
       location: 'Nigeria, Port Harcourt',
       skill: 'Flutter Developer',
       bio: 'I\'m a cool guy',
@@ -40,7 +40,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
     ),
     UserProfile(
       name: 'Livingstone',
-      image: AppAssets.avatar3,
+      image: AppAssets.user,
       location: 'Nigeria, Port Harcourt',
       skill: 'Flutter Developer',
       bio: 'I\'m a cool guy',
@@ -49,7 +49,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
     ),
     UserProfile(
       name: 'Victor Chiaka',
-      image: AppAssets.avatar4,
+      image: AppAssets.user,
       location: 'Nigeria, Port Harcourt',
       skill: 'Flutter Developer',
       bio: 'I\'m a cool guy',
