@@ -430,6 +430,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.1"
+  flutter_dotenv:
+    dependency: "direct main"
+    description:
+      name: flutter_dotenv
+      sha256: "9357883bdd153ab78cbf9ffa07656e336b8bbb2b5a3ca596b0b27e119f7c7d77"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -677,14 +685,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "13.0.1"
-  google_gemini:
+  google_generative_ai:
     dependency: "direct main"
     description:
-      name: google_gemini
-      sha256: a99e14ba2d497ec8e2b4c83e483204709a4ce3ec6c0a6021b3c4a9b2cd671150
+      name: google_generative_ai
+      sha256: "76e35d93b8c1cd888f69a1a371f8c5dc54cec372b6c74a4c0a5d506e7cf82c1a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.2"
+    version: "0.4.3"
   google_identity_services_web:
     dependency: transitive
     description:
