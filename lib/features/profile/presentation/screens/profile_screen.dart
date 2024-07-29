@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:skillradar/core/helpers/app_extensions.dart';
+import 'package:skillradar/core/helpers/extensions.dart';
 
 import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
@@ -140,7 +141,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
         centerTitle: false,
         actions: [
-          user!.showPhoneNumber
+          user!.showPhoneNumber && !user.phoneNumber.isNull
               ? IconButton(
                   onPressed: () {
                     AppHelpers.launchPhoneCall(user.phoneNumber!);
@@ -152,7 +153,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 )
               : const SizedBox.shrink(),
-          user.showEmail
+          user.showEmail && !user.email.isNull
               ? IconButton(
                   onPressed: () {
                     AppHelpers.launchEmail(

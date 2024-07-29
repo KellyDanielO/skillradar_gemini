@@ -45,9 +45,6 @@ class _AddSocialWidgetState extends ConsumerState<AddSocialWidget> {
     if (!buttonLoading) {
       if (link.text.isEmpty) {
         errorWidget(message: 'All fields are required!');
-      }
-      if (link.text.isURL == false) {
-        errorWidget(message: 'Please fill in a valid link!');
       } else {
         String? accessToken = await AppHelpers().getData('access_token');
         String? refreshToken = await AppHelpers().getData('refresh_token');

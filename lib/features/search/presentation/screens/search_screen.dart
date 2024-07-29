@@ -159,7 +159,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     return FeedShimmer(width: width);
                   },
                   physics: const BouncingScrollPhysics(),
-                  viewportFraction: 0.7,
+                  viewportFraction: 0.6,
                   scale: 0.9,
                   loop: false,
                   scrollDirection: Axis.vertical,
