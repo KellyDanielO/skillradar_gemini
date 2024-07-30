@@ -30,6 +30,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _aboutController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _websiteController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
   bool fileSelected = false;
   bool locating = false;
   File? selectedFile;
@@ -42,6 +44,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _nameController.text = user!.name;
     _locationController.text = user!.location!;
     _aboutController.text = user!.bio ?? '';
+    _phoneNumberController.text = user!.phoneNumber ?? '';
+    _websiteController.text = user!.website ?? '';
     super.initState();
   }
 
@@ -50,6 +54,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _aboutController.dispose();
     _locationController.dispose();
     _nameController.dispose();
+    _websiteController.dispose();
+    _phoneNumberController.dispose();
     super.dispose();
   }
 
@@ -60,15 +66,18 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       String? accessToken = await AppHelpers().getData('access_token');
       String? refreshToken = await AppHelpers().getData('refresh_token');
       ref.read(editProfileLoadingNotifierProvider.notifier).change(true);
-      UserEntity? user = await ref
-          .read(utilityListenerProvider.notifier)
-          .editProfile(
-              bio: _aboutController.text,
-              name: _nameController.text,
-              location: _locationController.text,
-              accessToken: accessToken!,
-              refreshToken: refreshToken!,
-              profileImage: selectedFile);
+      UserEntity? user =
+          await ref.read(utilityListenerProvider.notifier).editProfile(
+                bio: _aboutController.text,
+                name: _nameController.text,
+                location: _locationController.text,
+                accessToken: accessToken!,
+                refreshToken: refreshToken!,
+                profileImage: selectedFile,
+                phoneNumber: _phoneNumberController.text,
+                website: _websiteController.text,
+              );
+
       if (user != null) {
         ref.read(gobalUserNotifierProvider.notifier).setUser(user);
         if (mounted) {
@@ -197,6 +206,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         style: TextStyle(
                           color: AppColors.whiteColor.withOpacity(.7),
                         ),
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
                           hintText: 'Enter name',
                           hintStyle: TextStyle(
@@ -225,7 +235,109 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 20.h),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Website',
+                  style: TextStyle(
+                      color: AppColors.whiteColor.withOpacity(.7),
+                      fontWeight: FontWeight.w600,
+                      fontFamily: AppFonts.sansFont),
+                ),
+                SizedBox(height: 5.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: _websiteController,
+                        style: TextStyle(
+                          color: AppColors.whiteColor.withOpacity(.7),
+                        ),
+                        keyboardType: TextInputType.url,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          hintText: 'Enter website link',
+                          hintStyle: TextStyle(
+                            color: AppColors.whiteColor.withOpacity(.7),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: AppColors.whiteColor.withOpacity(.2),
+                              width: 2,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: AppColors.primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 15.w),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 20.h),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Phone number',
+                  style: TextStyle(
+                      color: AppColors.whiteColor.withOpacity(.7),
+                      fontWeight: FontWeight.w600,
+                      fontFamily: AppFonts.sansFont),
+                ),
+                SizedBox(height: 5.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        textInputAction: TextInputAction.next,
+                        controller: _phoneNumberController,
+                        style: TextStyle(
+                          color: AppColors.whiteColor.withOpacity(.7),
+                        ),
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          hintText: 'Enter your phone number',
+                          hintStyle: TextStyle(
+                            color: AppColors.whiteColor.withOpacity(.7),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: AppColors.whiteColor.withOpacity(.2),
+                              width: 2,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: AppColors.primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 15.w),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 20.h),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -279,7 +391,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 10.h),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

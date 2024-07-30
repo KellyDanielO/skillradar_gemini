@@ -22,15 +22,18 @@ class UtilityRepositoryImpl implements UtilityRepository {
     File? profileImage,
     required String accessToken,
     required String refreshToken,
+    String? website,
+    String? phoneNumber,
   }) async {
     Either<DataState, UserModel> response = await remoteDataSource.editProfile(
-      bio: bio,
-      name: name,
-      location: location,
-      accessToken: accessToken,
-      profileImage: profileImage,
-      refreshToken: refreshToken,
-    );
+        bio: bio,
+        name: name,
+        location: location,
+        accessToken: accessToken,
+        profileImage: profileImage,
+        refreshToken: refreshToken,
+        phoneNumber: phoneNumber,
+        website: website);
     return response.fold(
       (DataState responseDataState) => Left(responseDataState),
       (UserModel userModel) => Right(userModel.toEntity()),
@@ -115,6 +118,28 @@ class UtilityRepositoryImpl implements UtilityRepository {
       required String refreshToken}) async {
     Either<DataState, UserModel> response = await remoteDataSource.removeSocial(
       id: id,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    );
+    return response.fold(
+      (DataState responseDataState) => Left(responseDataState),
+      (UserModel userModel) => Right(userModel.toEntity()),
+    );
+  }
+
+  @override
+  Future<Either<DataState, UserEntity>> editVisibilitySettings({
+    required String showPhoneNumber,
+    required String showEmail,
+    required String showProfile,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    Either<DataState, UserModel> response =
+        await remoteDataSource.editVisibilitySettings(
+      showPhoneNumber: showPhoneNumber,
+      showEmail: showEmail,
+      showProfile: showProfile,
       accessToken: accessToken,
       refreshToken: refreshToken,
     );

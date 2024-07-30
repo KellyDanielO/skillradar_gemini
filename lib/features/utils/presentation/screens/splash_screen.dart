@@ -29,7 +29,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   void request() async {
-    // await AppHelpers.requestStoragePermission();
     String? accessToken = await AppHelpers().getData('access_token');
     String? refreshToken = await AppHelpers().getData('refresh_token');
     // print(accessToken);
@@ -89,10 +88,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(
-              width: 250.w,
-              height: 250.w,
-              child: Image.asset(AppAssets.logo3),
+              width: 100.w,
+              height: 100.w,
+              child: Image.asset(AppAssets.logo5),
             ).animate().fade(delay: 500.ms),
+            SizedBox(height: 30.h),
             const CupertinoActivityIndicator(
               color: AppColors.primaryColor,
               radius: 15,

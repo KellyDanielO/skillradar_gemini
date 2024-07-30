@@ -12,6 +12,8 @@ abstract class UtilityRepository {
     required String location,
     File? profileImage,
     required String accessToken,
+    String? website,
+    String? phoneNumber,
     required String refreshToken,
   });
 
@@ -40,6 +42,13 @@ abstract class UtilityRepository {
   Future<Either<DataState, UserEntity>> addSocial({
     required String social,
     required String link,
+    required String accessToken,
+    required String refreshToken,
+  });
+  Future<Either<DataState, UserEntity>> editVisibilitySettings({
+    required String showPhoneNumber,
+    required String showEmail,
+    required String showProfile,
     required String accessToken,
     required String refreshToken,
   });

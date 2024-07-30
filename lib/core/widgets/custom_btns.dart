@@ -211,13 +211,13 @@ class OutlinedCustomBtn extends ConsumerWidget {
       width: width,
       child: OutlinedButton(
         style: ButtonStyle(
-          side: MaterialStateProperty.all<BorderSide>(
+          side: WidgetStateProperty.all<BorderSide>(
             BorderSide(
               color: btnColor,
               width: 1,
             ),
           ),
-          padding: MaterialStatePropertyAll(
+          padding: WidgetStatePropertyAll(
             padding ?? const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
           ),
         ),

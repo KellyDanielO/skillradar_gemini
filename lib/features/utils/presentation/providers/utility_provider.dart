@@ -14,6 +14,7 @@ import '../../domain/repositories/utility_repository.dart';
 import '../../domain/usecases/add_featured_usecase.dart';
 import '../../domain/usecases/add_social_usecase.dart';
 import '../../domain/usecases/edit_profile_usecase.dart';
+import '../../domain/usecases/edit_visibility_settings_usecase.dart';
 import '../../domain/usecases/remove_featured_usecase.dart';
 import '../../domain/usecases/remove_social_usecase.dart';
 import '../../domain/usecases/upload_cover_usecase.dart';
@@ -57,6 +58,11 @@ final removeSocialProvider = Provider<RemoveSocial>((ref) {
   return RemoveSocial(repository);
 });
 
+final editVisibilitySettingProvider = Provider<EditVisibilitySettings>((ref) {
+  final repository = ref.read(authRepositoryProvider);
+  return EditVisibilitySettings(repository);
+});
+
 final utilityListenerProvider =
     StateNotifierProvider<UtilityStateNotifier, UserEntity?>((ref) {
   final editProfileData = ref.read(editProfileDataProvider);
@@ -65,8 +71,16 @@ final utilityListenerProvider =
   final removeFeaturedPhoto = ref.read(removeFeaturedPhotoProvider);
   final addSocial = ref.read(addSocialProvider);
   final removeSocial = ref.read(removeSocialProvider);
-  return UtilityStateNotifier(editProfileData, uploadCoverPhoto,
-      addFeaturedPhoto, removeFeaturedPhoto, addSocial, removeSocial);
+  final editVisibilitySetting = ref.read(editVisibilitySettingProvider);
+  return UtilityStateNotifier(
+    editProfileData,
+    uploadCoverPhoto,
+    addFeaturedPhoto,
+    removeFeaturedPhoto,
+    addSocial,
+    removeSocial,
+    editVisibilitySetting,
+  );
 });
 
 final editProfileLoadingNotifierProvider =
@@ -84,6 +98,11 @@ final addingSocialLoadingNotifierProvider =
   return BoolNotifier();
 });
 
+final editingVisibilityLoadingNotifierProvider =
+    StateNotifierProvider.autoDispose<BoolNotifier, bool>((ref) {
+  return BoolNotifier();
+});
+
 class UtilityStateNotifier extends StateNotifier<UserEntity?> {
   final EditProfile _editProfile;
   final UploadCoverPhoto _uploadCoverPhoto;
@@ -91,31 +110,36 @@ class UtilityStateNotifier extends StateNotifier<UserEntity?> {
   final RemoveFeatured _removeFeatured;
   final AddSocial _addSocial;
   final RemoveSocial _removeSocial;
+  final EditVisibilitySettings _editVisibilitySettings;
   UtilityStateNotifier(
-      this._editProfile,
-      this._uploadCoverPhoto,
-      this._addFeatured,
-      this._removeFeatured,
-      this._addSocial,
-      this._removeSocial)
-      : super(null);
+    this._editProfile,
+    this._uploadCoverPhoto,
+    this._addFeatured,
+    this._removeFeatured,
+    this._addSocial,
+    this._removeSocial,
+    this._editVisibilitySettings,
+  ) : super(null);
 
   Future<UserEntity?> editProfile({
     required String bio,
     required String name,
     required String location,
+    String? website,
+    String? phoneNumber,
     File? profileImage,
     required String accessToken,
     required String refreshToken,
   }) async {
     Either<DataState, UserEntity> response = await _editProfile.editProfile(
-      bio: bio,
-      name: name,
-      location: location,
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-      profileImage: profileImage,
-    );
+        bio: bio,
+        name: name,
+        location: location,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        profileImage: profileImage,
+        website: website,
+        phoneNumber: phoneNumber);
     return response.fold(
       (DataState responseDataState) {
         if (responseDataState is DataFailureOffline) {
@@ -179,6 +203,42 @@ class UtilityStateNotifier extends StateNotifier<UserEntity?> {
     Either<DataState, UserEntity> response = await _addSocial.addSocial(
       social: social,
       link: link,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    );
+    return response.fold(
+      (DataState responseDataState) {
+        if (responseDataState is DataFailureOffline) {
+          errorWidget(message: 'you\'re offline');
+        }
+        if (responseDataState is DataFailure) {
+          if (responseDataState.status != 500) {
+            errorWidget(message: responseDataState.message);
+          } else {
+            errorWidget(message: 'unknown error');
+          }
+        }
+
+        return null;
+      },
+      (UserEntity userEntity) {
+        return userEntity;
+      },
+    );
+  }
+
+  Future<UserEntity?> editVisibilitySettings({
+    required String showPhoneNumber,
+    required String showEmail,
+    required String showProfile,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    Either<DataState, UserEntity> response =
+        await _editVisibilitySettings.editVisibilitySettings(
+      showPhoneNumber: showPhoneNumber,
+      showEmail: showEmail,
+      showProfile: showProfile,
       accessToken: accessToken,
       refreshToken: refreshToken,
     );

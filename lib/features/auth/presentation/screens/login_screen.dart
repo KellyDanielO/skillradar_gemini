@@ -43,26 +43,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   void googleAuth() async {
-    UserCredential? credentials = await _authController.signInWithGoogle();
-
-    if (credentials != null && credentials.user!.email != null) {
+    final loading = ref.read(accountCreatingLoadingNotifierProvider);
+    if (!loading) {
       ref.read(accountCreatingLoadingNotifierProvider.notifier).change(true);
-      final data = await ref.read(authListenerProvider.notifier).loginAccount(
-          userId: credentials.user!.uid, email: credentials.user!.email!);
-      if (data == 'set-up') {
-        ref.read(accountCreatingLoadingNotifierProvider.notifier).change(false);
-        if (mounted) {
-          AppHelpers.goReplacedNamed(
-              routeName: AppRouter.setUpScreen, context: context);
-        }
-      } else if (data == 'done') {
-        ref.read(accountCreatingLoadingNotifierProvider.notifier).change(false);
-        if (mounted) {
-          AppHelpers.goReplacedNamed(
-              routeName: AppRouter.splashScreen, context: context);
+      UserCredential? credentials = await _authController.signInWithGoogle();
+
+      if (credentials != null && credentials.user!.email != null) {
+        final data = await ref.read(authListenerProvider.notifier).loginAccount(
+            userId: credentials.user!.uid, email: credentials.user!.email!);
+        if (data == 'set-up') {
+          ref
+              .read(accountCreatingLoadingNotifierProvider.notifier)
+              .change(false);
+          if (mounted) {
+            AppHelpers.goReplacedNamed(
+                routeName: AppRouter.setUpScreen, context: context);
+          }
+        } else if (data == 'done') {
+          ref
+              .read(accountCreatingLoadingNotifierProvider.notifier)
+              .change(false);
+          if (mounted) {
+            AppHelpers.goReplacedNamed(
+                routeName: AppRouter.splashScreen, context: context);
+          }
+        } else {
+          _authController.signOutFromGoogle();
+          ref
+              .read(accountCreatingLoadingNotifierProvider.notifier)
+              .change(false);
         }
       } else {
-        _authController.signOutFromGoogle();
         ref.read(accountCreatingLoadingNotifierProvider.notifier).change(false);
       }
     }
@@ -155,54 +166,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 SizedBox(height: 25.h),
-                Text(
-                  'Log in with one of the following options',
-                  style: TextStyle(
-                    color: AppColors.whiteColor.withOpacity(.7),
+                GestureDetector(
+                  onTap: googleAuth,
+                  child: Container(
+                    width: width,
+                    padding:
+                        EdgeInsets.symmetric(vertical: 8.h, horizontal: 20.w),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(
+                        color: AppColors.whiteColor.withOpacity(.4),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 30.w,
+                          height: 30.w,
+                          child: Image.asset(
+                            AppAssets.google,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        SizedBox(width: 20.w),
+                        Text(
+                          'Continue with Google',
+                          style: TextStyle(
+                            color: AppColors.whiteColor.withOpacity(.7),
+                            fontWeight: FontWeight.w600,
+                            fontFamily: AppFonts.sansFont,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 10.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: googleAuth,
-                      child: Container(
-                        width: width * .43,
-                        padding: EdgeInsets.symmetric(vertical: 15.h),
-                        decoration: BoxDecoration(
-                          color: AppColors.blackShadeColor,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                              color: AppColors.whiteColor.withOpacity(.4)),
-                        ),
-                        child: SvgPicture.asset(
-                          AppAssets.googleBoldIcon,
-                          colorFilter: const ColorFilter.mode(
-                              AppColors.whiteColor, BlendMode.srcIn),
-                          width: 15.w,
-                          height: 15.h,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: width * .43,
-                      padding: EdgeInsets.symmetric(vertical: 15.h),
-                      decoration: BoxDecoration(
-                        color: AppColors.blackShadeColor,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: AppColors.whiteColor.withOpacity(.4)),
-                      ),
-                      child: SvgPicture.asset(
-                        AppAssets.facebookBoldIcon,
-                        colorFilter: const ColorFilter.mode(
-                            AppColors.whiteColor, BlendMode.srcIn),
-                        width: 15.w,
-                        height: 15.h,
-                      ),
-                    ),
-                  ],
                 ),
                 SizedBox(height: 20.h),
                 Column(
@@ -335,10 +332,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 SizedBox(height: 15.h),
                 if (accountCreatingLoading)
                   const Align(
-                      alignment: Alignment.center,
-                      child: CupertinoActivityIndicator(
-                        color: AppColors.primaryColor,
-                      ))
+                    alignment: Alignment.center,
+                    child: CupertinoActivityIndicator(
+                      color: AppColors.primaryColor,
+                    ),
+                  )
                 else
                   Hero(
                     tag: 'submit_button',

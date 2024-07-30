@@ -17,14 +17,18 @@ class EditProfile {
     File? profileImage,
     required String accessToken,
     required String refreshToken,
+    String? website,
+    String? phoneNumber,
   }) {
     return repository.editProfile(
-        bio: bio,
-        name: name,
-        location: location,
-        profileImage: profileImage,
-        accessToken: accessToken,
-        
-        refreshToken: refreshToken);
+      bio: bio,
+      name: name,
+      location: location,
+      profileImage: profileImage,
+      accessToken: accessToken,
+      phoneNumber: phoneNumber,
+      website: website,
+      refreshToken: refreshToken,
+    );
   }
 }

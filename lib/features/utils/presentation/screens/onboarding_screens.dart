@@ -23,9 +23,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   late String image;
 
   final List<String> _imageUrls = [
-    'assets/images/onboarding1.jpg',
-    'assets/images/onboarding2.jpg',
-    'assets/images/onboarding3.jpg',
+    'assets/images/onboarding-2.jpeg',
+    'assets/images/onboarding-3.jpeg',
+    'assets/images/onboarding-4.jpeg',
   ];
 
   @override
@@ -87,13 +87,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
-                  width: 200.w,
-                  height: 200.w,
+                  width: 80.w,
+                  height: 80.w,
                   child: Image.asset(
-                    AppAssets.logo3,
-                    fit: BoxFit.cover,
+                    AppAssets.logo5,
+                    fit: BoxFit.contain,
                   ),
                 ),
+                SizedBox(height: 20.h),
                 Text(
                   transH.welcomeMsgTitle,
                   style: TextStyle(

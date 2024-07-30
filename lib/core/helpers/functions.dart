@@ -265,6 +265,18 @@ class AppHelpers {
     return user2.skills.first;
   }
 
+  static List<String> getSkillsInCommon(
+      UserEntity user1, UserEntity user2) {
+    Set<int> skillIds1 = user1.skills.map((skill) => skill.id).toSet();
+    List<String> inCommon = [];
+    for (SkillEntity skill in user2.skills) {
+      if (skillIds1.contains(skill.id)) {
+        inCommon.add(skill.name);
+      }
+    }
+    return inCommon;
+  }
+
   static String findFirstCommonSkillSet(
       List<SkillEntity> skills1, List<String> skills2) {
     Set<String> skillIds1 = skills1.map((skill) => skill.name).toSet();
@@ -318,14 +330,18 @@ class AppHelpers {
   }
 
   Future<String?> generateText({required String promptText}) async {
-    final model = GenerativeModel(
-      model: 'gemini-1.5-flash-latest',
-      apiKey: AppConstants.geminiAPIKey,
-    );
+    try {
+      final model = GenerativeModel(
+        model: 'gemini-1.5-flash-latest',
+        apiKey: AppConstants.geminiAPIKey,
+      );
 
-    final prompt = promptText;
-    final content = [Content.text(prompt)];
-    final response = await model.generateContent(content);
-    return response.text;
+      final prompt = promptText;
+      final content = [Content.text(prompt)];
+      final response = await model.generateContent(content);
+      return response.text;
+    } catch (e) {
+      return null;
+    }
   }
 }

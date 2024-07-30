@@ -22,6 +22,7 @@ class RemoteDataSource {
           HttpHeaders.contentTypeHeader: "application/json",
         },
       ).timeout(const Duration(minutes: 2));
+      response.headers['content-type'] = 'application/json; charset=utf-8';
       final statusCode = response.statusCode;
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
       if (response.statusCode == 200) {
@@ -36,7 +37,6 @@ class RemoteDataSource {
       if (e.toString().contains('SocketException')) {
         return Left(DataFailureOffline(700, 'network error'));
       }
-      print(e);
       return Left(DataFailure(500, e.toString()));
     }
   }
@@ -81,6 +81,7 @@ class RemoteDataSource {
           HttpHeaders.authorizationHeader: 'Bearer $accessToken',
         },
       );
+      response.headers['content-type'] = 'application/json; charset=utf-8';
       final statusCode = response.statusCode;
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
       if (response.statusCode == 201) {
@@ -106,6 +107,8 @@ class RemoteDataSource {
     File? profileImage,
     required String accessToken,
     required String refreshToken,
+    String? website,
+    String? phoneNumber,
   }) async {
     try {
       final uri = Uri.parse('${AppConstants.baseUrl}/user/');
@@ -116,6 +119,8 @@ class RemoteDataSource {
         ..headers[HttpHeaders.contentTypeHeader] = "application/json"
         ..fields['bio'] = bio
         ..fields['name'] = name
+        ..fields['phone_number'] = phoneNumber ?? ''
+        ..fields['website'] = website ?? ''
         ..fields['location'] = location;
 
       // If a file is provided, add it to the request
@@ -223,8 +228,47 @@ class RemoteDataSource {
         },
       );
       final statusCode = response.statusCode;
+      response.headers['content-type'] = 'application/json; charset=utf-8';
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
       if (response.statusCode == 201) {
+        UserModel user = UserModel.fromJson(jsonResponse['user']);
+        return Right(user);
+      } else if (statusCode == 401) {
+        return Left(DataFailure(response.statusCode, 'unauthorized access'));
+      } else {
+        return Left(DataFailure(response.statusCode, jsonResponse['response']));
+      }
+    } catch (e) {
+      if (e.toString().contains('SocketException')) {
+        return Left(DataFailureOffline(700, 'network error'));
+      }
+      return Left(DataFailure(500, e.toString()));
+    }
+  }
+
+  Future<Either<DataState, UserModel>> editVisibilitySettings({
+    required String showPhoneNumber,
+    required String showEmail,
+    required String showProfile,
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    try {
+      final response = await http.patch(
+        Uri.parse('${AppConstants.baseUrl}/user/visibility/'),
+        body: {
+          "show_phone_number": showPhoneNumber.toString(),
+          "show_email": showEmail.toString(),
+          "show_profile": showProfile.toString(),
+        },
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+        },
+      );
+      response.headers['content-type'] = 'application/json; charset=utf-8';
+      final statusCode = response.statusCode;
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      if (response.statusCode == 200) {
         UserModel user = UserModel.fromJson(jsonResponse['user']);
         return Right(user);
       } else if (statusCode == 401) {
@@ -252,6 +296,7 @@ class RemoteDataSource {
           HttpHeaders.authorizationHeader: 'Bearer $accessToken',
         },
       ).timeout(const Duration(minutes: 2));
+      response.headers['content-type'] = 'application/json; charset=utf-8';
       final statusCode = response.statusCode;
       final jsonResponse = json.decode(response.body);
       if (response.statusCode == 201 || statusCode == 200) {
@@ -286,6 +331,7 @@ class RemoteDataSource {
           HttpHeaders.authorizationHeader: 'Bearer $accessToken',
         },
       ).timeout(const Duration(minutes: 2));
+      response.headers['content-type'] = 'application/json; charset=utf-8';
       final statusCode = response.statusCode;
       final jsonResponse = json.decode(response.body);
       if (response.statusCode == 201 || statusCode == 200) {

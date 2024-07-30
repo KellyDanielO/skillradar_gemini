@@ -34,6 +34,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool fileSelected = false;
   File? selectedFile;
   bool me = false;
+  String? review, inCommonText;
   void _showBottomSheet(BuildContext context, double width, double height) {
     final user = ref.read(displayUserNotifierProvider);
     showModalBottomSheet(
@@ -73,6 +74,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         });
         ref.read(displayUserNotifierProvider.notifier).setUser(globalUser);
       }
+      getData(ref);
+      getIncommonMessage(ref);
     });
     super.initState();
   }
@@ -132,12 +135,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ),
         title: user == null
             ? null
-            : Text(
-                '@${user.username}',
-                style: TextStyle(
-                  color: AppColors.whiteColor,
-                  fontSize: 18.sp,
-                  fontFamily: AppFonts.actionFont,
+            : FittedBox(
+                child: Text(
+                  '@${user.username}',
+                  style: TextStyle(
+                    color: AppColors.whiteColor,
+                    fontSize: 18.sp,
+                    fontFamily: AppFonts.actionFont,
+                  ),
                 ),
               ),
         centerTitle: false,
@@ -515,12 +520,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 color: AppColors.greyColor,
                               ),
                             ),
-                            SizedBox(height: 10.h),
-                            GenerateAIReview(
-                                user: user,
-                                globalUser: globalUser!,
-                                width: width,
-                                height: height),
+                            if (user.bio != null && user.bio!.length >= 30) ...[
+                              SizedBox(height: 20.h),
+                              aiReviewWidget(context)
+                            ],
+                            if (user.id != globalUser!.id &&
+                                AppHelpers.getSkillsInCommon(user, globalUser)
+                                    .isNotEmpty) ...[
+                              SizedBox(height: 20.h),
+                              skillInCommonWidget(context)
+                            ],
                             SizedBox(height: 100.h),
                           ],
                         ),
@@ -583,6 +592,114 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ],
               ),
             ),
+    );
+  }
+
+  void getData(WidgetRef ref) async {
+    final user = ref.read(displayUserNotifierProvider);
+    if (user!.bio != null && user.bio!.length >= 30) {
+      String prompt = """
+    I want you to generate an AI remark about this user with this bio, give it from a middle man standpoint and don't ask for more details and don't put your response in quote
+    ${user.bio}.    
+    """;
+      final data = await AppHelpers().generateText(promptText: prompt);
+      setState(() {
+        review = data;
+      });
+    }
+  }
+
+  void getIncommonMessage(WidgetRef ref) async {
+    final user = ref.read(displayUserNotifierProvider);
+    final globalUser = ref.read(gobalUserNotifierProvider);
+    final skills = AppHelpers.getSkillsInCommon(user!, globalUser!);
+    if (user.id != globalUser.id && skills.isNotEmpty) {
+      String prompt = """
+    I want you to generate an AI message to talk about what these users have in common, give it from a middle man standpoint and don't ask for more details and don't put your response in quote, don't make statement like the other user and also emphasize on the skills they share. I want you to sound like you're comparing data from the viewing user and the profile user and talking to the viewing user
+    Here is the viewing user's bio
+    '${globalUser.bio}'
+    Here is the profile user's name
+    '${user.name}'
+    Here is the profile user's bio
+    '${user.bio}'
+
+    Here are the skills they have in common. list out the skill they have in common
+    ${skills.join(',')}
+    """;
+      final data = await AppHelpers().generateText(promptText: prompt);
+      setState(() {
+        inCommonText = data;
+      });
+    }
+  }
+
+  Column aiReviewWidget(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'AI Review',
+          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                fontWeight: FontWeight.w600,
+                fontFamily: AppFonts.sansFont,
+                color: AppColors.whiteColor,
+              ),
+        ),
+        SizedBox(height: 10.h),
+        AnimatedCrossFade(
+          crossFadeState: review == null
+              ? CrossFadeState.showFirst
+              : CrossFadeState.showSecond,
+          duration: const Duration(milliseconds: 500),
+          firstChild: const Text(
+            'Generating...',
+            style: TextStyle(
+              color: AppColors.greyColor,
+            ),
+          ),
+          secondChild: Text(
+            review.toString(),
+            style: const TextStyle(
+              color: AppColors.greyColor,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Column skillInCommonWidget(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'What you have in common',
+          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                fontWeight: FontWeight.w600,
+                fontFamily: AppFonts.sansFont,
+                color: AppColors.whiteColor,
+              ),
+        ),
+        SizedBox(height: 10.h),
+        AnimatedCrossFade(
+          crossFadeState: inCommonText == null
+              ? CrossFadeState.showFirst
+              : CrossFadeState.showSecond,
+          duration: const Duration(milliseconds: 500),
+          firstChild: const Text(
+            'Generating...',
+            style: TextStyle(
+              color: AppColors.greyColor,
+            ),
+          ),
+          secondChild: Text(
+            inCommonText.toString(),
+            style: const TextStyle(
+              color: AppColors.greyColor,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -669,69 +786,6 @@ class BottomSheetContent extends StatelessWidget {
                 ],
               ),
             ),
-    );
-  }
-}
-
-class GenerateAIReview extends StatefulWidget {
-  final UserEntity user;
-  final UserEntity globalUser;
-  final double width;
-  final double height;
-
-  const GenerateAIReview({
-    super.key,
-    required this.user,
-    required this.globalUser,
-    required this.width,
-    required this.height,
-  });
-
-  @override
-  State<GenerateAIReview> createState() => _GenerateAIReviewState();
-}
-
-class _GenerateAIReviewState extends State<GenerateAIReview> {
-  String? review;
-  @override
-  void initState() {
-    getData();
-    super.initState();
-  }
-
-  getData() async {
-    String prompt = """
-    I want you to generate a summary with this information.
-    ${widget.user.bio}.
-    
-    """;
-    final data = await AppHelpers().generateText(promptText: prompt);
-    setState(() {
-      review = data;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'AI Review',
-          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                fontWeight: FontWeight.w600,
-                fontFamily: AppFonts.sansFont,
-                color: AppColors.whiteColor,
-              ),
-        ),
-        SizedBox(height: 10.h),
-        Text(
-          review ?? 'generating...',
-          style: const TextStyle(
-            color: AppColors.greyColor,
-          ),
-        ),
-      ],
     );
   }
 }

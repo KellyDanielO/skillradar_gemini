@@ -20,6 +20,7 @@ class RemoteDataSource {
           HttpHeaders.contentTypeHeader: "application/json",
         },
       );
+      response.headers['content-type'] = 'application/json; charset=utf-8';
       final statusCode = response.statusCode;
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);

@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:skillradar/core/helpers/app_extensions.dart';
 
 import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../../core/entities/user_entity.dart';
+import '../../../../../core/helpers/functions.dart';
 import '../../../../../core/providers/provider_variables.dart';
+import '../../providers/utility_provider.dart';
 
 class VisiblityScreen extends ConsumerStatefulWidget {
   const VisiblityScreen({super.key});
@@ -21,8 +25,8 @@ class _VisiblityScreenState extends ConsumerState<VisiblityScreen> {
   bool showPhoneNumber = true,
       showEmail = true,
       showProfile = true,
-      dataChanged = false,
-      addingSkillsLoading = false;
+      dataChanged = false;
+
   @override
   void initState() {
     final user = ref.read(gobalUserNotifierProvider);
@@ -32,11 +36,36 @@ class _VisiblityScreenState extends ConsumerState<VisiblityScreen> {
     super.initState();
   }
 
+  void editVisibilitySettings() async {
+    final buttonLoading = ref.read(editingVisibilityLoadingNotifierProvider);
+    if (!buttonLoading) {
+      String? accessToken = await AppHelpers().getData('access_token');
+      String? refreshToken = await AppHelpers().getData('refresh_token');
+      ref.read(editingVisibilityLoadingNotifierProvider.notifier).change(true);
+      UserEntity? user = await ref
+          .read(utilityListenerProvider.notifier)
+          .editVisibilitySettings(
+            showPhoneNumber: showPhoneNumber.toString().capitalizeFirst.toString(),
+            showEmail: showEmail.toString().capitalizeFirst.toString(),
+            showProfile: showProfile.toString().capitalizeFirst.toString(),
+            accessToken: accessToken!,
+            refreshToken: refreshToken!,
+          );
+      if (user != null) {
+        ref.read(gobalUserNotifierProvider.notifier).setUser(user);
+        if (mounted) {
+          Navigator.pop(context);
+        }
+      }
+      ref.read(editingVisibilityLoadingNotifierProvider.notifier).change(false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;
     double height = ScreenUtil().screenHeight;
-    ref.watch(gobalUserNotifierProvider);
+    final buttonLoading = ref.watch(editingVisibilityLoadingNotifierProvider);
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 50.w,
@@ -65,16 +94,17 @@ class _VisiblityScreenState extends ConsumerState<VisiblityScreen> {
       floatingActionButton: dataChanged == false
           ? null
           : FloatingActionButton(
-              onPressed: () {},
+              onPressed: editVisibilitySettings,
               backgroundColor: AppColors.primaryColor,
               shape: const CircleBorder(),
-              child: addingSkillsLoading
-                  ? const CupertinoActivityIndicator()
+              child: buttonLoading
+                  ? const CupertinoActivityIndicator(color: AppColors.blackColor,)
                   : const Icon(
                       Icons.check,
                     ),
             ),
-      body: SizedBox(
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
         width: width,
         height: height,
         child: Column(
@@ -101,7 +131,7 @@ class _VisiblityScreenState extends ConsumerState<VisiblityScreen> {
             ),
             ListTile(
               title: Text(
-                'Show Phonenumber',
+                'Show Phone number',
                 style: TextStyle(
                   color: AppColors.whiteColor,
                   fontSize: 16.sp,
