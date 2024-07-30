@@ -90,7 +90,6 @@ final feedUsersNotifierProvider =
   return UsersStateNotifier();
 });
 
-
 final discoveredUsersNotifierProvider =
     StateNotifierProvider<UsersStateNotifier, List<UserEntity>>((ref) {
   return UsersStateNotifier();
@@ -170,8 +169,9 @@ class BaseRepositoryStateNotifier extends StateNotifier<UserEntity?> {
     required String accessToken,
     required String refreshToken,
   }) async {
-    Either<DataState, List<SavedProfileEntity>> response = await _getSavedProfile
-        .getSavedProfile(accessToken: accessToken, refreshToken: refreshToken);
+    Either<DataState, List<SavedProfileEntity>> response =
+        await _getSavedProfile.getSavedProfile(
+            accessToken: accessToken, refreshToken: refreshToken);
     return response.fold(
       (DataState responseDataState) {
         if (responseDataState is DataFailureOffline) {
@@ -183,8 +183,9 @@ class BaseRepositoryStateNotifier extends StateNotifier<UserEntity?> {
               ref
                   .read(savedProfileStateNotifierProvider.notifier)
                   .change(SavedProfileState.noUser);
+            } else {
+              errorWidget(message: responseDataState.message);
             }
-            errorWidget(message: responseDataState.message);
           } else {
             errorWidget(message: 'unknown error');
           }
@@ -197,7 +198,9 @@ class BaseRepositoryStateNotifier extends StateNotifier<UserEntity?> {
               .change(SavedProfileState.noUser);
         } else {
           ref.read(savedUsersNotifierProvider.notifier).setUsers(users);
-          ref.read(savedProfileStateNotifierProvider.notifier).change(SavedProfileState.none);
+          ref
+              .read(savedProfileStateNotifierProvider.notifier)
+              .change(SavedProfileState.none);
         }
       },
     );

@@ -73,7 +73,7 @@ class SavedTab extends ConsumerWidget {
           ),
         ),
         SizedBox(height: 20.h),
-        if (savedProfileState == SavedProfileState.noUser)
+        if (savedProfileState == SavedProfileState.noUser || savedProfileUsers.isEmpty)
           Flexible(
             key: const ValueKey(1),
             child: Column(
@@ -108,7 +108,7 @@ class SavedTab extends ConsumerWidget {
               loop: false,
             ),
           ),
-        if (savedProfileState == SavedProfileState.none)
+        if (savedProfileState == SavedProfileState.none || savedProfileUsers.isNotEmpty)
           Flexible(
             key: const ValueKey(4),
             child: Swiper(
