@@ -6,6 +6,12 @@ enum FeedState{
   noUsers
 }
 
+enum SavedProfileState{
+  loading,
+  none,
+  noUser
+}
+
 enum ExploreState{
   loading,
   none,

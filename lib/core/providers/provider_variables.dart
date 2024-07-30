@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../entities/saved_profile_entity.dart';
 import '../entities/skill_entity.dart';
 import '../entities/social_entity.dart';
 import '../entities/user_entity.dart';
@@ -19,6 +20,10 @@ final addingSkillsLoadingNotifierProvider = StateNotifierProvider.autoDispose<Bo
   return BoolNotifier();
 });
 
+final navigatedProfileSaved = StateNotifierProvider.autoDispose<BoolNotifier, bool>((ref) {
+  return BoolNotifier();
+});
+
 final languageNotifierProvider =
     StateNotifierProvider<LocaleNotifier, Locale>((ref) {
   return LocaleNotifier();
@@ -28,6 +33,11 @@ final gobalUserNotifierProvider =
     StateNotifierProvider<UserStateNotifier, UserEntity?>((ref) {
   return UserStateNotifier();
 });
+
+final gobalWidgetRefProvider =
+    StateNotifierProvider<WidgetRefStateNotifier, WidgetRef?>((ref) {
+  return WidgetRefStateNotifier();
+});
 final gobalSkillsNotifierProvider =
     StateNotifierProvider<SkillsStateNotifier, List<SkillEntity>>((ref) {
   return SkillsStateNotifier();
@@ -35,4 +45,9 @@ final gobalSkillsNotifierProvider =
 final gobalSocialsNotifierProvider =
     StateNotifierProvider<SocialsStateNotifier, List<SocialEntity>>((ref) {
   return SocialsStateNotifier();
+});
+
+final savedUsersNotifierProvider =
+    StateNotifierProvider<SavedUsersStateNotifier, List<SavedProfileEntity>>((ref) {
+  return SavedUsersStateNotifier();
 });

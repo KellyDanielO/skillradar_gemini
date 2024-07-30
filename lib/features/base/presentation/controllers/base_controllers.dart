@@ -17,4 +17,15 @@ class BaseController {
           ref: ref, accessToken: accessToken!, refreshToken: refreshToken!);
     }
   }
+
+  Future<void> fetchSavedProfileData({required WidgetRef ref}) async {
+    String? accessToken = await AppHelpers().getData('access_token');
+    String? refreshToken = await AppHelpers().getData('refresh_token');
+    ref
+        .read(savedProfileStateNotifierProvider.notifier)
+        .change(SavedProfileState.loading);
+
+    ref.read(baseListenerProvider.notifier).getSavedProfile(
+        ref: ref, accessToken: accessToken!, refreshToken: refreshToken!);
+  }
 }

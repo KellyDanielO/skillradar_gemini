@@ -222,14 +222,16 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                   return ProfileCard(
                     name: element.name,
                     isUrl: element.avatar != null,
-                    image:
-                        element.avatar != null ? element.avatar! : AppAssets.user,
+                    image: element.avatar != null
+                        ? element.avatar!
+                        : AppAssets.user,
                     location: element.location!,
                     skill: AppHelpers.findFirstCommonSkill(globalUser!, element)
                         .name,
                     bio: element.bio ?? 'no bio',
                     joined: AppHelpers.timeAgo(element.dateJoined),
-                    action: () {},
+                    action: () {
+                    },
                     user: element,
                   );
                 },
@@ -245,24 +247,4 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       ),
     );
   }
-}
-
-class UserProfile {
-  final String name;
-  final String image;
-  final String location;
-  final String skill;
-  final String bio;
-  final String joined;
-  final void Function() action;
-
-  UserProfile({
-    required this.name,
-    required this.image,
-    required this.location,
-    required this.skill,
-    required this.bio,
-    required this.joined,
-    required this.action,
-  });
 }

@@ -1,10 +1,11 @@
+import 'package:equatable/equatable.dart';
 
 import '../../features/auth/domain/entities/token_entity.dart';
 import 'featured_media_entity.dart';
 import 'skill_entity.dart';
 import 'user_social_entity.dart';
 
-class UserEntity  {
+class UserEntity extends Equatable {
   final String id;
   final String email;
   final String? username;
@@ -54,4 +55,31 @@ class UserEntity  {
     required this.showProfile,
     required this.showPhoneNumber,
   });
+
+  @override
+  List<Object?> get props => [
+        id,
+        email,
+        username,
+        tokens,
+        name,
+        bio,
+        isGoogle,
+        skills,
+        aboutMe,
+        website,
+        avatar,
+        accountType,
+        isActive,
+        dateJoined,
+        location,
+        coverPhoto,
+        featured,
+        socials,
+        phoneNumber,
+        isSaved,
+        showEmail,
+        showPhoneNumber,
+        showProfile,
+      ];
 }

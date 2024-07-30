@@ -7,6 +7,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/assets.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../../core/helpers/functions.dart';
+import '../../../../../core/providers/provider_variables.dart';
+import '../../../../../core/widgets/shimmers_widgets.dart';
+import '../../constants/enums.dart';
+import '../../provider/providers.dart';
 import '../../widgets/profile_card.dart';
 
 class SavedTab extends ConsumerWidget {
@@ -16,44 +21,9 @@ class SavedTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<UserProfile> profiles = [
-      UserProfile(
-        name: 'Ace',
-        image: AppAssets.user,
-        location: 'Nigeria, Port Harcourt',
-        skill: 'Photographer',
-        bio: 'I\'m a cool guy',
-        joined: '10 mons ago',
-        action: () {},
-      ),
-      UserProfile(
-        name: 'Kelly Daniel',
-        image: AppAssets.user,
-        location: 'Nigeria, Port Harcourt',
-        skill: 'Flutter Developer',
-        bio: 'I\'m a cool guy',
-        joined: '10 mons ago',
-        action: () {},
-      ),
-      UserProfile(
-        name: 'Livingstone',
-        image: AppAssets.user,
-        location: 'Nigeria, Port Harcourt',
-        skill: 'Flutter Developer',
-        bio: 'I\'m a cool guy',
-        joined: '10 mons ago',
-        action: () {},
-      ),
-      UserProfile(
-        name: 'Victor Chiaka',
-        image: AppAssets.user,
-        location: 'Nigeria, Port Harcourt',
-        skill: 'Flutter Developer',
-        bio: 'I\'m a cool guy',
-        joined: '10 mons ago',
-        action: () {},
-      ),
-    ];
+    final savedProfileState = ref.watch(savedProfileStateNotifierProvider);
+    final savedProfileUsers = ref.watch(savedUsersNotifierProvider);
+    final globalUser = ref.watch(gobalUserNotifierProvider);
     return Column(
       children: <Widget>[
         SizedBox(height: 10.h),
@@ -102,81 +72,72 @@ class SavedTab extends ConsumerWidget {
                 fontFamily: AppFonts.sansFont),
           ),
         ),
-        // SizedBox(height: 15.h),
-        // SingleChildScrollView(
-        //   scrollDirection: Axis.horizontal,
-        //   child: Padding(
-        //     padding: EdgeInsets.symmetric(horizontal: 20.w),
-        //     child: Row(
-        //       children: List.generate(skillList.length, (index) {
-        //         return Container(
-        //           margin: EdgeInsets.only(right: 10.w),
-        //           child: Chip(
-        //             backgroundColor:
-        //                 index == 0 ? AppColors.whiteColor : AppColors.blackColor,
-        //             shape: RoundedRectangleBorder(
-        //                 borderRadius: BorderRadius.circular(30)),
-        //             label: Text(
-        //               skillList[index],
-        //               style: TextStyle(
-        //                 color: index == 0
-        //                     ? AppColors.blackColor
-        //                     : AppColors.whiteColor,
-        //                 fontFamily: AppFonts.sansFont,
-        //                 fontWeight: FontWeight.w600,
-        //                 fontSize: 12.sp,
-        //               ),
-        //             ),
-        //           ),
-        //         );
-        //       }),
-        //     ),
-        //   ),
-        // ),
-        SizedBox(height: 30.h),
-        Flexible(
-          child: Swiper(
-            itemBuilder: (BuildContext context, int index) {
-              final element = profiles[index];
-              return ProfileCard(
-                name: element.name,
-                image: element.image,
-                location: element.location,
-                skill: element.skill,
-                bio: element.bio,
-                joined: element.joined,
-                action: element.action,
-              );
-            },
-            itemCount: profiles.length,
-            viewportFraction: 0.8,
-            scale: 0.9,
-            loop: false,
+        SizedBox(height: 20.h),
+        if (savedProfileState == SavedProfileState.noUser)
+          Flexible(
+            key: const ValueKey(1),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  AppAssets.notFound,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(height: 10.h),
+                Text(
+                  'No saved profile found!',
+                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                        color: AppColors.whiteColor,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: AppFonts.sansFont,
+                      ),
+                )
+              ],
+            ),
           ),
-        ),
+        if (savedProfileState == SavedProfileState.loading)
+          Flexible(
+            key: const ValueKey(3),
+            child: Swiper(
+              itemCount: 10,
+              itemBuilder: (BuildContext context, int index) {
+                return FeedShimmer(width: width);
+              },
+              viewportFraction: 0.8,
+              scale: 0.9,
+              loop: false,
+            ),
+          ),
+        if (savedProfileState == SavedProfileState.none)
+          Flexible(
+            key: const ValueKey(4),
+            child: Swiper(
+              itemBuilder: (BuildContext context, int index) {
+                final element = savedProfileUsers[index].profile;
+                return ProfileCard(
+                  name: element.name,
+                  isUrl: element.avatar != null,
+                  image:
+                      element.avatar != null ? element.avatar! : AppAssets.user,
+                  location: element.location!,
+                  skill: AppHelpers.findFirstCommonSkill(globalUser!, element)
+                      .name,
+                  bio: element.bio ?? 'no bio',
+                  joined: AppHelpers.timeAgo(element.dateJoined),
+                  action: () {
+                  },
+                  user: element,
+                );
+              },
+              itemCount: savedProfileUsers.length,
+              viewportFraction: 0.8,
+              scale: 0.9,
+              loop: false,
+            ),
+          ),
         SizedBox(height: 30.h),
         SizedBox(height: height * .12),
       ],
     );
   }
-}
-
-class UserProfile {
-  final String name;
-  final String image;
-  final String location;
-  final String skill;
-  final String bio;
-  final String joined;
-  final void Function() action;
-
-  UserProfile({
-    required this.name,
-    required this.image,
-    required this.location,
-    required this.skill,
-    required this.bio,
-    required this.joined,
-    required this.action,
-  });
 }

@@ -14,6 +14,7 @@ import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
 import '../../../../core/constants/router.dart';
+import '../../../../core/entities/saved_profile_entity.dart';
 import '../../../../core/entities/user_entity.dart';
 import '../../../../core/helpers/functions.dart';
 import '../../../../core/providers/provider_variables.dart';
@@ -35,6 +36,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   File? selectedFile;
   bool me = false;
   String? review, inCommonText;
+  SavedProfileEntity? savedProfile;
   void _showBottomSheet(BuildContext context, double width, double height) {
     final user = ref.read(displayUserNotifierProvider);
     showModalBottomSheet(
@@ -63,6 +65,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           });
           ref.read(displayUserNotifierProvider.notifier).setUser(globalUser);
         } else {
+          final savedUsers = ref.read(savedUsersNotifierProvider);
+          for (var element in savedUsers) {
+            if (element.profile.id == navUser.id) {
+              savedProfile = element;
+              ref.read(navigatedProfileSaved.notifier).change(true);
+            }
+          }
           setState(() {
             me = false;
           });
@@ -103,6 +112,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
+  void addSavedProfile() async {
+    final navigatedProfile = ref.read(navigatedProfileSaved);
+    final navUser = ref.read(navigatedUserNotifierProvider);
+    final globalWidgetRef = ref.read(gobalWidgetRefProvider);
+    if (!navigatedProfile) {
+      ref.read(navigatedProfileSaved.notifier).change(true);
+      String? accessToken = await AppHelpers().getData('access_token');
+      String? refreshToken = await AppHelpers().getData('refresh_token');
+      ref.read(profileListenerProvider.notifier).saveProfile(
+            ref: globalWidgetRef!,
+            accessToken: accessToken!,
+            refreshToken: refreshToken!,
+            id: navUser!.id,
+          );
+    } else {
+      ref.read(navigatedProfileSaved.notifier).change(false);
+      String? accessToken = await AppHelpers().getData('access_token');
+      String? refreshToken = await AppHelpers().getData('refresh_token');
+      ref.read(profileListenerProvider.notifier).removeProfile(
+            ref: globalWidgetRef!,
+            accessToken: accessToken!,
+            refreshToken: refreshToken!,
+            id: navUser!.id,
+            profile: savedProfile!,
+          );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = ScreenUtil().screenWidth;
@@ -110,6 +147,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final transH = AppLocalizations.of(context)!;
     final user = ref.watch(displayUserNotifierProvider);
     final globalUser = ref.watch(gobalUserNotifierProvider);
+    final savedProfiles = ref.watch(navigatedProfileSaved);
     ref.listen(
       gobalUserNotifierProvider,
       (previous, next) {
@@ -149,34 +187,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         actions: user == null
             ? null
             : [
-                user.showPhoneNumber && !user.phoneNumber.isNull
-                    ? IconButton(
-                        onPressed: () {
-                          AppHelpers.launchPhoneCall(user.phoneNumber!);
-                        },
-                        icon: Icon(
-                          CupertinoIcons.phone,
-                          size: 24.sp,
-                          color: AppColors.whiteColor,
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-                user.showEmail && !user.email.isNull
-                    ? IconButton(
-                        onPressed: () {
-                          AppHelpers.launchEmail(
-                              to: user.email,
-                              subject:
-                                  'Hey I\'m ${user.name} from Skill Radar.',
-                              body: '');
-                        },
-                        icon: Icon(
-                          CupertinoIcons.envelope,
-                          size: 24.sp,
-                          color: AppColors.whiteColor,
-                        ),
-                      )
-                    : const SizedBox.shrink(),
+                if (user.showPhoneNumber && !user.phoneNumber.isNull)
+                  IconButton(
+                    onPressed: () {
+                      AppHelpers.launchPhoneCall(user.phoneNumber!);
+                    },
+                    icon: Icon(
+                      CupertinoIcons.phone,
+                      size: 24.sp,
+                      color: AppColors.whiteColor,
+                    ),
+                  )
+                else
+                  const SizedBox.shrink(),
+                if (user.showEmail && !user.email.isNull)
+                  IconButton(
+                    onPressed: () {
+                      AppHelpers.launchEmail(
+                          to: user.email,
+                          subject: 'Hey I\'m ${user.name} from Skill Radar.',
+                          body: '');
+                    },
+                    icon: Icon(
+                      CupertinoIcons.envelope,
+                      size: 24.sp,
+                      color: AppColors.whiteColor,
+                    ),
+                  )
+                else
+                  const SizedBox.shrink(),
                 Container(
                   margin: EdgeInsets.only(right: 10.w),
                   child: IconButton(
@@ -258,12 +297,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 right: 10,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: AppColors.greyColor.withOpacity(.3),
+                                    color: AppColors.blackColor.withOpacity(.3),
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                   margin: EdgeInsets.only(right: 10.w),
                                   child: IconButton(
-                                    onPressed: uploadCoverPhoto,
+                                    onPressed:
+                                        me ? uploadCoverPhoto : addSavedProfile,
                                     icon: me
                                         ? Icon(
                                             Icons.change_circle_outlined,
@@ -271,10 +311,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                             size: 20.sp,
                                           )
                                         : SvgPicture.asset(
-                                            AppAssets.bookmarkOutlinedIcon,
-                                            colorFilter: const ColorFilter.mode(
-                                                AppColors.whiteColor,
-                                                BlendMode.srcIn),
+                                            savedProfiles
+                                                ? AppAssets.bookmarkBoldIcon
+                                                : AppAssets
+                                                    .bookmarkOutlinedIcon,
+                                            colorFilter: ColorFilter.mode(
+                                              savedProfiles
+                                                  ? AppColors.primaryColor
+                                                  : AppColors.whiteColor,
+                                              BlendMode.srcIn,
+                                            ),
                                             width: 15.w,
                                             height: 15.h,
                                           ),
@@ -603,9 +649,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     ${user.bio}.    
     """;
       final data = await AppHelpers().generateText(promptText: prompt);
-      setState(() {
-        review = data;
-      });
+      if (mounted) {
+        setState(() {
+          review = data;
+        });
+      }
     }
   }
 
@@ -627,9 +675,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     ${skills.join(',')}
     """;
       final data = await AppHelpers().generateText(promptText: prompt);
-      setState(() {
-        inCommonText = data;
-      });
+      if (mounted) {
+        setState(() {
+          inCommonText = data;
+        });
+      }
     }
   }
 

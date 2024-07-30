@@ -3,34 +3,38 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
+
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/data_state/data_state.dart';
 import '../../../../../core/models/saved_profile_model.dart';
-import '../../../../../core/models/user_model.dart';
 
-class RemoteDataSource {
-  Future<Either<DataState, List<UserModel>>> getFeedData({
+class RemoteDatasource {
+  Future<Either<DataState, SavedProfileModel>> saveProfile({
     required String accessToken,
     required String refreshToken,
+    required String id,
   }) async {
     try {
-      final response = await http.get(
-        Uri.parse('${AppConstants.baseUrl}/get-all-users-with-same-skill/'),
+      final response = await http.post(
+        Uri.parse('${AppConstants.baseUrl}/user/saved-profile/'),
+        body: {
+          'profile_id': id,
+        },
         headers: {
           HttpHeaders.authorizationHeader: 'Bearer $accessToken',
-          HttpHeaders.contentTypeHeader: "application/json",
         },
       );
       response.headers['content-type'] = 'application/json; charset=utf-8';
       final statusCode = response.statusCode;
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = json.decode(response.body);
-        List<UserModel> user = UserModel.fromJsonList(jsonResponse['users']);
-        return Right(user);
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      if (response.statusCode == 201) {
+        SavedProfileModel profile =
+            SavedProfileModel.fromJson(jsonResponse['data']);
+        return Right(profile);
       } else if (statusCode == 401) {
         return Left(DataFailure(response.statusCode, 'unauthorized access'));
       } else {
-        return Left(DataFailure(response.statusCode, response.body));
+        return Left(DataFailure(response.statusCode, jsonResponse['response']));
       }
     } catch (e) {
       if (e.toString().contains('SocketException')) {
@@ -38,32 +42,29 @@ class RemoteDataSource {
       }
       return Left(DataFailure(500, e.toString()));
     }
-
   }
 
-
-  Future<Either<DataState, List<SavedProfileModel>>> getSavedUser({
+  Future<Either<DataState, String>> removeProfile({
     required String accessToken,
     required String refreshToken,
+    required String id,
   }) async {
     try {
-      final response = await http.get(
-        Uri.parse('${AppConstants.baseUrl}/user/saved-profile/'),
+      final response = await http.delete(
+        Uri.parse('${AppConstants.baseUrl}/user/saved-profile/$id/'),
         headers: {
           HttpHeaders.authorizationHeader: 'Bearer $accessToken',
-          HttpHeaders.contentTypeHeader: "application/json",
         },
       );
       response.headers['content-type'] = 'application/json; charset=utf-8';
       final statusCode = response.statusCode;
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = json.decode(response.body);
-        List<SavedProfileModel> user = SavedProfileModel.fromJsonList(jsonResponse['data']);
-        return Right(user);
+        return const Right('done');
       } else if (statusCode == 401) {
         return Left(DataFailure(response.statusCode, 'unauthorized access'));
-      }  else {
-        return Left(DataFailure(response.statusCode, response.body));
+      } else {
+        return Left(DataFailure(response.statusCode, jsonResponse['response']));
       }
     } catch (e) {
       if (e.toString().contains('SocketException')) {
@@ -72,5 +73,4 @@ class RemoteDataSource {
       return Left(DataFailure(500, e.toString()));
     }
   }
-
 }

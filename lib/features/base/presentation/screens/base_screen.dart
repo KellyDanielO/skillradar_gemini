@@ -39,7 +39,9 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
       if (globalUser!.skills.isEmpty) {
         ref.read(feedStateNotifierProvider.notifier).change(FeedState.noSkill);
       } else {
+        ref.read(gobalWidgetRefProvider.notifier).setState(ref);
         BaseController().fetchFeedData(ref: ref);
+        BaseController().fetchSavedProfileData(ref: ref);
         if (globalUser.avatar != null) {
           AppHelpers().precacheNetworkImages(context, [globalUser.avatar!]);
         }
@@ -90,6 +92,9 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
               duration: const Duration(milliseconds: 500),
               curve: Curves.easeInOut);
         },
+        doubleTap: () {
+          BaseController().fetchSavedProfileData(ref: ref);
+        },
       ),
       BottomTabs(
         activeIcon: AppAssets.userBoldIcon,
@@ -114,7 +119,8 @@ class _BaseScreenState extends ConsumerState<BaseScreen> {
           ? null
           : FloatingActionButton(
               onPressed: () {
-                AppHelpers.goNamed(routeName: AppRouter.searchScreen, context: context);
+                AppHelpers.goNamed(
+                    routeName: AppRouter.searchScreen, context: context);
               },
               backgroundColor: AppColors.primaryColor,
               shape: const CircleBorder(),

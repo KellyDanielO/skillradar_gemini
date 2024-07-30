@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../../../core/constants/assets.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/fonts.dart';
 import '../../../../core/constants/router.dart';
@@ -70,22 +68,6 @@ class ProfileCard extends ConsumerWidget {
                     fontFamily: AppFonts.sansFont,
                     fontWeight: FontWeight.w600,
                     color: AppColors.blackColor),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.greyColor.withOpacity(.3),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: IconButton(
-                  onPressed: () {},
-                  icon: SvgPicture.asset(
-                    AppAssets.bookmarkBoldIcon,
-                    colorFilter: const ColorFilter.mode(
-                        AppColors.blackColor, BlendMode.srcIn),
-                    width: 15.w,
-                    height: 15.h,
-                  ),
-                ),
               ),
             ],
           ),

@@ -30,7 +30,6 @@ class ProfileCardShimmer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               ShimmerBox(width: 50.w, height: 10.h),
-              ShimmerBox(width: 35.w, height: 35.w),
             ],
           ),
           ShimmerBox(
