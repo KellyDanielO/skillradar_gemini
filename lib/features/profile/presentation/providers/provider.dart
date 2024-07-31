@@ -8,6 +8,8 @@ import '../../../../core/providers/provider_classes.dart';
 import '../../../../core/providers/provider_variables.dart';
 import '../../../../core/widgets/error_widgets.dart';
 import '../../../../core/widgets/success_widgets.dart';
+import '../../../base/presentation/constants/enums.dart';
+import '../../../base/presentation/provider/providers.dart';
 import '../../data/datasources/remote/remote_datasource.dart';
 import '../../data/repositories/profile_repository_impl.dart';
 import '../../domain/repositories/profile_repository.dart';
@@ -107,15 +109,23 @@ class ProfileRepositoryStateNotifier extends StateNotifier<UserEntity?> {
           if (responseDataState.status != 500) {
             if (responseDataState.status == 404) {
               errorWidget(message: 'profile not found');
+            }else {
+              errorWidget(message: responseDataState.message);
             }
-            errorWidget(message: responseDataState.message);
           } else {
+            print(responseDataState.message);
             errorWidget(message: 'unknown error');
           }
         }
       },
       (String response) {
         ref.read(savedUsersNotifierProvider.notifier).removeUser(profile);
+        final remaingProfiles = ref.read(savedUsersNotifierProvider);
+        if (remaingProfiles.isEmpty) {
+          ref
+              .read(savedProfileStateNotifierProvider.notifier)
+              .change(SavedProfileState.noUser);
+        }
         successWidget(message: 'completed');
       },
     );

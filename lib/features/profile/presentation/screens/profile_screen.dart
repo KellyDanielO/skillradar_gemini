@@ -65,11 +65,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           });
           ref.read(displayUserNotifierProvider.notifier).setUser(globalUser);
         } else {
-          final savedUsers = ref.read(savedUsersNotifierProvider);
-          for (var element in savedUsers) {
-            if (element.profile.id == navUser.id) {
-              savedProfile = element;
-              ref.read(navigatedProfileSaved.notifier).change(true);
+          if (navUser.isSaved) {
+            final savedProfiles = ref.read(savedUsersNotifierProvider);
+            for (var element in savedProfiles) {
+              if (element.profile.id == navUser.id) {
+                ref.read(navigatedProfileSaved.notifier).change(true);
+                savedProfile = element;
+              }
             }
           }
           setState(() {
@@ -134,7 +136,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ref: globalWidgetRef!,
             accessToken: accessToken!,
             refreshToken: refreshToken!,
-            id: navUser!.id,
+            id: savedProfile!.id.toString(),
             profile: savedProfile!,
           );
     }
