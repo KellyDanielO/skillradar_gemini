@@ -1,4 +1,3 @@
-```markdown
 # Skill Radar
 
 This is a Flutter application.
