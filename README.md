@@ -27,7 +27,7 @@ Before running the app, ensure you have the following installed:
    Add gemini API key
    Create .env in the root directory and add
    ```bash
-   GEMINI_API_KEY = 'GEMINI-API-KEY'
+   GEMINI_API_KEY=GEMINI-API-KEY
    ```
 ## Running the App
 
