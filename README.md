@@ -1,4 +1,4 @@
-# fundz_app
+# Skill Radar
 
 A new Flutter project.
 
